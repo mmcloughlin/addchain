@@ -13,6 +13,14 @@ func TestBosCosterMakeSequence(t *testing.T) {
 		targets = append(targets, big.NewInt(num))
 	}
 
+	// According to Example 9.39 in
+	// https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+	// we should get:
+	//
+	// 1, 2, 4, 8, 10, 11, 18, 36, 47 , 55, 91, 109, 117 , 226, 343 , 434, 489, 499 , 933 , 1422, 2844, 5688, 5689
+	//
+	// Our code is not the same, but the example shows it can be done with a chain of length 23.
+
 	// Apply MakeSequence.
 	seq, err := BosCosterMakeSequence(targets)
 	if err != nil {

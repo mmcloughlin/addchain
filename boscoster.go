@@ -2,7 +2,6 @@ package addchain
 
 import (
 	"errors"
-	"fmt"
 	"math/big"
 
 	"github.com/mmcloughlin/addchain/bigint"
@@ -25,8 +24,6 @@ func BosCosterMakeSequence(targets []*big.Int) ([]*big.Int, error) {
 	result := []*big.Int{}
 
 	for len(f) > 2 {
-		fmt.Println(f)
-
 		// Pop the target element.
 		top := len(f) - 1
 		target := f[top]
@@ -119,7 +116,7 @@ func division(_ []*big.Int, target *big.Int) []*big.Int {
 		{P: 19, Chain: []int64{1, 2, 4, 8, 16, 18}},
 		{P: 17, Chain: []int64{1, 2, 4, 8, 9}},
 		{P: 13, Chain: []int64{1, 2, 4, 8, 9}},
-		{P: 11, Chain: []int64{1, 2, 3, 5}},
+		{P: 11, Chain: []int64{1, 2, 3, 5, 10}},
 		{P: 7, Chain: []int64{1, 2, 3, 5}},
 		{P: 5, Chain: []int64{1, 2, 3}},
 		{P: 3, Chain: []int64{1, 2}},
