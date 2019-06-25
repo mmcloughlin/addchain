@@ -21,8 +21,7 @@ import (
 // algorithm to generate an addition sequence producing every element of targets.
 func BosCosterMakeSequence(targets []*big.Int) ([]*big.Int, error) {
 	// Initialize the protosequence.
-	f := []*big.Int{big.NewInt(1), big.NewInt(2)}
-	f = append(f, targets...)
+	f := bigint.MergeUnique([]*big.Int{big.NewInt(1), big.NewInt(2)}, targets)
 	result := []*big.Int{}
 
 	for len(f) > 2 {
@@ -38,6 +37,11 @@ func BosCosterMakeSequence(targets []*big.Int) ([]*big.Int, error) {
 		insert := approx(f, target)
 		if insert == nil {
 			insert = halving(f, target)
+
+			div := division(f, target)
+			if div != nil && (insert == nil || len(div) < len(insert)) {
+				insert = div
+			}
 		}
 
 		// Bail if we found nothing.
@@ -46,8 +50,7 @@ func BosCosterMakeSequence(targets []*big.Int) ([]*big.Int, error) {
 		}
 
 		// Update protosequence.
-		f = append(f, insert...)
-		bigint.Sort(f)
+		f = bigint.MergeUnique(f, insert)
 	}
 
 	return result, nil
@@ -102,12 +105,41 @@ func approx(f []*big.Int, target *big.Int) []*big.Int {
 
 	// We have found a sum within epsilon of the target.
 	// Return a + epsilon to be added to the protosequence.
-	insert := new(big.Int).Add(besta, epsilon)
+	insert := new(big.Int).Add(besta, mindelta)
 	return []*big.Int{insert}
 }
 
 // division applies the "Division" heuristic.
-func division(f []*big.Int, target *big.Int) []*big.Int {
+func division(_ []*big.Int, target *big.Int) []*big.Int {
+	// Small primes together with minimal addition chains for them.
+	primes := []struct {
+		P     int64
+		Chain []int64 // excluding P
+	}{
+		{P: 19, Chain: []int64{1, 2, 4, 8, 16, 18}},
+		{P: 17, Chain: []int64{1, 2, 4, 8, 9}},
+		{P: 13, Chain: []int64{1, 2, 4, 8, 9}},
+		{P: 11, Chain: []int64{1, 2, 3, 5}},
+		{P: 7, Chain: []int64{1, 2, 3, 5}},
+		{P: 5, Chain: []int64{1, 2, 3}},
+		{P: 3, Chain: []int64{1, 2}},
+	}
+
+	// Check if any of them divide the target.
+	m, p := new(big.Int), new(big.Int)
+	for _, prime := range primes {
+		p.SetInt64(prime.P)
+		if m.Mod(target, p).Sign() == 0 {
+			d := new(big.Int).Div(target, p)
+			insertions := []*big.Int{}
+			for _, c := range prime.Chain {
+				insert := new(big.Int).Mul(d, big.NewInt(c))
+				insertions = append(insertions, insert)
+			}
+			return insertions
+		}
+	}
+
 	return nil
 }
 
@@ -131,12 +163,12 @@ func halving(f []*big.Int, target *big.Int) []*big.Int {
 		return nil
 	}
 
-	// Otherwise we return the chain.
+	// Otherwise we return the values k, 2*k, ..., 2^{u-1} * k, 2^u * k.
 	insertions := []*big.Int{}
 	k := t.Sub(target, s)
-	for ; maxu >= 0; maxu-- {
-		insertions = append(insertions, new(big.Int).Set(k))
-		k.Rsh(k, 1)
+	for r := maxu; r >= 0; r-- {
+		insert := new(big.Int).Rsh(k, uint(r))
+		insertions = append(insertions, insert)
 	}
 
 	return insertions

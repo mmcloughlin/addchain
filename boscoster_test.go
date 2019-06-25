@@ -19,7 +19,9 @@ func TestBosCosterMakeSequence(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	for _, x := range seq {
-		t.Log(x)
+	for l, r := 0, len(seq)-1; l < r; l, r = l+1, r-1 {
+		seq[l], seq[r] = seq[r], seq[l]
 	}
+
+	t.Logf("length=%d sequence=%v", len(seq), seq)
 }
