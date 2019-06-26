@@ -4,7 +4,8 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/mmcloughlin/addchain/bigint"
+	"github.com/mmcloughlin/addchain/internal/bigint"
+	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
 // References:
@@ -20,7 +21,7 @@ import (
 // algorithm to generate an addition sequence producing every element of targets.
 func BosCosterMakeSequence(targets []*big.Int) ([]*big.Int, error) {
 	// Initialize the protosequence.
-	f := bigint.MergeUnique([]*big.Int{big.NewInt(1), big.NewInt(2)}, targets)
+	f := bigints.MergeUnique([]*big.Int{big.NewInt(1), big.NewInt(2)}, targets)
 	result := []*big.Int{}
 
 	for len(f) > 2 {
@@ -47,7 +48,7 @@ func BosCosterMakeSequence(targets []*big.Int) ([]*big.Int, error) {
 		}
 
 		// Update protosequence.
-		f = bigint.MergeUnique(f, insert)
+		f = bigints.MergeUnique(f, insert)
 	}
 
 	return result, nil

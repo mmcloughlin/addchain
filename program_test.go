@@ -2,17 +2,17 @@ package addchain
 
 import "testing"
 
-func TestEvaluateDoubleChain(t *testing.T) {
+func TestProgramEvaluateDoublings(t *testing.T) {
 	// Build a chain of doublings.
-	c := Chain{}
+	p := Program{}
 	n := 17
 	for i := 0; i < n; i++ {
-		c.Add(i, i)
+		p.Double(i)
 	}
 
 	// Evaluate.
-	x := c.Evaluate()
-	for i, got := range x {
+	c := p.Evaluate()
+	for i, got := range c {
 		if !got.IsUint64() {
 			t.Fatal("expected to be representable as uint64")
 		}
