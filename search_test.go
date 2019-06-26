@@ -5,6 +5,8 @@ import (
 	"math/big"
 	"math/rand"
 	"testing"
+
+	"github.com/mmcloughlin/addchain/internal/test"
 )
 
 func TestBinaryPowersOfTwo(t *testing.T) {
@@ -17,12 +19,12 @@ func TestBinaryPowersOfTwo(t *testing.T) {
 }
 
 func TestBinaryRandomInt64(t *testing.T) {
-	for trials := 0; trials < 1000; trials++ {
+	test.Repeat(t, func(t *testing.T) {
 		r := rand.Int63n(math.MaxInt64)
 		n := big.NewInt(r)
 		p := BinaryRightToLeft(n)
 		AssertProgramProduces(t, p, n)
-	}
+	})
 }
 
 func AssertProgramProduces(t *testing.T, p Program, expect *big.Int) {
