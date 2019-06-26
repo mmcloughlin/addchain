@@ -57,7 +57,7 @@ func BosCosterMakeSequence(targets []*big.Int) ([]*big.Int, error) {
 // approx applies the "Approximation" heuristic.
 //
 // This heuristic looks for two elements a, b in the list that sum to something close to the top element f.
-// That is, we look for f-(a+b) = epsilon where a <= b and epsilon is a "small" positive value.
+// That is, we look for f-(a+b) = epsilon where a ⩽ b and epsilon is a "small" positive value.
 func approx(f []*big.Int, target *big.Int) []*big.Int {
 	// Look for the closest sum.
 	delta := new(big.Int)
@@ -145,7 +145,7 @@ func division(_ []*big.Int, target *big.Int) []*big.Int {
 func halving(f []*big.Int, target *big.Int) []*big.Int {
 	t := new(big.Int)
 
-	// Look for target - f[i] = 2^u * k with maximal u.
+	// Look for target - f[i] = 2ᵘ * k with maximal u.
 	maxu := 0
 	var s *big.Int
 	for i := range f {
@@ -161,7 +161,7 @@ func halving(f []*big.Int, target *big.Int) []*big.Int {
 		return nil
 	}
 
-	// Otherwise we return the values k, 2*k, ..., 2^{u-1} * k, 2^u * k.
+	// Otherwise we return the values k, 2*k, ..., 2ᵘ⁻¹ * k, 2ᵘ * k.
 	insertions := []*big.Int{}
 	k := t.Sub(target, s)
 	for r := maxu; r >= 0; r-- {

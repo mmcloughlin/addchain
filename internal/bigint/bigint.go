@@ -1,8 +1,6 @@
 package bigint
 
-import (
-	"math/big"
-)
+import "math/big"
 
 // Zero returns 0.
 func Zero() *big.Int {
