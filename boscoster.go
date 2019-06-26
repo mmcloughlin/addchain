@@ -46,20 +46,31 @@ func (h Approximation) Suggest(s *SequenceState) []*Proposal {
 	delta := new(big.Int)
 	f, target := s.SplitTarget()
 	eps := h.Epsilon(target)
+	var min *big.Int
 	for i, a := range f {
 		for _, b := range f[i:] {
 			delta.Add(a, b)
 			delta.Sub(target, delta)
-			if delta.Sign() < 0 || delta.Cmp(eps) > 0 {
+			if delta.Sign() < 0 {
 				continue
 			}
 
-			// We have found a sum within epsilon of the target.
-			// Suggest a + delta be added to the protosequence.
 			insert := new(big.Int).Add(a, delta)
-			proposals = append(proposals, ProposeInsert(insert))
+
+			if delta.Cmp(eps) <= 0 {
+				// If within epsilon of the target, propose this as an insertion.
+				proposals = append(proposals, ProposeInsert(insert))
+			} else if min == nil || insert.Cmp(min) < 0 {
+				// Otherwise keep track of it if it's the smallest we've seen so far.
+				min = insert
+			}
 		}
 	}
+
+	if len(proposals) == 0 {
+		proposals = []*Proposal{ProposeInsert(min)}
+	}
+
 	return proposals
 }
 
