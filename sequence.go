@@ -13,7 +13,20 @@ import (
 // target values.
 type SequenceAlgorithm interface {
 	fmt.Stringer
-	FindSequence(targets []*big.Int) ([]*big.Int, error)
+	FindSequence(targets []*big.Int) (Chain, error)
+}
+
+// NewChainAlgorithmFromSequenceAlgorithm adapts a to a chain algorithm.
+func NewChainAlgorithmFromSequenceAlgorithm(a SequenceAlgorithm) ChainAlgorithm {
+	name := fmt.Sprintf("sequence_algorithm(%s)", a)
+	return NewChainAlgorithm(name, func(target *big.Int) (Program, error) {
+		targets := []*big.Int{target}
+		c, err := a.FindSequence(targets)
+		if err != nil {
+			return nil, err
+		}
+		return c.Program()
+	})
 }
 
 // SequenceState represents a current state in a search for a addition sequence.
@@ -47,6 +60,12 @@ func (s *SequenceState) Target() *big.Int {
 	return s.Proto[top]
 }
 
+// SplitTarget splits the target integer from all the rest.
+func (s *SequenceState) SplitTarget() ([]*big.Int, *big.Int) {
+	top := len(s.Proto) - 1
+	return s.Proto[:top], s.Proto[top]
+}
+
 // MoveTargetToChain moves the target element (top element in protosequence) to the chain.
 func (s *SequenceState) MoveTargetToChain() {
 	top := len(s.Proto) - 1
@@ -69,6 +88,12 @@ type Proposal struct {
 	Insert []*big.Int
 }
 
+func ProposeInsert(xs ...*big.Int) *Proposal {
+	return &Proposal{
+		Insert: xs,
+	}
+}
+
 func (p Proposal) Apply(s *SequenceState) *SequenceState {
 	return &SequenceState{
 		Proto: bigints.MergeUnique(p.Insert, s.Proto),
@@ -80,6 +105,31 @@ func (p Proposal) Apply(s *SequenceState) *SequenceState {
 type Heuristic interface {
 	fmt.Stringer
 	Suggest(*SequenceState) []*Proposal
+}
+
+// NewHeuristic is a convenience for building a heuristic from a function.
+func NewHeuristic(name string, suggest func(*SequenceState) []*Proposal) Heuristic {
+	return heuristic{name: name, f: suggest}
+}
+
+type heuristic struct {
+	name string
+	f    func(*SequenceState) []*Proposal
+}
+
+func (h heuristic) String() string                       { return h.name }
+func (h heuristic) Suggest(s *SequenceState) []*Proposal { return h.f(s) }
+
+// LastTwoDelta implements the simple heuristic of adding the delta between the
+// last two entries in the protosequence.
+func LastTwoDelta() Heuristic {
+	return NewHeuristic("last_two_delta", func(s *SequenceState) []*Proposal {
+		f := s.Proto
+		n := len(f)
+		delta := new(big.Int).Sub(f[n-1], f[n-2])
+		propose := ProposeInsert(delta)
+		return []*Proposal{propose}
+	})
 }
 
 // HeuristicSequenceAlgorithm searches for an addition sequence with a
@@ -105,7 +155,7 @@ func (h HeuristicSequenceAlgorithm) String() string {
 }
 
 // FindSequence searches for an addition sequence for the given targets.
-func (h HeuristicSequenceAlgorithm) FindSequence(targets []*big.Int) ([]*big.Int, error) {
+func (h HeuristicSequenceAlgorithm) FindSequence(targets []*big.Int) (Chain, error) {
 	// Initialize priority queue.
 	initial := NewInitialSequenceState(targets)
 	q := queue.NewPriority()
@@ -118,10 +168,13 @@ func (h HeuristicSequenceAlgorithm) FindSequence(targets []*big.Int) ([]*big.Int
 			return s.Chain, nil
 		}
 
+		fmt.Println(s.Score(), s.Proto)
+
 		// Apply heuristics.
 		for _, heuristic := range h.heuristics {
 			proposals := heuristic.Suggest(s)
 			for _, proposal := range proposals {
+				fmt.Printf("%s suggests %v\n", heuristic, proposal.Insert)
 				t := proposal.Apply(s)
 				t.MoveTargetToChain()
 				if t.Complete() {

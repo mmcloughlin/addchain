@@ -1,11 +1,8 @@
 package addchain
 
 import (
-	"errors"
+	"fmt"
 	"math/big"
-
-	"github.com/mmcloughlin/addchain/internal/bigint"
-	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
 // References:
@@ -17,96 +14,56 @@ import (
 // https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
 // https://github.com/kwantam/addchain
 
-// BosCosterMakeSequence applies a variant of the Bos-Coster MakeSequence
-// algorithm to generate an addition sequence producing every element of targets.
-func BosCosterMakeSequence(targets []*big.Int) ([]*big.Int, error) {
-	// Initialize the protosequence.
-	f := bigints.MergeUnique([]*big.Int{big.NewInt(1), big.NewInt(2)}, targets)
-	result := []*big.Int{}
-
-	for len(f) > 2 {
-		// Pop the target element.
-		top := len(f) - 1
-		target := f[top]
-		f = f[:top]
-		result = append(result, target)
-
-		// Heuristics.
-		insert := approx(f, target)
-		if insert == nil {
-			insert = halving(f, target)
-
-			div := division(f, target)
-			if div != nil && (insert == nil || len(div) < len(insert)) {
-				insert = div
-			}
-		}
-
-		// Bail if we found nothing.
-		if insert == nil {
-			return nil, errors.New("failed to find addition sequence")
-		}
-
-		// Update protosequence.
-		f = bigints.MergeUnique(f, insert)
-	}
-
-	return result, nil
+// BosCosterMakeSequence builds a sequence algorithm that applies a variant of the Bos-Coster heuristics.
+func BosCosterMakeSequence() SequenceAlgorithm {
+	return NewHeuristicSequenceAlgorithm(
+		Approximation{Ratio: 8},
+		Halving{},
+	)
 }
 
-// approx applies the "Approximation" heuristic.
-//
-// This heuristic looks for two elements a, b in the list that sum to something close to the top element f.
-// That is, we look for f-(a+b) = epsilon where a ⩽ b and epsilon is a "small" positive value.
-func approx(f []*big.Int, target *big.Int) []*big.Int {
-	// Look for the closest sum.
-	delta := new(big.Int)
-	var zero big.Int
-	var mindelta *big.Int
-	var besta *big.Int
+// Approximation is the Bos-Coster "Approximation" heuristic.
+type Approximation struct {
+	Ratio int64
+}
 
+func (h Approximation) String() string {
+	return fmt.Sprintf("approximation(%d)", h.Ratio)
+}
+
+// Epsilon computes the epsilon value for a given target.
+func (h Approximation) Epsilon(target *big.Int) *big.Int {
+	r := big.NewInt(h.Ratio)
+	return new(big.Int).Div(target, r)
+}
+
+// Suggest applies the "Approximation" heuristic. This heuristic looks for two
+// elements a, b in the list that sum to something close to the target element
+// f. That is, we look for f-(a+b) = epsilon where a ⩽ b and epsilon is a
+// "small" positive value.
+func (h Approximation) Suggest(s *SequenceState) []*Proposal {
+	proposals := []*Proposal{}
+	delta := new(big.Int)
+	f, target := s.SplitTarget()
+	eps := h.Epsilon(target)
 	for i, a := range f {
 		for _, b := range f[i:] {
 			delta.Add(a, b)
 			delta.Sub(target, delta)
-			if delta.Cmp(&zero) < 0 {
+			if delta.Sign() < 0 || delta.Cmp(eps) > 0 {
 				continue
 			}
-			if mindelta == nil || delta.Cmp(mindelta) < 0 {
-				mindelta = new(big.Int).Set(delta)
-				besta = a
-			}
+
+			// We have found a sum within epsilon of the target.
+			// Suggest a + delta be added to the protosequence.
+			insert := new(big.Int).Add(a, delta)
+			proposals = append(proposals, ProposeInsert(insert))
 		}
 	}
-
-	// Exit if we didn't find anything at all.
-	if mindelta == nil {
-		return nil
-	}
-
-	// It it small enough? The literature is unclear on good choices for epsilon.
-	// We follow Riad S. Wahby's implementation that uses epsilon approximately
-	// log(target).
-	//
-	// Reference: https://github.com/kwantam/addchain/blob/abe1e1c254673e32ed923088b89080c14874e5b3/boscoster.go#L161-L164
-	//
-	//	func bc_approx_test(d []*big.Int) (int) {
-	//	    var targ = d[len(d)-1]
-	//	    var tmp = big.NewInt(0)
-	//	    var eps = big.NewInt(int64(targ.BitLen() - 1))
-	//
-	// TODO(mbm): investigate choices of epsilon in Bos-Coster "Approximation" heuristic.
-	epsilon := big.NewInt(int64(target.BitLen()))
-	if mindelta.Cmp(epsilon) > 0 {
-		return nil
-	}
-
-	// We have found a sum within epsilon of the target.
-	// Return a + epsilon to be added to the protosequence.
-	insert := new(big.Int).Add(besta, mindelta)
-	return []*big.Int{insert}
+	return proposals
 }
 
+/*
 // division applies the "Division" heuristic.
 func division(_ []*big.Int, target *big.Int) []*big.Int {
 	// Small primes together with minimal addition chains for them.
@@ -140,34 +97,39 @@ func division(_ []*big.Int, target *big.Int) []*big.Int {
 
 	return nil
 }
+*/
 
-// halving applies the "Halving" heuristic.
-func halving(f []*big.Int, target *big.Int) []*big.Int {
-	t := new(big.Int)
+type Halving struct{}
 
-	// Look for target - f[i] = 2ᵘ * k with maximal u.
-	maxu := 0
-	var s *big.Int
-	for i := range f {
-		t.Sub(target, f[i])
-		u := bigint.TrailingZeros(t)
-		if u >= maxu {
-			maxu, s = u, f[i]
-		}
-	}
+func (h Halving) String() string {
+	return "halving"
+}
 
-	// Bail if we didn't find anything even.
-	if s == nil {
+func (h Halving) Suggest(s *SequenceState) []*Proposal {
+	f := s.Proto
+	n := len(f)
+
+	// Check the condition f / f_1 >= 2^u
+	r := new(big.Int).Div(f[n-1], f[n-2])
+	if r.BitLen() < 2 {
 		return nil
 	}
+	u := r.BitLen() - 1
 
-	// Otherwise we return the values k, 2*k, ..., 2ᵘ⁻¹ * k, 2ᵘ * k.
-	insertions := []*big.Int{}
-	k := t.Sub(target, s)
-	for r := maxu; r >= 0; r-- {
-		insert := new(big.Int).Rsh(k, uint(r))
-		insertions = append(insertions, insert)
+	// Compute k = floor(f / 2^u)
+	k := new(big.Int).Rsh(f[n-1], uint(u))
+
+	// Proposal to insert:
+	// Delta d = f - k*2^u
+	// Sequence k, 2*k, ..., k*2^u
+	kshifts := []*big.Int{}
+	for e := 0; e <= u; e++ {
+		kshift := new(big.Int).Lsh(k, uint(e))
+		kshifts = append(kshifts, kshift)
 	}
+	d := new(big.Int).Sub(f[n-1], kshifts[u])
+	insertions := append([]*big.Int{d}, kshifts...)
+	proposal := ProposeInsert(insertions...)
 
-	return insertions
+	return []*Proposal{proposal}
 }

@@ -45,3 +45,10 @@ func Repeat(t *testing.T, trial func(t *testing.T)) {
 	}
 	t.Logf("%d trials in %s", n, time.Since(start))
 }
+
+// Trials returns a function that repeats f.
+func Trials(f func(t *testing.T)) func(t *testing.T) {
+	return func(t *testing.T) {
+		Repeat(t, f)
+	}
+}
