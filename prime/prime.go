@@ -6,6 +6,12 @@ import (
 	"math/big"
 )
 
+// Prime is the interface for a prime number.
+type Prime interface {
+	Int() *big.Int
+	fmt.Stringer
+}
+
 // Crandall is a prime of the form 2ⁿ - c.
 type Crandall struct {
 	N int
