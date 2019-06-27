@@ -6,8 +6,8 @@ package prime
 //	              Jefferson E. Ricardini. A note on high-security general-purpose elliptic curves.
 //	              Cryptology ePrint Archive, Report 2013/647. 2013.
 //	              https://eprint.iacr.org/2013/647
-//	[curve25519]  Bernstein, Daniel J.. Curve25519: New Diffie-Hellman Speed Records. In Public
-//	              Key Cryptography - PKC 2006, pages 207--228. 2006.
+//	[curve25519]  Bernstein, Daniel J. Curve25519: New Diffie-Hellman Speed Records. In Public Key
+//	              Cryptography - PKC 2006, pages 207--228. 2006.
 //	              https://cr.yp.to/ecdh/curve25519-20060209.pdf
 //	[elligator]   Daniel J. Bernstein, Mike Hamburg, Anna Krasnova and Tanja Lange. Elligator:
 //	              Elliptic-curve points indistinguishable from uniform random strings. Cryptology
