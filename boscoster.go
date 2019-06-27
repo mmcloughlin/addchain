@@ -5,7 +5,7 @@ import (
 	"math/big"
 )
 
-// References:
+// References
 //
 // https://link.springer.com/content/pdf/10.1007/0-387-34805-0_37.pdf
 // http://library.isical.ac.in:8080/jspui/bitstream/123456789/6441/1/DISS-285.pdf

@@ -8,20 +8,23 @@ import (
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
-// Bibliography:
+// References:
 //
-// http://www.numdam.org/article/JTNB_1994__6_1_21_0.pdf
+//	[efficientcompaddchain]  Bergeron, F., Berstel, J. and Brlek, S.. Efficient computation of addition
+//	                         chains. 1994. http://www.numdam.org/item/JTNB_1994__6_1_21_0
+//	[hehcc:exp]              Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve
+//	                         Cryptography. 2006.
+//	                         https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
 
 // ContinuedFractionStrategy is a method of choosing the auxiliary integer k in
-// the continued fraction method outlined by "Efficient computation of addition
-// chains" by F. Bergeron, J. Berstel and S. Brlek.
+// the continued fraction method outlined in [efficientcompaddchain].
 type ContinuedFractionStrategy interface {
 	fmt.Stringer
 	K(n *big.Int) []*big.Int
 }
 
 // ContinuedFractions uses the continued fractions method for finding an
-// addition chain.
+// addition chain [efficientcompaddchain].
 type ContinuedFractions struct {
 	strategy ContinuedFractionStrategy
 }
@@ -108,7 +111,7 @@ type DichotomicStrategy struct{}
 
 func (DichotomicStrategy) String() string { return "dichotomic" }
 
-// K returns only one suggestion for k, namely floor(n / 2ʰ⁾ where h = log2(n)/2.
+// K returns only one suggestion for k, namely floor( n / 2ʰ ) where h = log2(n)/2.
 func (DichotomicStrategy) K(n *big.Int) []*big.Int {
 	l := n.BitLen()
 	h := uint(l) / 2
