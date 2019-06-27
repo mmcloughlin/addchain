@@ -11,7 +11,8 @@ import (
 
 func TestChainAlgorithms(t *testing.T) {
 	as := []ChainAlgorithm{
-		BinaryRightToLeft(),
+		BinaryRightToLeft{},
+		NewContinuedFractions(DichotomicStrategy{}),
 	}
 	for _, a := range as {
 		t.Run(a.String(), ChainAlgorithmSuite(a))
@@ -29,11 +30,11 @@ func CheckPowersOfTwo(a ChainAlgorithm, e int) func(t *testing.T) {
 	return func(t *testing.T) {
 		n := big.NewInt(1)
 		for i := 0; i < e; i++ {
-			p, err := a.FindChain(n)
+			c, err := a.FindChain(n)
 			if err != nil {
 				t.Fatal(err)
 			}
-			AssertProgramProduces(t, p, n)
+			AssertChainProduces(t, c, n)
 			n.Lsh(n, 1)
 		}
 	}
@@ -43,18 +44,18 @@ func CheckRandomInt64(a ChainAlgorithm) func(t *testing.T) {
 	return func(t *testing.T) {
 		r := rand.Int63n(math.MaxInt64)
 		n := big.NewInt(r)
-		p, err := a.FindChain(n)
+		c, err := a.FindChain(n)
 		if err != nil {
 			t.Fatal(err)
 		}
-		AssertProgramProduces(t, p, n)
+		AssertChainProduces(t, c, n)
 	}
 }
 
-func AssertProgramProduces(t *testing.T, p Program, expect *big.Int) {
-	c := p.Evaluate()
+func AssertChainProduces(t *testing.T, c Chain, expect *big.Int) {
 	err := c.Produces(expect)
 	if err != nil {
+		t.Log(c)
 		t.Fatal(err)
 	}
 }

@@ -16,19 +16,6 @@ type SequenceAlgorithm interface {
 	FindSequence(targets []*big.Int) (Chain, error)
 }
 
-// NewChainAlgorithmFromSequenceAlgorithm adapts a to a chain algorithm.
-func NewChainAlgorithmFromSequenceAlgorithm(a SequenceAlgorithm) ChainAlgorithm {
-	name := fmt.Sprintf("sequence_algorithm(%s)", a)
-	return NewChainAlgorithm(name, func(target *big.Int) (Program, error) {
-		targets := []*big.Int{target}
-		c, err := a.FindSequence(targets)
-		if err != nil {
-			return nil, err
-		}
-		return c.Program()
-	})
-}
-
 // SequenceState represents a current state in a search for a addition sequence.
 type SequenceState struct {
 	Proto []*big.Int // remaining elements to produce
@@ -168,13 +155,10 @@ func (h HeuristicSequenceAlgorithm) FindSequence(targets []*big.Int) (Chain, err
 			return s.Chain, nil
 		}
 
-		fmt.Println(s.Score(), s.Proto)
-
 		// Apply heuristics.
 		for _, heuristic := range h.heuristics {
 			proposals := heuristic.Suggest(s)
 			for _, proposal := range proposals {
-				fmt.Printf("%s suggests %v\n", heuristic, proposal.Insert)
 				t := proposal.Apply(s)
 				t.MoveTargetToChain()
 				if t.Complete() {

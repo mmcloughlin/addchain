@@ -34,6 +34,11 @@ func Sort(xs []*big.Int) {
 	sort.Sort(ascending(xs))
 }
 
+// SortDescending in descending order.
+func SortDescending(xs []*big.Int) {
+	sort.Sort(sort.Reverse(ascending(xs)))
+}
+
 // Clone a list of integers.
 func Clone(xs []*big.Int) []*big.Int {
 	return append([]*big.Int{}, xs...)

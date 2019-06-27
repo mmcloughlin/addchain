@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+
+	"github.com/mmcloughlin/addchain/internal/bigint"
+	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
 // Chain is an addition chain.
@@ -12,6 +15,16 @@ type Chain []*big.Int
 // New constructs the minimal chain {1}.
 func New() Chain {
 	return Chain{big.NewInt(1)}
+}
+
+// Clone the chain.
+func (c Chain) Clone() Chain {
+	return bigints.Clone(c)
+}
+
+// Append a copy of x to c.
+func (c *Chain) AppendClone(x *big.Int) {
+	*c = append(*c, bigint.Clone(x))
 }
 
 // End returns the last element of the chain.
@@ -70,4 +83,26 @@ func (c Chain) Produces(target *big.Int) error {
 		return errors.New("chain does not end with target")
 	}
 	return nil
+}
+
+// Product computes the product of two addition chains. The is the "o times"
+// operator defined in "Efficient computation of addition chains" by F.
+// Bergeron, J. Berstel and S. Brlek.
+func Product(a, b Chain) Chain {
+	c := a.Clone()
+	last := c.End()
+	for _, x := range b {
+		y := new(big.Int).Mul(last, x)
+		c = append(c, y)
+	}
+	return c
+}
+
+// Plus adds x to the addition chain. This is the "o plus" operator defined in
+// "Efficient computation of addition chains" by F. Bergeron, J. Berstel and S.
+// Brlek.
+func Plus(a Chain, x *big.Int) Chain {
+	c := a.Clone()
+	y := new(big.Int).Add(c.End(), x)
+	return append(c, y)
 }

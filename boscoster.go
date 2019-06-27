@@ -120,19 +120,19 @@ func (h Halving) Suggest(s *SequenceState) []*Proposal {
 	f := s.Proto
 	n := len(f)
 
-	// Check the condition f / f_1 >= 2^u
+	// Check the condition f / f_1 ⩾ 2ᵘ
 	r := new(big.Int).Div(f[n-1], f[n-2])
 	if r.BitLen() < 2 {
 		return nil
 	}
 	u := r.BitLen() - 1
 
-	// Compute k = floor(f / 2^u)
+	// Compute k = floor(f / 2ᵘ⁾
 	k := new(big.Int).Rsh(f[n-1], uint(u))
 
 	// Proposal to insert:
-	// Delta d = f - k*2^u
-	// Sequence k, 2*k, ..., k*2^u
+	// Delta d = f - k*2ᵘ
+	// Sequence k, 2*k, ..., k*2ᵘ
 	kshifts := []*big.Int{}
 	for e := 0; e <= u; e++ {
 		kshift := new(big.Int).Lsh(k, uint(e))

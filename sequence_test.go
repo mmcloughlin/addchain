@@ -1,8 +1,6 @@
 package addchain
 
-import (
-	"testing"
-)
+import "testing"
 
 /*
 func TestHeuristicSequenceAlgorithm(t *testing.T) {
@@ -18,7 +16,7 @@ func TestHeuristicSequenceAlgorithm(t *testing.T) {
 
 func TestSequenceAlgorithms(t *testing.T) {
 	as := []SequenceAlgorithm{
-		//NewHeuristicSequenceAlgorithm(LastTwoDelta{}),
+		// NewHeuristicSequenceAlgorithm(LastTwoDelta{}),
 	}
 	for _, a := range as {
 		t.Run(a.String(), SequenceAlgorithmSuite(a))
@@ -26,8 +24,6 @@ func TestSequenceAlgorithms(t *testing.T) {
 }
 
 func SequenceAlgorithmSuite(a SequenceAlgorithm) func(t *testing.T) {
-	ca := NewChainAlgorithmFromSequenceAlgorithm(a)
 	return func(t *testing.T) {
-		t.Run("chain_algorithm", ChainAlgorithmSuite(ca))
 	}
 }
