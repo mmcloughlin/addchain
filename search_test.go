@@ -6,6 +6,8 @@ import (
 	"math/rand"
 	"testing"
 
+	"github.com/mmcloughlin/addchain/prime"
+
 	"github.com/mmcloughlin/addchain/internal/test"
 )
 
@@ -25,6 +27,7 @@ func ChainAlgorithmSuite(a ChainAlgorithm) func(t *testing.T) {
 	return func(t *testing.T) {
 		t.Run("powers_of_two", CheckPowersOfTwo(a, 100))
 		t.Run("random_int64", test.Trials(CheckRandomInt64(a)))
+		t.Run("primes", CheckPrimes(a))
 	}
 }
 
@@ -43,5 +46,13 @@ func CheckRandomInt64(a ChainAlgorithm) func(t *testing.T) {
 		r := rand.Int63n(math.MaxInt64)
 		n := big.NewInt(r)
 		AssertChainAlgorithmProduces(t, a, n)
+	}
+}
+
+func CheckPrimes(a ChainAlgorithm) func(t *testing.T) {
+	return func(t *testing.T) {
+		for _, p := range prime.Distinguished {
+			AssertChainAlgorithmProduces(t, a, p.Int())
+		}
 	}
 }
