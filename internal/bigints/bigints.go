@@ -8,8 +8,8 @@ import (
 	"github.com/mmcloughlin/addchain/internal/bigint"
 )
 
-// Int64s converts a slice of int64s into a slice of big integers.
-func Int64s(xs []int64) []*big.Int {
+// Int64s converts a list of int64s into a slice of big integers.
+func Int64s(xs ...int64) []*big.Int {
 	bs := make([]*big.Int, len(xs))
 	for i, x := range xs {
 		bs[i] = big.NewInt(x)

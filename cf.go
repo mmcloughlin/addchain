@@ -8,6 +8,10 @@ import (
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
+// Bibliography:
+//
+// http://www.numdam.org/article/JTNB_1994__6_1_21_0.pdf
+
 // ContinuedFractionStrategy is a method of choosing the auxiliary integer k in
 // the continued fraction method outlined by "Efficient computation of addition
 // chains" by F. Bergeron, J. Berstel and S. Brlek.
@@ -47,7 +51,7 @@ func (a ContinuedFractions) minchain(n *big.Int) Chain {
 	}
 
 	if bigint.EqualInt64(n, 3) {
-		return bigints.Int64s([]int64{1, 2, 3})
+		return bigints.Int64s(1, 2, 3)
 	}
 
 	var min Chain
@@ -81,6 +85,23 @@ func (a ContinuedFractions) chain(ns []*big.Int) Chain {
 
 	remaining = bigints.InsertSortedUnique(remaining, r)
 	return Plus(Product(a.chain(remaining), cq), r)
+}
+
+type BinaryStrategy struct {
+	Parity uint
+}
+
+func (b BinaryStrategy) String() string {
+	if b.Parity == 0 {
+		return "binary"
+	}
+	return "co-binary"
+}
+
+func (b BinaryStrategy) K(n *big.Int) []*big.Int {
+	k := new(big.Int).Add(n, big.NewInt(int64(b.Parity)))
+	k.Rsh(k, 1)
+	return []*big.Int{k}
 }
 
 type DichotomicStrategy struct{}

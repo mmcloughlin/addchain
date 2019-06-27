@@ -17,12 +17,17 @@ func New() Chain {
 	return Chain{big.NewInt(1)}
 }
 
+// Int64s builds a chain from the given int64 values.
+func Int64s(xs ...int64) Chain {
+	return Chain(bigints.Int64s(xs...))
+}
+
 // Clone the chain.
 func (c Chain) Clone() Chain {
 	return bigints.Clone(c)
 }
 
-// Append a copy of x to c.
+// AppendClone appends a copy of x to c.
 func (c *Chain) AppendClone(x *big.Int) {
 	*c = append(*c, bigint.Clone(x))
 }
@@ -91,7 +96,7 @@ func (c Chain) Produces(target *big.Int) error {
 func Product(a, b Chain) Chain {
 	c := a.Clone()
 	last := c.End()
-	for _, x := range b {
+	for _, x := range b[1:] {
 		y := new(big.Int).Mul(last, x)
 		c = append(c, y)
 	}
