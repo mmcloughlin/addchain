@@ -1,6 +1,9 @@
 package bigint
 
-import "math/big"
+import (
+	"math/big"
+	"math/rand"
+)
 
 // Zero returns 0.
 func Zero() *big.Int {
@@ -60,6 +63,12 @@ func Pow2UpTo(x *big.Int) []*big.Int {
 		p.Lsh(p, 1)
 	}
 	return ps
+}
+
+// RandBits returns a random integer less than 2ⁿ.
+func RandBits(r *rand.Rand, n uint) *big.Int {
+	max := Pow2(n)
+	return new(big.Int).Rand(r, max)
 }
 
 // TrailingZeros returns the number of trailing zero bits in x. Returns 0 if x is 0.

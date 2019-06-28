@@ -53,12 +53,12 @@ type FixedWindow struct {
 	K uint
 }
 
-func (f FixedWindow) String() string { return fmt.Sprintf("fixed_window(%d)", f.K) }
+func (w FixedWindow) String() string { return fmt.Sprintf("fixed_window(%d)", w.K) }
 
 // Decompose represents x in base 2ᵏ.
-func (f FixedWindow) Decompose(x *big.Int) DictSum {
+func (w FixedWindow) Decompose(x *big.Int) DictSum {
 	sum := DictSum{}
-	mask := bigint.Pow2(f.K)
+	mask := bigint.Pow2(w.K)
 	mask.Sub(mask, bigint.One())
 	b := bigint.Clone(x)
 	s := uint(0)
@@ -69,8 +69,44 @@ func (f FixedWindow) Decompose(x *big.Int) DictSum {
 			E: s,
 		}
 		sum = append(sum, t)
-		b.Rsh(b, f.K)
-		s += f.K
+		b.Rsh(b, w.K)
+		s += w.K
+	}
+	return sum
+}
+
+// SlidingWindow breaks integers into k-bit windows, skipping runs of zeros
+// where possible. See [hehcc:exp] section 9.1.3 or [braueraddsubchains] section
+// 1.2.3.
+type SlidingWindow struct {
+	K uint
+}
+
+func (w SlidingWindow) String() string { return fmt.Sprintf("sliding_window(%d)", w.K) }
+
+// Decompose represents x in base 2ᵏ.
+func (w SlidingWindow) Decompose(x *big.Int) DictSum {
+	sum := DictSum{}
+	mask := bigint.Pow2(w.K)
+	mask.Sub(mask, bigint.One())
+	b := bigint.Clone(x)
+	s := uint(0)
+	for bigint.IsNonZero(b) {
+		// Find the next 1 bit.
+		for b.Bit(0) == 0 {
+			b.Rsh(b, 1)
+			s++
+		}
+
+		// Extract the k-bit window here.
+		d := new(big.Int).And(b, mask)
+		t := DictTerm{
+			D: d.Uint64(),
+			E: s,
+		}
+		sum = append(sum, t)
+		b.Rsh(b, w.K)
+		s += w.K
 	}
 	return sum
 }

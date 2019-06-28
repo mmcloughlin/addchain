@@ -2,9 +2,38 @@ package addchain
 
 import (
 	"math/big"
+	"math/rand"
 	"reflect"
 	"testing"
+	"time"
+
+	"github.com/mmcloughlin/addchain/internal/bigint"
+	"github.com/mmcloughlin/addchain/internal/test"
 )
+
+func TestDecomposersRandom(t *testing.T) {
+	ds := []Decomposer{
+		FixedWindow{K: 2},
+		FixedWindow{K: 11},
+		FixedWindow{K: 16},
+
+		SlidingWindow{K: 2},
+		SlidingWindow{K: 7},
+		SlidingWindow{K: 12},
+	}
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for _, d := range ds {
+		d := d
+		t.Run(d.String(), test.Trials(func(t *testing.T) bool {
+			n := bigint.RandBits(r, 256)
+			got := d.Decompose(n)
+			if !bigint.Equal(got.Int(), n) {
+				t.Fatalf("got %v expect %v", got, n)
+			}
+			return true
+		}))
+	}
+}
 
 func TestFixedWindow(t *testing.T) {
 	n := big.NewInt(0x10beef0)
