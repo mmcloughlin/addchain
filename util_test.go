@@ -19,7 +19,7 @@ func AssertChainAlgorithmGenerates(t *testing.T, a ChainAlgorithm, n *big.Int, e
 	}
 }
 
-func AssertChainAlgorithmProduces(t *testing.T, a ChainAlgorithm, n *big.Int) {
+func AssertChainAlgorithmProduces(t *testing.T, a ChainAlgorithm, n *big.Int) Chain {
 	c, err := a.FindChain(n)
 	if err != nil {
 		t.Fatal(err)
@@ -29,9 +29,10 @@ func AssertChainAlgorithmProduces(t *testing.T, a ChainAlgorithm, n *big.Int) {
 		t.Log(c)
 		t.Fatal(err)
 	}
+	return c
 }
 
-func AssertSequenceAlgorithmProduces(t *testing.T, a SequenceAlgorithm, targets []*big.Int) {
+func AssertSequenceAlgorithmProduces(t *testing.T, a SequenceAlgorithm, targets []*big.Int) Chain {
 	c, err := a.FindSequence(targets)
 	if err != nil {
 		t.Fatal(err)
@@ -41,4 +42,5 @@ func AssertSequenceAlgorithmProduces(t *testing.T, a SequenceAlgorithm, targets 
 		t.Log(c)
 		t.Fatal(err)
 	}
+	return c
 }
