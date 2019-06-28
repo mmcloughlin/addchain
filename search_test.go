@@ -8,6 +8,7 @@ import (
 
 	"github.com/mmcloughlin/addchain/prime"
 
+	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/test"
 )
 
@@ -23,17 +24,28 @@ func TestChainAlgorithms(t *testing.T) {
 func ChainAlgorithmSuite(a ChainAlgorithm) func(t *testing.T) {
 	return func(t *testing.T) {
 		t.Run("powers_of_two", CheckPowersOfTwo(a, 100))
+		t.Run("binary_runs", CheckPowersOfTwo(a, 32))
 		t.Run("random_int64", CheckRandomInt64s(a))
 		t.Run("primes", CheckPrimes(a))
 	}
 }
 
-func CheckPowersOfTwo(a ChainAlgorithm, e int) func(t *testing.T) {
+func CheckPowersOfTwo(a ChainAlgorithm, e uint) func(t *testing.T) {
 	return func(t *testing.T) {
 		n := big.NewInt(1)
-		for i := 0; i < e; i++ {
+		for i := uint(0); i <= e; i++ {
 			AssertChainAlgorithmProduces(t, a, n)
 			n.Lsh(n, 1)
+		}
+	}
+}
+
+func CheckBinaryRuns(a ChainAlgorithm, n uint) func(t *testing.T) {
+	return func(t *testing.T) {
+		for i := uint(1); i <= n; i++ {
+			r := bigint.Pow2(i)
+			r.Sub(r, bigint.One())
+			AssertChainAlgorithmProduces(t, a, r)
 		}
 	}
 }
