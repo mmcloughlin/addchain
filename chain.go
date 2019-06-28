@@ -90,6 +90,19 @@ func (c Chain) Produces(target *big.Int) error {
 	return nil
 }
 
+// Superset checks that c is a valid chain containing all the targets.
+func (c Chain) Superset(targets []*big.Int) error {
+	if err := c.Validate(); err != nil {
+		return err
+	}
+	for _, target := range targets {
+		if !bigints.Contains(target, c) {
+			return fmt.Errorf("chain does not contain %v", target)
+		}
+	}
+	return nil
+}
+
 // Product computes the product of two addition chains. The is the "o times"
 // operator defined in "Efficient computation of addition chains" by F.
 // Bergeron, J. Berstel and S. Brlek.

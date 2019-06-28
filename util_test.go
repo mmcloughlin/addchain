@@ -30,3 +30,15 @@ func AssertChainAlgorithmProduces(t *testing.T, a ChainAlgorithm, n *big.Int) {
 		t.Fatal(err)
 	}
 }
+
+func AssertSequenceAlgorithmProduces(t *testing.T, a SequenceAlgorithm, targets []*big.Int) {
+	c, err := a.FindSequence(targets)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = c.Superset(targets)
+	if err != nil {
+		t.Log(c)
+		t.Fatal(err)
+	}
+}

@@ -40,10 +40,6 @@ func (a ContinuedFractions) String() string {
 	return fmt.Sprintf("continued_fractions(%s)", a.strategy)
 }
 
-func (a ContinuedFractions) FindChain(target *big.Int) (Chain, error) {
-	return a.FindSequence([]*big.Int{target})
-}
-
 func (a ContinuedFractions) FindSequence(targets []*big.Int) (Chain, error) {
 	bigints.Sort(targets)
 	return a.chain(targets), nil

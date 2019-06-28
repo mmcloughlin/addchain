@@ -46,6 +46,16 @@ func Reverse(xs []*big.Int) {
 	}
 }
 
+// Contains reports whether n is in xs.
+func Contains(n *big.Int, xs []*big.Int) bool {
+	for _, x := range xs {
+		if bigint.Equal(n, x) {
+			return true
+		}
+	}
+	return false
+}
+
 // Clone a list of integers.
 func Clone(xs []*big.Int) []*big.Int {
 	return append([]*big.Int{}, xs...)

@@ -14,9 +14,6 @@ import (
 func TestChainAlgorithms(t *testing.T) {
 	as := []ChainAlgorithm{
 		BinaryRightToLeft{},
-		NewContinuedFractions(BinaryStrategy{}),
-		NewContinuedFractions(BinaryStrategy{Parity: 1}),
-		NewContinuedFractions(DichotomicStrategy{}),
 	}
 	for _, a := range as {
 		t.Run(a.String(), ChainAlgorithmSuite(a))
