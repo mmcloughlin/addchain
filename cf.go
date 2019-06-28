@@ -99,7 +99,7 @@ func (b BinaryStrategy) String() string {
 	if b.Parity == 0 {
 		return "binary"
 	}
-	return "co-binary"
+	return "co_binary"
 }
 
 func (b BinaryStrategy) K(n *big.Int) []*big.Int {
