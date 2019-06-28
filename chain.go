@@ -53,6 +53,7 @@ func (c Chain) Op(k int) (Op, error) {
 
 // Program produces a program that generates the chain.
 func (c Chain) Program() (Program, error) {
+	// Sanity checks.
 	if len(c) == 0 {
 		return nil, errors.New("chain empty")
 	}
@@ -61,6 +62,19 @@ func (c Chain) Program() (Program, error) {
 		return nil, errors.New("chain must start with 1")
 	}
 
+	if bigints.Contains(bigint.Zero(), c) {
+		return nil, errors.New("chain contains zero")
+	}
+
+	for i := 0; i < len(c); i++ {
+		for j := i + 1; j < len(c); j++ {
+			if bigint.Equal(c[i], c[j]) {
+				return nil, fmt.Errorf("chain contains duplicate: %v at positions %d and %d", c[i], i, j)
+			}
+		}
+	}
+
+	// Produce the program.
 	p := Program{}
 	for k := 1; k < len(c); k++ {
 		op, err := c.Op(k)
