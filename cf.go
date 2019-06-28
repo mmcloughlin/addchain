@@ -14,7 +14,7 @@ import (
 //	                         chains. Journal de theorie des nombres de Bordeaux. 1994.
 //	                         http://www.numdam.org/item/JTNB_1994__6_1_21_0
 //	[hehcc:exp]              Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve
-//	                         Cryptography. 2006.
+//	                         Cryptography, chapter 9. 2006.
 //	                         https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
 
 // ContinuedFractionStrategy is a method of choosing the auxiliary integer k in
