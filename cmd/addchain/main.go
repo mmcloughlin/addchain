@@ -29,35 +29,18 @@ func main() {
 
 	log.Printf("n: %s", n)
 
-	// Initialize algorithm.
-	a := addchain.NewDictAlgorithm(
-		addchain.SlidingWindow{K: 4},
-		addchain.NewContinuedFractions(addchain.DichotomicStrategy{}),
-	)
-	log.Printf("algorithm: %s", a)
+	// Execute an ensemble of algorithms.
+	as := addchain.Ensemble()
+	rs := addchain.Parallel(n, as)
 
-	// Apply and report.
-	c, err := a.FindChain(n)
-	if err != nil {
-		log.Fatal(err)
+	// Report results.
+	for _, r := range rs {
+		log.Printf("algorithm: %s", r.Algorithm)
+		if r.Err != nil {
+			log.Printf("error: %s", r.Err)
+			continue
+		}
+		doubles, adds := r.Program.Count()
+		log.Printf("total: %d\tdoubles: \t%d adds: %d", doubles+adds, doubles, adds)
 	}
-
-	if err := c.Produces(n); err != nil {
-		log.Fatal(err)
-	}
-
-	for i, x := range c {
-		log.Printf("%4d: %s", i, x)
-	}
-
-	// Analyze program.
-	p, err := c.Program()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	doubles, adds := p.Count()
-	log.Printf("total: %d", doubles+adds)
-	log.Printf("doubles: %d", doubles)
-	log.Printf("adds: %d", adds)
 }
