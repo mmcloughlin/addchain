@@ -52,3 +52,13 @@ func TestFixedWindow(t *testing.T) {
 		t.Fatalf("got %v expect %v", got, expect)
 	}
 }
+
+func TestDictAlgorithm(t *testing.T) {
+	a := NewDictAlgorithm(
+		SlidingWindow{K: 4},
+		NewContinuedFractions(DichotomicStrategy{}),
+	)
+	n := big.NewInt(587257)
+	c := AssertChainAlgorithmProduces(t, a, n)
+	t.Log(c)
+}

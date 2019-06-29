@@ -15,6 +15,16 @@ import (
 func TestChainAlgorithms(t *testing.T) {
 	as := []ChainAlgorithm{
 		BinaryRightToLeft{},
+
+		// Dictionary-based algorithms.
+		NewDictAlgorithm(
+			SlidingWindow{K: 4},
+			NewContinuedFractions(DichotomicStrategy{}),
+		),
+		NewDictAlgorithm(
+			FixedWindow{K: 7},
+			NewContinuedFractions(BinaryStrategy{}),
+		),
 	}
 	for _, a := range as {
 		t.Run(a.String(), ChainAlgorithmSuite(a))

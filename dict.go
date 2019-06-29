@@ -3,8 +3,10 @@ package addchain
 import (
 	"fmt"
 	"math/big"
+	"sort"
 
 	"github.com/mmcloughlin/addchain/internal/bigint"
+	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
 // References:
@@ -12,6 +14,9 @@ import (
 //	[braueraddsubchains]  Martin Otto. Brauer addition-subtraction chains. PhD thesis, Universitat
 //	                      Paderborn. 2001.
 //	                      http://www.martin-otto.de/publications/docs/2001_MartinOtto_Diplom_BrauerAddition-SubtractionChains.pdf
+//	[genshortchains]      Kunihiro, Noboru and Yamamoto, Hirosuke. New Methods for Generating Short
+//	                      Addition Chains. IEICE Transactions on Fundamentals of Electronics
+//	                      Communications and Computer Sciences. 2000.
 //	[hehcc:exp]           Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve
 //	                      Cryptography, chapter 9. 2006.
 //	                      https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
@@ -40,6 +45,29 @@ func (s DictSum) Int() *big.Int {
 		x.Add(x, t.Int())
 	}
 	return x
+}
+
+// SortByExponent sorts terms in ascending order of the exponent E.
+func (s DictSum) SortByExponent() {
+	sort.Slice(s, func(i, j int) bool { return s[i].E < s[j].E })
+}
+
+// Dictionary returns the distinct D values in the terms of this sum. The values
+// are returned in ascending order.
+func (s DictSum) Dictionary() []uint64 {
+	set := map[uint64]bool{}
+	for _, t := range s {
+		set[t.D] = true
+	}
+
+	dict := make([]uint64, 0, len(set))
+	for d := range set {
+		dict = append(dict, d)
+	}
+
+	sort.Slice(dict, func(i, j int) bool { return dict[i] < dict[j] })
+
+	return dict
 }
 
 // Decomposer is a method of breaking an integer into a dictionary sum.
@@ -109,4 +137,78 @@ func (w SlidingWindow) Decompose(x *big.Int) DictSum {
 		s += w.K
 	}
 	return sum
+}
+
+// DictAlgorithm implements a general dictionary-based chain construction
+// algorithm, as in [braueraddsubchains] Algorithm 1.26. This operates in three
+// stages: decompose the target into a sum of dictionray terms, use a sequence
+// algorithm to generate the dictionary, then construct the target from the
+// dictionary terms.
+type DictAlgorithm struct {
+	decomp Decomposer
+	seqalg SequenceAlgorithm
+}
+
+// NewDictAlgorithm builds a dictionary algorithm that breaks up integers using
+// the decomposer d and uses the sequence algorithm s to generate dictionary entries.
+func NewDictAlgorithm(d Decomposer, a SequenceAlgorithm) *DictAlgorithm {
+	return &DictAlgorithm{
+		decomp: d,
+		seqalg: a,
+	}
+}
+
+func (a DictAlgorithm) String() string {
+	return fmt.Sprintf("dictionary(%s,%s)", a.decomp, a.seqalg)
+}
+
+// FindChain builds an addition chain producing n. This works by using the
+// configured Decomposer to represent n as a sum of dictionary terms, then
+// delegating to the SequenceAlgorithm to build a chain producing the
+// dictionary, and finally using the dictionary terms to construct n. See
+// [genshortchains] Section 2 for a full description.
+func (a DictAlgorithm) FindChain(n *big.Int) (Chain, error) {
+	// Decompose the target.
+	sum := a.decomp.Decompose(n)
+	sum.SortByExponent()
+
+	// Extract dictionary.
+	dict := sum.Dictionary()
+
+	// Use the sequence algorithm to produce a chain for each element of the dictionary.
+	targets := []*big.Int{}
+	for _, d := range dict {
+		targets = append(targets, big.NewInt(int64(d)))
+	}
+
+	c, err := a.seqalg.FindSequence(targets)
+	if err != nil {
+		return nil, err
+	}
+
+	// Build chain for n out of the dictionary.
+	k := len(sum) - 1
+	cur := big.NewInt(int64(sum[k].D))
+	for ; k > 0; k-- {
+		// Shift until the next exponent.
+		for i := sum[k].E; i > sum[k-1].E; i-- {
+			cur.Lsh(cur, 1)
+			c.AppendClone(cur)
+		}
+
+		// Add in the dictionary term at this position.
+		cur.Add(cur, big.NewInt(int64(sum[k-1].D)))
+		c.AppendClone(cur)
+	}
+
+	for i := sum[0].E; i > 0; i-- {
+		cur.Lsh(cur, 1)
+		c.AppendClone(cur)
+	}
+
+	// Prepare chain for returning.
+	bigints.Sort(c)
+	c = Chain(bigints.Unique(c))
+
+	return c, nil
 }
