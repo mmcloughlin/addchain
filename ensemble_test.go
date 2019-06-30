@@ -10,8 +10,8 @@ import (
 
 // References:
 //
-//	[curvechains]  Brian Smith. The Most Efficient Known Addition Chains for Field Element & Scalar
-//	               Inversion for the Most Popular & Most Unpopular Elliptic Curves. 2017.
+//	[curvechains]  Brian Smith. The Most Efficient Known Addition Chains for Field Element and
+//	               Scalar Inversion for the Most Popular and Most Unpopular Elliptic Curves. 2017.
 //	               https://briansmith.org/ecc-inversion-addition-chains-01
 
 // TestEfficientInversionChains compares our methods against the efficient
