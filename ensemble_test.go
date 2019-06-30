@@ -64,6 +64,7 @@ func TestEfficientInversionChains(t *testing.T) {
 	}
 	as := Ensemble()
 	for _, c := range cases {
+		c := c // scopelint
 		t.Run(c.Name, func(t *testing.T) {
 			n := new(big.Int).Sub(c.N, big.NewInt(c.Delta))
 			t.Logf("n-%d=%x", c.Delta, n)

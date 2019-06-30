@@ -149,8 +149,7 @@ func number(b []byte) (*big.Int, []byte, error) {
 		i++
 	}
 	isdigit := isdecimal
-	switch {
-	case bytes.HasPrefix(b[i:], []byte("0x")):
+	if bytes.HasPrefix(b[i:], []byte("0x")) {
 		isdigit = ishex
 		i += 2
 	}
