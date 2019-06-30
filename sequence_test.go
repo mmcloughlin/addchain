@@ -9,6 +9,9 @@ import (
 
 // References:
 //
+//	[curvechains]       Brian Smith. The Most Efficient Known Addition Chains for Field Element and
+//	                    Scalar Inversion for the Most Popular and Most Unpopular Elliptic Curves. 2017.
+//	                    https://briansmith.org/ecc-inversion-addition-chains-01 (accessed June 30, 2019)
 //	[hehcc:exp]         Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve
 //	                    Cryptography, chapter 9. 2006.
 //	                    https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
@@ -66,6 +69,16 @@ func CheckKnownSequences(a SequenceAlgorithm) func(t *testing.T) {
 		{
 			Targets:  bigints.Int64s(3, 5, 7, 14, 15, 21, 25, 35, 49, 54, 62, 70, 87, 98, 112, 245, 273, 319, 343, 434, 450, 581, 609, 784, 931, 1407, 1911, 4802, 6517),
 			Solution: Int64s(1, 2, 3, 4, 5, 7, 8, 14, 15, 16, 21, 25, 28, 35, 42, 49, 54, 62, 70, 87, 98, 112, 147, 245, 273, 294, 319, 343, 392, 434, 450, 581, 609, 784, 931, 1162, 1407, 1862, 1911, 3724, 4655, 4802, 6517),
+		},
+		// P-256 field inversion in [curvechains].
+		{
+			Targets:  bigints.Int64s(32, 94),
+			Solution: bigints.Int64s(1, 2, 3, 6, 12, 15, 30, 32, 64, 94),
+		},
+		// P-384 field inversion in [curvechains].
+		{
+			Targets:  bigints.Int64s(30, 32, 255),
+			Solution: bigints.Int64s(1, 2, 3, 6, 12, 15, 30, 32, 60, 120, 240, 255),
 		},
 	}
 
