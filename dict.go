@@ -17,6 +17,7 @@ import (
 //	[genshortchains]      Kunihiro, Noboru and Yamamoto, Hirosuke. New Methods for Generating Short
 //	                      Addition Chains. IEICE Transactions on Fundamentals of Electronics
 //	                      Communications and Computer Sciences. 2000.
+//	                      https://pdfs.semanticscholar.org/b398/d10faca35af9ce5a6026458b251fd0a5640c.pdf
 //	[hehcc:exp]           Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve
 //	                      Cryptography, chapter 9. 2006.
 //	                      https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
