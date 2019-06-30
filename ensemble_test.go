@@ -12,7 +12,7 @@ import (
 //
 //	[curvechains]  Brian Smith. The Most Efficient Known Addition Chains for Field Element and
 //	               Scalar Inversion for the Most Popular and Most Unpopular Elliptic Curves. 2017.
-//	               https://briansmith.org/ecc-inversion-addition-chains-01
+//	               https://briansmith.org/ecc-inversion-addition-chains-01 (accessed June 30, 2019)
 
 // TestEfficientInversionChains compares our methods against the efficient
 // chains listed for inversion in [curvechains].
@@ -72,14 +72,10 @@ func TestEfficientInversionChains(t *testing.T) {
 			rs := Parallel(n, as)
 			var best Program
 			for _, r := range rs {
-				t.Logf("algorithm: %s", r.Algorithm)
 				if r.Err != nil {
 					t.Fatal(r.Err)
 					continue
 				}
-				doubles, adds := r.Program.Count()
-				total := doubles + adds
-				t.Logf("total: %d\tdoubles: \t%d adds: %d", total, doubles, adds)
 				if best == nil || len(r.Program) < len(best) {
 					best = r.Program
 				}
