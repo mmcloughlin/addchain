@@ -3,6 +3,7 @@ package bigint
 import (
 	"math/big"
 	"math/rand"
+	"strings"
 )
 
 // Zero returns 0.
@@ -16,9 +17,9 @@ func One() *big.Int {
 }
 
 // Hex constructs an integer from a hex string, returning the integer and a
-// boolean indicating success.
+// boolean indicating success. Underscore may be used as a separator.
 func Hex(s string) (*big.Int, bool) {
-	return new(big.Int).SetString(s, 16)
+	return new(big.Int).SetString(stripliteral(s), 16)
 }
 
 // MustHex constructs an integer from a hex string. It panics on error.
@@ -28,6 +29,26 @@ func MustHex(s string) *big.Int {
 		panic("failed to parse hex integer")
 	}
 	return x
+}
+
+// Binary parses a binary string into an integer, returning the integer and a
+// boolean indicating success. Underscore may be used as a separator.
+func Binary(s string) (*big.Int, bool) {
+	return new(big.Int).SetString(stripliteral(s), 2)
+}
+
+// MustBinary constructs an integer from a binary string. It panics on error.
+func MustBinary(s string) *big.Int {
+	x, ok := Binary(s)
+	if !ok {
+		panic("failed to parse binary integer")
+	}
+	return x
+}
+
+// stripliteral removes underscore spacers from a numeric literal.
+func stripliteral(s string) string {
+	return strings.Replace(s, "_", "", -1)
 }
 
 // Equal returns whether x equals y.

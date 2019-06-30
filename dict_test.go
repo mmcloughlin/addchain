@@ -24,6 +24,9 @@ func TestDecomposersRandom(t *testing.T) {
 		RunLength{T: 1},
 		RunLength{T: 3},
 		RunLength{T: 7},
+
+		Hybrid{K: 4, T: 7},
+		Hybrid{K: 3, T: 0},
 	}
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for _, d := range ds {
@@ -32,7 +35,8 @@ func TestDecomposersRandom(t *testing.T) {
 			n := bigint.RandBits(r, 256)
 			got := d.Decompose(n)
 			if !bigint.Equal(got.Int(), n) {
-				t.Fatalf("got %v expect %v", got, n)
+				t.Log(got)
+				t.Fatalf("got %v expect %v", got.Int(), n)
 			}
 			return true
 		}))
@@ -120,6 +124,23 @@ func TestRunLength(t *testing.T) {
 		if got := d.Decompose(big.NewInt(c.X)); !DictSumEquals(got, c.Expect) {
 			t.Fatalf("Decompose(%#x) = %v; expect %v", c.X, got, c.Expect)
 		}
+	}
+}
+
+func TestHybrid(t *testing.T) {
+	n := bigint.MustBinary("11111111_11111111_000_111_000000_1_0_111111_0_11_0")
+	f := Hybrid{K: 4, T: 8}
+	got := f.Decompose(n)
+	expect := DictSum{
+		{D: big.NewInt(0x3), E: 1},
+		{D: big.NewInt(0x3f), E: 4},
+		{D: big.NewInt(0x1), E: 11},
+		{D: big.NewInt(0x7), E: 18},
+		{D: big.NewInt(0xff), E: 24},
+		{D: big.NewInt(0xff), E: 32},
+	}
+	if !DictSumEquals(got, expect) {
+		t.Fatalf("got %v expect %v", got, expect)
 	}
 }
 

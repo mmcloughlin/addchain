@@ -72,12 +72,12 @@ type Decomposer interface {
 
 // FixedWindow breaks integers into k-bit windows.
 type FixedWindow struct {
-	K uint
+	K uint // Window size.
 }
 
 func (w FixedWindow) String() string { return fmt.Sprintf("fixed_window(%d)", w.K) }
 
-// Decompose represents x in base 2ᵏ.
+// Decompose represents x in terms of k-bit windows from left to right.
 func (w FixedWindow) Decompose(x *big.Int) DictSum {
 	sum := DictSum{}
 	h := x.BitLen()
@@ -97,7 +97,7 @@ func (w FixedWindow) Decompose(x *big.Int) DictSum {
 // where possible. See [hehcc:exp] section 9.1.3 or [braueraddsubchains] section
 // 1.2.3.
 type SlidingWindow struct {
-	K uint
+	K uint // Window size.
 }
 
 func (w SlidingWindow) String() string { return fmt.Sprintf("sliding_window(%d)", w.K) }
@@ -138,8 +138,7 @@ func (w SlidingWindow) Decompose(x *big.Int) DictSum {
 // RunLength decomposes integers in to runs of 1s up to a maximal length. See
 // [genshortchains] Section 3.1.
 type RunLength struct {
-	// T is the maximal run length. Zero means no limit.
-	T uint
+	T uint // Maximal run length. Zero means no limit.
 }
 
 func (r RunLength) String() string { return fmt.Sprintf("run_length(%d)", r.T) }
@@ -171,6 +170,65 @@ func (r RunLength) Decompose(x *big.Int) DictSum {
 		})
 	}
 	sum.SortByExponent()
+	return sum
+}
+
+// Hybrid is a mix of the sliding window and run length decomposition methods,
+// similar to the "Hybrid Method" of [genshortchains] Section 3.3.
+type Hybrid struct {
+	K uint // Window size.
+	T uint // Maximal run length. Zero means no limit.
+}
+
+func (h Hybrid) String() string { return fmt.Sprintf("hybrid(%d,%d)", h.K, h.T) }
+
+// Decompose breaks x into k-bit sliding windows or runs of 1s up to length T.
+func (h Hybrid) Decompose(x *big.Int) DictSum {
+	sum := DictSum{}
+
+	// Clone since we'll be modifying it.
+	y := bigint.Clone(x)
+
+	// Process runs of length at least K.
+	i := y.BitLen() - 1
+	for i >= 0 {
+		// Find first 1.
+		for i >= 0 && y.Bit(i) == 0 {
+			i--
+		}
+
+		if i < 0 {
+			break
+		}
+
+		// Look for the end of the run.
+		s := i
+		for i >= 0 && y.Bit(i) == 1 && (h.T == 0 || uint(s-i) < h.T) {
+			i--
+		}
+
+		// We have a run from s to i+1. Skip it if its short.
+		n := uint(s - i)
+		if n <= h.K {
+			continue
+		}
+
+		// Add it to the sum and remove it from the integer.
+		sum = append(sum, DictTerm{
+			D: bigint.Ones(n),
+			E: uint(i + 1),
+		})
+
+		y.Xor(y, bigint.Mask(uint(i+1), uint(s+1)))
+	}
+
+	// Process what remains with a sliding window.
+	w := SlidingWindow{K: h.K}
+	rem := w.Decompose(y)
+
+	sum = append(sum, rem...)
+	sum.SortByExponent()
+
 	return sum
 }
 

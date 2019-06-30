@@ -5,6 +5,40 @@ import (
 	"testing"
 )
 
+func TestHex(t *testing.T) {
+	cases := []struct {
+		Input  string
+		Expect int64
+	}{
+		{"0", 0},
+		{"1", 1},
+		{"f_4", 0xf4},
+		{"abcd_ef", 0xabcdef},
+	}
+	for _, c := range cases {
+		if got := MustHex(c.Input); !EqualInt64(got, c.Expect) {
+			t.FailNow()
+		}
+	}
+}
+
+func TestBinary(t *testing.T) {
+	cases := []struct {
+		Input  string
+		Expect int64
+	}{
+		{"0", 0},
+		{"1", 1},
+		{"1111_0100", 0xf4},
+		{"1_1_____1_1_010______0", 0xf4},
+	}
+	for _, c := range cases {
+		if got := MustBinary(c.Input); !EqualInt64(got, c.Expect) {
+			t.FailNow()
+		}
+	}
+}
+
 func TestMask(t *testing.T) {
 	if Mask(4, 16).Uint64() != 0xfff0 {
 		t.Fail()
