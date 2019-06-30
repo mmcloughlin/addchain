@@ -78,8 +78,7 @@ func (w FixedWindow) String() string { return fmt.Sprintf("fixed_window(%d)", w.
 // Decompose represents x in base 2ᵏ.
 func (w FixedWindow) Decompose(x *big.Int) DictSum {
 	sum := DictSum{}
-	mask := bigint.Pow2(w.K)
-	mask.Sub(mask, bigint.One())
+	mask := bigint.Ones(w.K)
 	b := bigint.Clone(x)
 	s := uint(0)
 	for bigint.IsNonZero(b) {
@@ -107,8 +106,7 @@ func (w SlidingWindow) String() string { return fmt.Sprintf("sliding_window(%d)"
 // Decompose represents x in base 2ᵏ.
 func (w SlidingWindow) Decompose(x *big.Int) DictSum {
 	sum := DictSum{}
-	mask := bigint.Pow2(w.K)
-	mask.Sub(mask, bigint.One())
+	mask := bigint.Ones(w.K)
 	b := bigint.Clone(x)
 	s := uint(0)
 	for bigint.IsNonZero(b) {
@@ -128,6 +126,45 @@ func (w SlidingWindow) Decompose(x *big.Int) DictSum {
 		b.Rsh(b, w.K)
 		s += w.K
 	}
+	return sum
+}
+
+// RunLength decomposes integers in to runs of 1s up to a maximal length. See
+// [genshortchains] Section 3.1.
+type RunLength struct {
+	// T is the maximal run length. Zero means no limit.
+	T uint
+}
+
+func (r RunLength) String() string { return fmt.Sprintf("run_length(%d)", r.T) }
+
+// Decompose breaks x into runs of 1 bits.
+func (r RunLength) Decompose(x *big.Int) DictSum {
+	sum := DictSum{}
+	i := x.BitLen() - 1
+	for i >= 0 {
+		// Find first 1.
+		for i >= 0 && x.Bit(i) == 0 {
+			i--
+		}
+
+		if i < 0 {
+			break
+		}
+
+		// Look for the end of the run.
+		s := i
+		for i >= 0 && x.Bit(i) == 1 && (r.T == 0 || uint(s-i) < r.T) {
+			i--
+		}
+
+		// We have a run from s to i+1.
+		sum = append(sum, DictTerm{
+			D: bigint.Ones(uint(s - i)),
+			E: uint(i + 1),
+		})
+	}
+	sum.SortByExponent()
 	return sum
 }
 

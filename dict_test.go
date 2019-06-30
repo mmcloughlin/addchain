@@ -19,6 +19,11 @@ func TestDecomposersRandom(t *testing.T) {
 		SlidingWindow{K: 2},
 		SlidingWindow{K: 7},
 		SlidingWindow{K: 12},
+
+		RunLength{T: 0},
+		RunLength{T: 1},
+		RunLength{T: 3},
+		RunLength{T: 7},
 	}
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for _, d := range ds {
@@ -38,13 +43,71 @@ func TestFixedWindow(t *testing.T) {
 	n := big.NewInt(0x10beef0)
 	f := FixedWindow{K: 4}
 	got := f.Decompose(n)
-	nibbles := []int64{0, 0xf, 0xe, 0xe, 0xb, 0x0, 0x1}
-	if len(got) != len(nibbles) {
-		t.FailNow()
+	expect := DictSum{
+		{D: big.NewInt(0x0), E: 0},
+		{D: big.NewInt(0xf), E: 4},
+		{D: big.NewInt(0xe), E: 8},
+		{D: big.NewInt(0xe), E: 12},
+		{D: big.NewInt(0xb), E: 16},
+		{D: big.NewInt(0x0), E: 20},
+		{D: big.NewInt(0x1), E: 24},
 	}
-	for i, n := range nibbles {
-		if !bigint.EqualInt64(got[i].D, n) || got[i].E != uint(4*i) {
-			t.FailNow()
+	if !DictSumEquals(got, expect) {
+		t.Fatalf("got %v expect %v", got, expect)
+	}
+}
+
+func TestRunLength(t *testing.T) {
+	cases := []struct {
+		T      uint
+		X      int64
+		Expect DictSum
+	}{
+		{
+			T: 4,
+			X: 0xff,
+			Expect: DictSum{
+				{D: big.NewInt(0xf), E: 0},
+				{D: big.NewInt(0xf), E: 4},
+			},
+		},
+		{
+			T: 0,
+			X: 0xff,
+			Expect: DictSum{
+				{D: big.NewInt(0xff), E: 0},
+			},
+		},
+		{
+			T: 4,
+			X: 0xf0f0,
+			Expect: DictSum{
+				{D: big.NewInt(0xf), E: 4},
+				{D: big.NewInt(0xf), E: 12},
+			},
+		},
+		{
+			T: 0,
+			X: 0xf0f0,
+			Expect: DictSum{
+				{D: big.NewInt(0xf), E: 4},
+				{D: big.NewInt(0xf), E: 12},
+			},
+		},
+		{
+			T: 3,
+			X: 0xff,
+			Expect: DictSum{
+				{D: big.NewInt(0x3), E: 0},
+				{D: big.NewInt(0x7), E: 2},
+				{D: big.NewInt(0x7), E: 5},
+			},
+		},
+	}
+	for _, c := range cases {
+		d := RunLength{T: c.T}
+		if got := d.Decompose(big.NewInt(c.X)); !DictSumEquals(got, c.Expect) {
+			t.Fatalf("Decompose(%#x) = %v; expect %v", c.X, got, c.Expect)
 		}
 	}
 }
@@ -57,4 +120,19 @@ func TestDictAlgorithm(t *testing.T) {
 	n := big.NewInt(587257)
 	c := AssertChainAlgorithmProduces(t, a, n)
 	t.Log(c)
+}
+
+func DictSumEquals(a, b DictSum) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i].E != b[i].E {
+			return false
+		}
+		if !bigint.Equal(a[i].D, b[i].D) {
+			return false
+		}
+	}
+	return true
 }

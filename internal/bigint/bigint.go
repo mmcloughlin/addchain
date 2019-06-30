@@ -65,6 +65,12 @@ func Pow2UpTo(x *big.Int) []*big.Int {
 	return ps
 }
 
+// Ones returns 2ⁿ - 1, the integer with n 1s in the low bits.
+func Ones(n uint) *big.Int {
+	x := Pow2(n)
+	return x.Sub(x, One())
+}
+
 // RandBits returns a random integer less than 2ⁿ.
 func RandBits(r *rand.Rand, n uint) *big.Int {
 	max := Pow2(n)
