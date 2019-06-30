@@ -24,6 +24,13 @@ func Ensemble() []ChainAlgorithm {
 		decomposers = append(decomposers, RunLength{T: t})
 	}
 
+	for k := uint(2); k <= 8; k++ {
+		decomposers = append(decomposers, Hybrid{K: k, T: 0})
+		for t := uint(16); t <= 64; t *= 2 {
+			decomposers = append(decomposers, Hybrid{K: k, T: t})
+		}
+	}
+
 	// Build dictionary algorithms for every combination.
 	as := []ChainAlgorithm{}
 	for _, decomp := range decomposers {

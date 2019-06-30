@@ -70,17 +70,20 @@ func TestEfficientInversionChains(t *testing.T) {
 			t.Logf("n-%d=%x", c.Delta, n)
 
 			rs := Parallel(n, as)
-			var best Program
-			for _, r := range rs {
+			best := 0
+			for i, r := range rs {
 				if r.Err != nil {
 					t.Fatal(r.Err)
 					continue
 				}
-				if best == nil || len(r.Program) < len(best) {
-					best = r.Program
+				if len(r.Program) < len(rs[best].Program) {
+					best = i
 				}
 			}
-			t.Logf("min: %d bestknown: %d", len(best), c.KnownBest)
+			b := rs[best]
+			t.Logf("algorithm: %s", b.Algorithm)
+			t.Logf("total: %d", len(b.Program))
+			t.Logf("known: %d", c.KnownBest)
 		})
 	}
 }

@@ -52,4 +52,5 @@ func main() {
 	for n, op := range b.Program {
 		log.Printf("%3d:\t%d+%d\t%x", n+1, op.I, op.J, b.Chain[n+1])
 	}
+	log.Printf("best: %s", b.Algorithm)
 }
