@@ -3,7 +3,6 @@ package addchain
 import (
 	"math/big"
 	"math/rand"
-	"reflect"
 	"testing"
 	"time"
 
@@ -39,17 +38,14 @@ func TestFixedWindow(t *testing.T) {
 	n := big.NewInt(0x10beef0)
 	f := FixedWindow{K: 4}
 	got := f.Decompose(n)
-	expect := DictSum{
-		{D: 0x0, E: 0},
-		{D: 0xf, E: 4},
-		{D: 0xe, E: 8},
-		{D: 0xe, E: 12},
-		{D: 0xb, E: 16},
-		{D: 0x0, E: 20},
-		{D: 0x1, E: 24},
+	nibbles := []int64{0, 0xf, 0xe, 0xe, 0xb, 0x0, 0x1}
+	if len(got) != len(nibbles) {
+		t.FailNow()
 	}
-	if !reflect.DeepEqual(got, expect) {
-		t.Fatalf("got %v expect %v", got, expect)
+	for i, n := range nibbles {
+		if !bigint.EqualInt64(got[i].D, n) || got[i].E != uint(4*i) {
+			t.FailNow()
+		}
 	}
 }
 

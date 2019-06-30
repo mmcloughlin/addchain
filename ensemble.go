@@ -9,10 +9,10 @@ func Ensemble() []ChainAlgorithm {
 	}
 
 	as := []ChainAlgorithm{}
-	for k := 4; k <= 32; k *= 2 {
+	for _, k := range []uint{4, 8, 16, 32, 60} {
 		for _, seqalg := range seqalgs {
 			a := NewDictAlgorithm(
-				SlidingWindow{K: uint(k)},
+				SlidingWindow{K: k},
 				seqalg,
 			)
 			as = append(as, a)

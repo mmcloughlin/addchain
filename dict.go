@@ -24,15 +24,13 @@ import (
 
 // DictTerm represents the integer D * 2ᴱ.
 type DictTerm struct {
-	D uint64
+	D *big.Int
 	E uint
 }
 
 // Int converts the term to an integer.
 func (t DictTerm) Int() *big.Int {
-	x := big.NewInt(int64(t.D))
-	x.Lsh(x, t.E)
-	return x
+	return new(big.Int).Lsh(t.D, t.E)
 }
 
 // DictSum is the representation of an integer as a sum of dictionary terms.
@@ -55,20 +53,13 @@ func (s DictSum) SortByExponent() {
 
 // Dictionary returns the distinct D values in the terms of this sum. The values
 // are returned in ascending order.
-func (s DictSum) Dictionary() []uint64 {
-	set := map[uint64]bool{}
+func (s DictSum) Dictionary() []*big.Int {
+	dict := make([]*big.Int, 0, len(s))
 	for _, t := range s {
-		set[t.D] = true
+		dict = append(dict, t.D)
 	}
-
-	dict := make([]uint64, 0, len(set))
-	for d := range set {
-		dict = append(dict, d)
-	}
-
-	sort.Slice(dict, func(i, j int) bool { return dict[i] < dict[j] })
-
-	return dict
+	bigints.Sort(dict)
+	return bigints.Unique(dict)
 }
 
 // Decomposer is a method of breaking an integer into a dictionary sum.
@@ -94,7 +85,7 @@ func (w FixedWindow) Decompose(x *big.Int) DictSum {
 	for bigint.IsNonZero(b) {
 		d := new(big.Int).And(b, mask)
 		t := DictTerm{
-			D: d.Uint64(),
+			D: d,
 			E: s,
 		}
 		sum = append(sum, t)
@@ -130,7 +121,7 @@ func (w SlidingWindow) Decompose(x *big.Int) DictSum {
 		// Extract the k-bit window here.
 		d := new(big.Int).And(b, mask)
 		t := DictTerm{
-			D: d.Uint64(),
+			D: d,
 			E: s,
 		}
 		sum = append(sum, t)
@@ -177,19 +168,14 @@ func (a DictAlgorithm) FindChain(n *big.Int) (Chain, error) {
 	dict := sum.Dictionary()
 
 	// Use the sequence algorithm to produce a chain for each element of the dictionary.
-	targets := []*big.Int{}
-	for _, d := range dict {
-		targets = append(targets, big.NewInt(int64(d)))
-	}
-
-	c, err := a.seqalg.FindSequence(targets)
+	c, err := a.seqalg.FindSequence(dict)
 	if err != nil {
 		return nil, err
 	}
 
 	// Build chain for n out of the dictionary.
 	k := len(sum) - 1
-	cur := big.NewInt(int64(sum[k].D))
+	cur := bigint.Clone(sum[k].D)
 	for ; k > 0; k-- {
 		// Shift until the next exponent.
 		for i := sum[k].E; i > sum[k-1].E; i-- {
@@ -198,7 +184,7 @@ func (a DictAlgorithm) FindChain(n *big.Int) (Chain, error) {
 		}
 
 		// Add in the dictionary term at this position.
-		cur.Add(cur, big.NewInt(int64(sum[k-1].D)))
+		cur.Add(cur, sum[k-1].D)
 		c.AppendClone(cur)
 	}
 
