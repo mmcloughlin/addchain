@@ -15,6 +15,21 @@ func One() *big.Int {
 	return big.NewInt(1)
 }
 
+// Hex constructs an integer from a hex string, returning the integer and a
+// boolean indicating success.
+func Hex(s string) (*big.Int, bool) {
+	return new(big.Int).SetString(s, 16)
+}
+
+// MustHex constructs an integer from a hex string. It panics on error.
+func MustHex(s string) *big.Int {
+	x, ok := Hex(s)
+	if !ok {
+		panic("failed to parse hex integer")
+	}
+	return x
+}
+
 // Equal returns whether x equals y.
 func Equal(x, y *big.Int) bool {
 	return x.Cmp(y) == 0

@@ -4,6 +4,7 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/prime"
 )
 
@@ -18,37 +19,56 @@ import (
 func TestEfficientInversionChains(t *testing.T) {
 	cases := []struct {
 		Name      string
-		P         prime.Prime
+		N         *big.Int
 		Delta     int64
 		KnownBest int
 	}{
 		{
 			Name:      "curve25519_field",
-			P:         prime.P25519,
+			N:         prime.P25519.Int(),
 			Delta:     2,
 			KnownBest: 265,
 		},
 		{
 			Name:      "p256_field",
-			P:         prime.NISTP256,
+			N:         prime.NISTP256.Int(),
 			Delta:     3,
 			KnownBest: 266,
 		},
 		{
 			Name:      "p384_field",
-			P:         prime.NISTP384,
+			N:         prime.NISTP384.Int(),
 			Delta:     3,
 			KnownBest: 396,
+		},
+		{
+			Name:      "secp256k1_scalar",
+			N:         bigint.MustHex("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413f"),
+			KnownBest: 290,
+		},
+		{
+			Name:      "p256_scalar",
+			N:         bigint.MustHex("ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc63254f"),
+			KnownBest: 292,
+		},
+		{
+			Name:      "p384_scalar",
+			N:         bigint.MustHex("ffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52971"),
+			KnownBest: 433,
+		},
+		{
+			Name:      "curve25519_scalar",
+			N:         bigint.MustHex("1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3eb"),
+			KnownBest: 284,
 		},
 	}
 	as := Ensemble()
 	for _, c := range cases {
 		t.Run(c.Name, func(t *testing.T) {
-			q := new(big.Int).Sub(c.P.Int(), big.NewInt(c.Delta))
-			t.Logf("p=%x", c.P.Int())
-			t.Logf("q=%x", q)
+			n := new(big.Int).Sub(c.N, big.NewInt(c.Delta))
+			t.Logf("n-%d=%x", c.Delta, n)
 
-			rs := Parallel(q, as)
+			rs := Parallel(n, as)
 			var best Program
 			for _, r := range rs {
 				t.Logf("algorithm: %s", r.Algorithm)

@@ -6,6 +6,11 @@ func Ensemble() []ChainAlgorithm {
 		NewContinuedFractions(BinaryStrategy{}),
 		NewContinuedFractions(BinaryStrategy{Parity: 1}),
 		NewContinuedFractions(DichotomicStrategy{}),
+
+		NewHeuristicAlgorithm(UseFirstHeuristic{
+			Halving{},
+			DeltaLargest{},
+		}),
 	}
 
 	// Build decomposers.
@@ -15,7 +20,7 @@ func Ensemble() []ChainAlgorithm {
 	}
 
 	decomposers = append(decomposers, RunLength{T: 0})
-	for t := uint(16); t <= 64; t *= 2 {
+	for t := uint(16); t <= 128; t *= 2 {
 		decomposers = append(decomposers, RunLength{T: t})
 	}
 
