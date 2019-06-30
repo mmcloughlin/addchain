@@ -34,13 +34,22 @@ func main() {
 	rs := addchain.Parallel(n, as)
 
 	// Report results.
-	for _, r := range rs {
+	best := 0
+	for i, r := range rs {
 		log.Printf("algorithm: %s", r.Algorithm)
 		if r.Err != nil {
-			log.Printf("error: %s", r.Err)
-			continue
+			log.Fatalf("error: %s", r.Err)
 		}
 		doubles, adds := r.Program.Count()
 		log.Printf("total: %d\tdoubles: \t%d adds: %d", doubles+adds, doubles, adds)
+		if len(r.Program) < len(rs[best].Program) {
+			best = i
+		}
+	}
+
+	// Details for the best chain.
+	b := rs[best]
+	for n, op := range b.Program {
+		log.Printf("%3d:\t%d+%d\t%x", n+1, op.I, op.J, b.Chain[n+1])
 	}
 }
