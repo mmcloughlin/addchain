@@ -55,3 +55,10 @@ func TestPolynomialEvaluate(t *testing.T) {
 		t.Fatalf("evaluate %s at %v: got %v; expect %v", p, x, got, expect)
 	}
 }
+
+func TestPolynomialDegree(t *testing.T) {
+	p := Polynomial{{-11, 0}, {1, 4}, {2, 3}}
+	if p.Degree() != 4 {
+		t.FailNow()
+	}
+}

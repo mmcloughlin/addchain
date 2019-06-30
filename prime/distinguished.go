@@ -1,5 +1,7 @@
 package prime
 
+import "github.com/mmcloughlin/addchain/polynomial"
+
 // References:
 //
 //	[aranha]      Diego F. Aranha, Paulo S. L. M. Barreto, Geovandro C. C. F. Pereira and
@@ -12,6 +14,11 @@ package prime
 //	[elligator]   Daniel J. Bernstein, Mike Hamburg, Anna Krasnova and Tanja Lange. Elligator:
 //	              Elliptic-curve points indistinguishable from uniform random strings. Cryptology
 //	              ePrint Archive, Report 2013/325. 2013. https://eprint.iacr.org/2013/325
+//	[fips186-2]   NIST. Digital Signature Standard (DSS). Federal Information Processing Standards
+//	              Publication 186-2. 2000.
+//	              https://csrc.nist.gov/csrc/media/publications/fips/186/2/archive/2000-01-27/documents/fips186-2.pdf
+//	[goldilocks]  Mike Hamburg. Ed448-Goldilocks, a new elliptic curve. Cryptology ePrint Archive,
+//	              Report 2015/625. 2015. https://eprint.iacr.org/2015/625
 //	[nistdanger]  Daniel J. Bernstein and Tanja Lange. Security dangers of the NIST curves. 2013.
 //	              https://cr.yp.to/talks/2013.09.16/slides-djb-20130916-a4.pdf
 //	[safecurves]  Daniel J. Bernstein and Tanja Lange. SafeCurves: choosing safe curves for
@@ -41,6 +48,21 @@ var (
 
 	// P511187 is the prime 2⁵¹¹ - 187 used in M-511 [aranha].
 	P511187 = NewCrandall(511, 187)
+
+	// NISTP192 is the P-192 prime 2¹⁹² - 2⁶⁴ - 1 defined in [fips186-2].
+	NISTP192 = NewSolinas(polynomial.Polynomial{{A: -1, N: 0}, {A: -1, N: 1}, {A: 1, N: 3}}, 64)
+
+	// NISTP224 is the P-224 prime 2²²⁴ - 2⁹⁶ + 1 defined in [fips186-2].
+	NISTP224 = NewSolinas(polynomial.Polynomial{{A: 1, N: 0}, {A: -1, N: 3}, {A: 1, N: 7}}, 32)
+
+	// NISTP256 is the P-256 prime 2²⁵⁶ - 2²²⁴ + 2¹⁹² + 2⁹⁶ - 1 defined in [fips186-2].
+	NISTP256 = NewSolinas(polynomial.Polynomial{{A: -1, N: 0}, {A: +1, N: 3}, {A: +1, N: 6}, {A: -1, N: 7}, {A: +1, N: 8}}, 32)
+
+	// NISTP384 is the P-384 prime 2³⁸⁴ - 2¹²⁸ - 2⁹⁶ + 2³² - 1 defined in [fips186-2].
+	NISTP384 = NewSolinas(polynomial.Polynomial{{A: -1, N: 0}, {A: 1, N: 1}, {A: -1, N: 3}, {A: -1, N: 4}, {A: 1, N: 12}}, 32)
+
+	// Goldilocks is the prime 2⁴⁴⁸ - 2²²⁴ - 1 defined in [goldilocks].
+	Goldilocks = NewSolinas(polynomial.Polynomial{{A: -1, N: 0}, {A: -1, N: 1}, {A: 1, N: 2}}, 224)
 )
 
 // Distinguished is a list of well-known primes.
@@ -53,4 +75,9 @@ var Distinguished = []Prime{
 	P383187,
 	P41417,
 	P511187,
+	NISTP192,
+	NISTP224,
+	NISTP256,
+	NISTP384,
+	Goldilocks,
 }
