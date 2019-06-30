@@ -105,26 +105,33 @@ func (w SlidingWindow) String() string { return fmt.Sprintf("sliding_window(%d)"
 // Decompose represents x in base 2ᵏ.
 func (w SlidingWindow) Decompose(x *big.Int) DictSum {
 	sum := DictSum{}
-	mask := bigint.Ones(w.K)
-	b := bigint.Clone(x)
-	s := uint(0)
-	for bigint.IsNonZero(b) {
-		// Find the next 1 bit.
-		for b.Bit(0) == 0 {
-			b.Rsh(b, 1)
-			s++
+	h := x.BitLen() - 1
+	for h >= 0 {
+		// Find first 1.
+		for h >= 0 && x.Bit(h) == 0 {
+			h--
 		}
 
-		// Extract the k-bit window here.
-		d := new(big.Int).And(b, mask)
-		t := DictTerm{
-			D: d,
-			E: s,
+		if h < 0 {
+			break
 		}
-		sum = append(sum, t)
-		b.Rsh(b, w.K)
-		s += w.K
+
+		// Look down k positions.
+		l := ints.Max(h-int(w.K)+1, 0)
+
+		// Advance to the next 1.
+		for x.Bit(l) == 0 {
+			l++
+		}
+
+		sum = append(sum, DictTerm{
+			D: bigint.Extract(x, uint(l), uint(h+1)),
+			E: uint(l),
+		})
+
+		h = l - 1
 	}
+	sum.SortByExponent()
 	return sum
 }
 

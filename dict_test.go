@@ -54,6 +54,20 @@ func TestFixedWindow(t *testing.T) {
 	}
 }
 
+func TestSlidingWindow(t *testing.T) {
+	n := big.NewInt(0xf143)
+	f := SlidingWindow{K: 4}
+	got := f.Decompose(n)
+	expect := DictSum{
+		{D: big.NewInt(0x3), E: 0},
+		{D: big.NewInt(0x5), E: 6},
+		{D: big.NewInt(0xf), E: 12},
+	}
+	if !DictSumEquals(got, expect) {
+		t.Fatalf("got %v expect %v", got, expect)
+	}
+}
+
 func TestRunLength(t *testing.T) {
 	cases := []struct {
 		T      uint
