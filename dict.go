@@ -5,6 +5,8 @@ import (
 	"math/big"
 	"sort"
 
+	"github.com/mmcloughlin/addchain/internal/ints"
+
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
@@ -78,19 +80,16 @@ func (w FixedWindow) String() string { return fmt.Sprintf("fixed_window(%d)", w.
 // Decompose represents x in base 2ᵏ.
 func (w FixedWindow) Decompose(x *big.Int) DictSum {
 	sum := DictSum{}
-	mask := bigint.Ones(w.K)
-	b := bigint.Clone(x)
-	s := uint(0)
-	for bigint.IsNonZero(b) {
-		d := new(big.Int).And(b, mask)
-		t := DictTerm{
-			D: d,
-			E: s,
+	h := x.BitLen()
+	for h > 0 {
+		l := ints.Max(h-int(w.K), 0)
+		d := bigint.Extract(x, uint(l), uint(h))
+		if bigint.IsNonZero(d) {
+			sum = append(sum, DictTerm{D: d, E: uint(l)})
 		}
-		sum = append(sum, t)
-		b.Rsh(b, w.K)
-		s += w.K
+		h = l
 	}
+	sum.SortByExponent()
 	return sum
 }
 

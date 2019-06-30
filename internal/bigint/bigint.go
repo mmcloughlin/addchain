@@ -80,10 +80,22 @@ func Pow2UpTo(x *big.Int) []*big.Int {
 	return ps
 }
 
+// Mask returns the integer with 1s in positions [l,h).
+func Mask(l, h uint) *big.Int {
+	mask := Pow2(h)
+	return mask.Sub(mask, Pow2(l))
+}
+
 // Ones returns 2ⁿ - 1, the integer with n 1s in the low bits.
 func Ones(n uint) *big.Int {
-	x := Pow2(n)
-	return x.Sub(x, One())
+	return Mask(0, n)
+}
+
+// Extract bits [l,h) and shift them to the low bits.
+func Extract(x *big.Int, l, h uint) *big.Int {
+	e := Mask(l, h)
+	e.And(e, x)
+	return e.Rsh(e, l)
 }
 
 // RandBits returns a random integer less than 2ⁿ.

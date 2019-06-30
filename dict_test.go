@@ -40,17 +40,14 @@ func TestDecomposersRandom(t *testing.T) {
 }
 
 func TestFixedWindow(t *testing.T) {
-	n := big.NewInt(0x10beef0)
+	n := big.NewInt(0xbeef0 << 3)
 	f := FixedWindow{K: 4}
 	got := f.Decompose(n)
 	expect := DictSum{
-		{D: big.NewInt(0x0), E: 0},
-		{D: big.NewInt(0xf), E: 4},
-		{D: big.NewInt(0xe), E: 8},
-		{D: big.NewInt(0xe), E: 12},
-		{D: big.NewInt(0xb), E: 16},
-		{D: big.NewInt(0x0), E: 20},
-		{D: big.NewInt(0x1), E: 24},
+		{D: big.NewInt(0xf), E: 7},
+		{D: big.NewInt(0xe), E: 11},
+		{D: big.NewInt(0xe), E: 15},
+		{D: big.NewInt(0xb), E: 19},
 	}
 	if !DictSumEquals(got, expect) {
 		t.Fatalf("got %v expect %v", got, expect)
