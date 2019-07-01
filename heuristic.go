@@ -109,6 +109,47 @@ func (DeltaLargest) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 	return []*big.Int{delta}
 }
 
+// Approximation is the "Approximation" heuristic from [boscoster].
+type Approximation struct{}
+
+func (Approximation) String() string { return "approximation" }
+
+// Suggest applies the "Approximation" heuristic. This heuristic looks for two
+// elements a, b in the list that sum to something close to the target element
+// f. That is, we look for f-(a+b) = epsilon where a ⩽ b and epsilon is a
+// "small" positive value.
+func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
+	delta := new(big.Int)
+	var mindelta *big.Int
+	var best *big.Int
+	for i, a := range f {
+		for _, b := range f[i:] {
+			// Compute the delta f-(a+b).
+			delta.Add(a, b)
+			delta.Sub(target, delta)
+			if delta.Sign() < 0 {
+				continue
+			}
+
+			// Proposed insertion is a+delta.
+			insert := new(big.Int).Add(a, delta)
+
+			// If it's actually in the sequence already, use it.
+			if bigints.Contains(insert, f) {
+				return []*big.Int{insert}
+			}
+
+			// Keep it if its the closest we've seen.
+			if best == nil || delta.Cmp(mindelta) < 0 {
+				mindelta = bigint.Clone(delta)
+				best = insert
+			}
+		}
+	}
+
+	return []*big.Int{best}
+}
+
 // Halving is the "Halving" heuristic from [boscoster].
 type Halving struct{}
 

@@ -11,6 +11,10 @@ func Ensemble() []ChainAlgorithm {
 			Halving{},
 			DeltaLargest{},
 		}),
+		NewHeuristicAlgorithm(UseFirstHeuristic{
+			Halving{},
+			Approximation{},
+		}),
 	}
 
 	// Build decomposers.

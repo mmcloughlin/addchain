@@ -32,6 +32,10 @@ func TestSequenceAlgorithms(t *testing.T) {
 			Halving{},
 			DeltaLargest{},
 		}),
+		NewHeuristicAlgorithm(UseFirstHeuristic{
+			Halving{},
+			Approximation{},
+		}),
 	}
 	for _, a := range as {
 		t.Run(a.String(), SequenceAlgorithmSuite(a))
