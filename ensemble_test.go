@@ -45,6 +45,12 @@ func TestEfficientInversionChains(t *testing.T) {
 			KnownBest: 396,
 		},
 		{
+			Name:      "secp256k1_field",
+			N:         prime.Secp256k1.Int(),
+			Delta:     3,
+			KnownBest: 269,
+		},
+		{
 			Name:      "secp256k1_scalar",
 			N:         bigint.MustHex("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413f"),
 			KnownBest: 290,
