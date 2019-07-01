@@ -40,5 +40,10 @@ func Ensemble() []ChainAlgorithm {
 		}
 	}
 
+	// Wrap in an optimization layer.
+	for i, a := range as {
+		as[i] = Optimized{Algorithm: a}
+	}
+
 	return as
 }

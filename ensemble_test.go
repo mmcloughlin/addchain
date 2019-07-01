@@ -76,7 +76,7 @@ func TestEfficientInversionChains(t *testing.T) {
 					t.Fatal(r.Err)
 					continue
 				}
-				if len(r.Program) < len(rs[best].Program) {
+				if len(r.Program) <= len(rs[best].Program) {
 					best = i
 				}
 			}

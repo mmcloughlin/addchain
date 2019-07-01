@@ -8,6 +8,20 @@ type Op struct{ I, J int }
 // IsDouble returns whether this operation is a doubling.
 func (o Op) IsDouble() bool { return o.I == o.J }
 
+// Operands returns the indicies used in this operation. This will contain one
+// or two entries depending on whether this is a doubling.
+func (o Op) Operands() []int {
+	if o.IsDouble() {
+		return []int{o.I}
+	}
+	return []int{o.I, o.J}
+}
+
+// Uses reports whether the given index is one of the operands.
+func (o Op) Uses(i int) bool {
+	return o.I == i || o.J == i
+}
+
 // Program is a sequence of operations.
 type Program []Op
 

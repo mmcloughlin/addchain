@@ -9,6 +9,12 @@ import (
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
+// References:
+//
+//	[efficientcompaddchain]  Bergeron, F., Berstel, J. and Brlek, S. Efficient computation of addition
+//	                         chains. Journal de theorie des nombres de Bordeaux. 1994.
+//	                         http://www.numdam.org/item/JTNB_1994__6_1_21_0
+
 // Chain is an addition chain.
 type Chain []*big.Int
 
@@ -37,18 +43,29 @@ func (c Chain) End() *big.Int {
 	return c[len(c)-1]
 }
 
-// Op returns an Op that produces the kth position.
-func (c Chain) Op(k int) (Op, error) {
+// Ops returns all operations that produce the kth position. This could be empty
+// for an invalid chain.
+func (c Chain) Ops(k int) []Op {
+	ops := []Op{}
 	s := new(big.Int)
 	for i := 0; i < k; i++ {
 		for j := i; j < k; j++ {
 			s.Add(c[i], c[j])
 			if s.Cmp(c[k]) == 0 {
-				return Op{i, j}, nil
+				ops = append(ops, Op{i, j})
 			}
 		}
 	}
-	return Op{}, fmt.Errorf("position %d is not the sum of previous entries", k)
+	return ops
+}
+
+// Op returns an Op that produces the kth position.
+func (c Chain) Op(k int) (Op, error) {
+	ops := c.Ops(k)
+	if len(ops) == 0 {
+		return Op{}, fmt.Errorf("position %d is not the sum of previous entries", k)
+	}
+	return ops[0], nil
 }
 
 // Program produces a program that generates the chain.
@@ -118,8 +135,7 @@ func (c Chain) Superset(targets []*big.Int) error {
 }
 
 // Product computes the product of two addition chains. The is the "o times"
-// operator defined in "Efficient computation of addition chains" by F.
-// Bergeron, J. Berstel and S. Brlek.
+// operator defined in [efficientcompaddchain] Section 2.
 func Product(a, b Chain) Chain {
 	c := a.Clone()
 	last := c.End()
@@ -131,8 +147,7 @@ func Product(a, b Chain) Chain {
 }
 
 // Plus adds x to the addition chain. This is the "o plus" operator defined in
-// "Efficient computation of addition chains" by F. Bergeron, J. Berstel and S.
-// Brlek.
+// [efficientcompaddchain] Section 2.
 func Plus(a Chain, x *big.Int) Chain {
 	c := a.Clone()
 	y := new(big.Int).Add(c.End(), x)

@@ -1,8 +1,11 @@
 package addchain
 
 import (
+	"errors"
 	"math/big"
 	"sync"
+
+	"github.com/mmcloughlin/addchain/internal/bigint"
 )
 
 // Result from applying an algorithm to a target.
@@ -26,14 +29,15 @@ func Execute(n *big.Int, a ChainAlgorithm) Result {
 		return r
 	}
 
-	r.Err = r.Chain.Produces(n)
+	// Note this also performs validation.
+	r.Program, r.Err = r.Chain.Program()
 	if r.Err != nil {
 		return r
 	}
 
-	r.Program, r.Err = r.Chain.Program()
-	if r.Err != nil {
-		return r
+	// Still, verify that it produced what we wanted.
+	if !bigint.Equal(r.Chain.End(), n) {
+		r.Err = errors.New("did not produce the required value")
 	}
 
 	return r
