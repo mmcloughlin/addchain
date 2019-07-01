@@ -85,3 +85,27 @@ func (p Solinas) String() string {
 	}
 	return g.Format("2")
 }
+
+// Other is a prime whose structure does not match any of the other specific
+// types in this package.
+type Other struct {
+	P *big.Int
+}
+
+// NewOther builds a prime from the provided integer.
+func NewOther(p *big.Int) Other {
+	return Other{P: p}
+}
+
+// MustHex parses a prime from the hex literal p. Panics on error.
+func MustHex(p string) Other {
+	return NewOther(bigint.MustHex(p))
+}
+
+// Bits returns the bit length of p.
+func (p Other) Bits() int { return p.P.BitLen() }
+
+// Int returns p as an integer.
+func (p Other) Int() *big.Int { return p.P }
+
+func (p Other) String() string { return p.P.String() }

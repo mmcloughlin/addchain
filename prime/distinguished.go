@@ -23,6 +23,9 @@ import "github.com/mmcloughlin/addchain/polynomial"
 //	              https://cr.yp.to/talks/2013.09.16/slides-djb-20130916-a4.pdf
 //	[safecurves]  Daniel J. Bernstein and Tanja Lange. SafeCurves: choosing safe curves for
 //	              elliptic-curve cryptography. https://safecurves.cr.yp.to
+//	[sec2]        Certicom Research. SEC 2: Recommended Elliptic Curve Domain Parameters, Version
+//	              2.0. Standards for Efficient Cryptography 2. 2010.
+//	              http://safecurves.cr.yp.to/www.secg.org/sec2-v2.pdf
 
 var (
 	// P2213 is the prime 2²²¹ - 3 used in curve M-221 [aranha].
@@ -63,6 +66,27 @@ var (
 
 	// Goldilocks is the prime 2⁴⁴⁸ - 2²²⁴ - 1 defined in [goldilocks].
 	Goldilocks = NewSolinas(polynomial.Polynomial{{A: -1, N: 0}, {A: -1, N: 1}, {A: 1, N: 2}}, 224)
+
+	// Secp192k1 is the prime for the 192-bit Koblitz curve recommended in [sec2].
+	Secp192k1 = MustHex("FFFFFFFF_FFFFFFFF_FFFFFFFF_FFFFFFFF_FFFFFFFE_FFFFEE37")
+
+	// Secp192r1 is the prime for the 192-bit "random" curve recommended in [sec2].
+	Secp192r1 = NISTP192
+
+	// Secp224k1 is the prime for the 224-bit Koblitz curve recommended in [sec2].
+	Secp224k1 = MustHex("FFFFFFFF_FFFFFFFF_FFFFFFFF_FFFFFFFF_FFFFFFFF_FFFFFFFE_FFFFE56D")
+
+	// Secp224r1 is the prime for the 224-bit "random" curve recommended in [sec2].
+	Secp224r1 = NISTP224
+
+	// Secp256k1 is the prime for the 256-bit Koblitz curve recommended in [sec2].
+	Secp256k1 = MustHex("FFFFFFFF_FFFFFFFF_FFFFFFFF_FFFFFFFF_FFFFFFFF_FFFFFFFF_FFFFFFFE_FFFFFC2F")
+
+	// Secp256r1 is the prime for the 256-bit "random" curve recommended in [sec2].
+	Secp256r1 = NISTP256
+
+	// Secp384r1 is the prime for the 384-bit "random" curve recommended in [sec2].
+	Secp384r1 = NISTP384
 )
 
 // Distinguished is a list of well-known primes.
@@ -80,4 +104,7 @@ var Distinguished = []Prime{
 	NISTP256,
 	NISTP384,
 	Goldilocks,
+	Secp192k1,
+	Secp224k1,
+	Secp256k1,
 }
