@@ -13,8 +13,8 @@ var (
 	duration = flag.Duration("duration", 0, "duration for trial-based tests")
 )
 
-// trialsduration returns how long trial-based tests can take.
-func trialsduration() time.Duration {
+// timeallowed returns how long a single test is allowed to take.
+func timeallowed() time.Duration {
 	switch {
 	case *duration > 0:
 		return *duration
@@ -29,6 +29,13 @@ func trialsduration() time.Duration {
 	}
 }
 
+// RequireDuration skips the test unless at least duration d is allowed.
+func RequireDuration(t *testing.T, d time.Duration) {
+	if timeallowed() < d {
+		t.Skipf("test requires at least %s: use the -long, -stress or -duration=<duration> options", d)
+	}
+}
+
 // Repeat the given trial function. The duration is controlled by custom
 // command-line flags. The trial function returns whether it wants to continue
 // testing.
@@ -39,7 +46,7 @@ func trialsduration() time.Duration {
 //	-duration	set a custom duration
 func Repeat(t *testing.T, trial func(t *testing.T) bool) {
 	start := time.Now()
-	d := trialsduration()
+	d := timeallowed()
 	n := 1
 	for time.Since(start) < d && trial(t) {
 		n++
