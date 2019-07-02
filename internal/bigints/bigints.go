@@ -46,14 +46,19 @@ func Reverse(xs []*big.Int) {
 	}
 }
 
-// Contains reports whether n is in xs.
-func Contains(n *big.Int, xs []*big.Int) bool {
-	for _, x := range xs {
+// Index returns the index of the first occurence of n in xs, or -1 if it does not appear.
+func Index(n *big.Int, xs []*big.Int) int {
+	for i, x := range xs {
 		if bigint.Equal(n, x) {
-			return true
+			return i
 		}
 	}
-	return false
+	return -1
+}
+
+// Contains reports whether n is in xs.
+func Contains(n *big.Int, xs []*big.Int) bool {
+	return Index(n, xs) >= 0
 }
 
 // Clone a list of integers.
