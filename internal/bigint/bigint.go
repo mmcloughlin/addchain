@@ -112,6 +112,26 @@ func Ones(n uint) *big.Int {
 	return Mask(0, n)
 }
 
+// MinMax returns the minimum and maximum of x and y.
+func MinMax(x, y *big.Int) (min, max *big.Int) {
+	if x.Cmp(y) < 0 {
+		return x, y
+	}
+	return y, x
+}
+
+// Min returns the smaller of x and y.
+func Min(x, y *big.Int) *big.Int {
+	min, _ := MinMax(x, y)
+	return min
+}
+
+// Max returns the larger of x and y.
+func Max(x, y *big.Int) *big.Int {
+	_, max := MinMax(x, y)
+	return max
+}
+
 // Extract bits [l,h) and shift them to the low bits.
 func Extract(x *big.Int, l, h uint) *big.Int {
 	e := Mask(l, h)
