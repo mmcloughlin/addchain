@@ -2,8 +2,10 @@ package addchain
 
 import (
 	"errors"
+	"io/ioutil"
+	"log"
 	"math/big"
-	"sync"
+	"runtime"
 
 	"github.com/mmcloughlin/addchain/internal/bigint"
 )
@@ -44,16 +46,51 @@ func Execute(n *big.Int, a ChainAlgorithm) Result {
 }
 
 // Parallel executes multiple algorithms in parallel.
-func Parallel(n *big.Int, as []ChainAlgorithm) []Result {
+type Parallel struct {
+	limit  int
+	logger *log.Logger
+}
+
+// NewParallel builds a new parallel executor.
+func NewParallel() *Parallel {
+	return &Parallel{
+		limit:  runtime.NumCPU(),
+		logger: log.New(ioutil.Discard, "", 0),
+	}
+}
+
+// SetConcurrency sets the number of algorithms that may be run in parallel.
+func (p *Parallel) SetConcurrency(limit int) {
+	p.limit = limit
+}
+
+// SetLogger sets the
+func (p *Parallel) SetLogger(l *log.Logger) {
+	p.logger = l
+}
+
+// Execute all algorithms against the provided target.
+func (p Parallel) Execute(n *big.Int, as []ChainAlgorithm) []Result {
 	rs := make([]Result, len(as))
-	var wg sync.WaitGroup
+
+	// Use buffered channel to limit concurrency.
+	type token struct{}
+	sem := make(chan token, p.limit)
+
 	for i, a := range as {
-		wg.Add(1)
+		sem <- token{}
 		go func(i int, a ChainAlgorithm) {
-			defer wg.Done()
+			p.logger.Printf("start: %s", a)
 			rs[i] = Execute(n, a)
+			p.logger.Printf("done: %s", a)
+			<-sem
 		}(i, a)
 	}
-	wg.Wait()
+
+	// Wait for completion.
+	for i := 0; i < p.limit; i++ {
+		sem <- token{}
+	}
+
 	return rs
 }

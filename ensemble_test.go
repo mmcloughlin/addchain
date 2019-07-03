@@ -81,7 +81,7 @@ func TestEfficientInversionChains(t *testing.T) {
 			n := new(big.Int).Sub(c.N, big.NewInt(c.Delta))
 			t.Logf("n-%d=%x", c.Delta, n)
 
-			rs := Parallel(n, as)
+			rs := NewParallel().Execute(n, as)
 			best := 0
 			for i, r := range rs {
 				if r.Err != nil {

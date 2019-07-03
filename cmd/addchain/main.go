@@ -2,36 +2,46 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
+	"runtime"
 
 	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/internal/calc"
 )
 
-func main() {
-	log.SetPrefix("addchain: ")
-	log.SetFlags(0)
+// l is the global logger.
+var l = log.New(os.Stderr, "addchain: ", 0)
 
+var concurrency = flag.Int("concurrency", runtime.NumCPU(), "number of algorithms to run concurrently")
+
+func main() {
 	// Parse command-line.
-	if len(os.Args) < 2 {
-		log.Fatal("usage: addchain expr")
+	flag.Parse()
+
+	if flag.NArg() < 1 {
+		l.Fatal("usage: addchain expr")
 	}
-	expr := os.Args[1]
+	expr := flag.Arg(0)
 
 	// Evaluate expression.
-	log.Printf("expr: %q", expr)
+	l.Printf("expr: %q", expr)
 
 	n, err := calc.Eval(expr)
 	if err != nil {
-		log.Fatalf("failed to evaluate %q: %s", expr, err)
+		l.Fatalf("failed to evaluate %q: %s", expr, err)
 	}
 
-	log.Printf("n: %s", n)
+	l.Printf("n: %s", n)
 
 	// Execute an ensemble of algorithms.
+	p := addchain.NewParallel()
+	p.SetLogger(l)
+	p.SetConcurrency(*concurrency)
+
 	as := addchain.Ensemble()
-	rs := addchain.Parallel(n, as)
+	rs := p.Execute(n, as)
 
 	// Report results.
 	best := 0
