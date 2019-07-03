@@ -15,7 +15,7 @@ func TestBinaryStrategy(t *testing.T) {
 }
 
 func TestCoBinaryStrategy(t *testing.T) {
-	a := AsChainAlgorithm{NewContinuedFractions(BinaryStrategy{Parity: 1})}
+	a := AsChainAlgorithm{NewContinuedFractions(CoBinaryStrategy{})}
 	n := big.NewInt(87)
 	expect := bigints.Int64s(1, 2, 3, 5, 10, 11, 21, 22, 43, 44, 87)
 	AssertChainAlgorithmGenerates(t, a, n, expect)

@@ -21,31 +21,44 @@ import (
 //	                    https://eprint.iacr.org/2008/490
 
 func TestSequenceAlgorithms(t *testing.T) {
-	as := []SequenceAlgorithm{
-		// Continued fractions algorithms.
-		NewContinuedFractions(BinaryStrategy{}),
-		NewContinuedFractions(BinaryStrategy{Parity: 1}),
-		NewContinuedFractions(DichotomicStrategy{}),
+	suites := []SequenceAlgorithmSuite{}
 
-		// Heuristics algorithms.
-		NewHeuristicAlgorithm(UseFirstHeuristic{
-			Halving{},
-			DeltaLargest{},
-		}),
-		NewHeuristicAlgorithm(UseFirstHeuristic{
-			Halving{},
-			Approximation{},
-		}),
+	// Continued fractions algorithms.
+	for _, strategy := range ContinuedFractionStrategies {
+		suites = append(suites, SequenceAlgorithmSuite{
+			Algorithm:          NewContinuedFractions(strategy),
+			AcceptsLargeInputs: strategy.Singleton(),
+		})
 	}
-	for _, a := range as {
-		t.Run(a.String(), SequenceAlgorithmSuite(a))
+
+	// Heuristics algorithms.
+	heuristics := []Heuristic{
+		UseFirstHeuristic{Halving{}, DeltaLargest{}},
+		UseFirstHeuristic{Halving{}, Approximation{}},
+	}
+	for _, heuristic := range heuristics {
+		suites = append(suites, SequenceAlgorithmSuite{
+			Algorithm:          NewHeuristicAlgorithm(heuristic),
+			AcceptsLargeInputs: true,
+		})
+	}
+
+	for _, suite := range suites {
+		t.Run(suite.Algorithm.String(), suite.Tests())
 	}
 }
 
-func SequenceAlgorithmSuite(a SequenceAlgorithm) func(t *testing.T) {
+type SequenceAlgorithmSuite struct {
+	Algorithm          SequenceAlgorithm
+	AcceptsLargeInputs bool
+}
+
+func (s SequenceAlgorithmSuite) Tests() func(t *testing.T) {
 	return func(t *testing.T) {
-		t.Run("as_chain_algorithm", ChainAlgorithmSuite(AsChainAlgorithm{a}))
-		t.Run("known_sequences", CheckKnownSequences(a))
+		t.Run("known_sequences", CheckKnownSequences(s.Algorithm))
+		if s.AcceptsLargeInputs {
+			t.Run("as_chain_algorithm", ChainAlgorithmSuite(AsChainAlgorithm{s.Algorithm}))
+		}
 	}
 }
 

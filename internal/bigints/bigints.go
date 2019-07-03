@@ -46,7 +46,7 @@ func Reverse(xs []*big.Int) {
 	}
 }
 
-// Index returns the index of the first occurence of n in xs, or -1 if it does not appear.
+// Index returns the index of the first occurrence of n in xs, or -1 if it does not appear.
 func Index(n *big.Int, xs []*big.Int) int {
 	for i, x := range xs {
 		if bigint.Equal(n, x) {

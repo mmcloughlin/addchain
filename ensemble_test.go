@@ -21,54 +21,54 @@ import (
 // chains listed for inversion in [curvechains].
 func TestEfficientInversionChains(t *testing.T) {
 	cases := []struct {
-		Name      string
-		N         *big.Int
-		Delta     int64
-		KnownBest int
+		Name        string
+		N           *big.Int
+		Delta       int64
+		HandCrafted int
 	}{
 		{
-			Name:      "curve25519_field",
-			N:         prime.P25519.Int(),
-			Delta:     2,
-			KnownBest: 265,
+			Name:        "curve25519_field",
+			N:           prime.P25519.Int(),
+			Delta:       2,
+			HandCrafted: 265,
 		},
 		{
-			Name:      "p256_field",
-			N:         prime.NISTP256.Int(),
-			Delta:     3,
-			KnownBest: 266,
+			Name:        "p256_field",
+			N:           prime.NISTP256.Int(),
+			Delta:       3,
+			HandCrafted: 266,
 		},
 		{
-			Name:      "p384_field",
-			N:         prime.NISTP384.Int(),
-			Delta:     3,
-			KnownBest: 396,
+			Name:        "p384_field",
+			N:           prime.NISTP384.Int(),
+			Delta:       3,
+			HandCrafted: 396,
 		},
 		{
-			Name:      "secp256k1_field",
-			N:         prime.Secp256k1.Int(),
-			Delta:     3,
-			KnownBest: 269,
+			Name:        "secp256k1_field",
+			N:           prime.Secp256k1.Int(),
+			Delta:       3,
+			HandCrafted: 269,
 		},
 		{
-			Name:      "secp256k1_scalar",
-			N:         bigint.MustHex("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413f"),
-			KnownBest: 290,
+			Name:        "secp256k1_scalar",
+			N:           bigint.MustHex("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413f"),
+			HandCrafted: 290,
 		},
 		{
-			Name:      "p256_scalar",
-			N:         bigint.MustHex("ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc63254f"),
-			KnownBest: 292,
+			Name:        "p256_scalar",
+			N:           bigint.MustHex("ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc63254f"),
+			HandCrafted: 292,
 		},
 		{
-			Name:      "p384_scalar",
-			N:         bigint.MustHex("ffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52971"),
-			KnownBest: 433,
+			Name:        "p384_scalar",
+			N:           bigint.MustHex("ffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52971"),
+			HandCrafted: 433,
 		},
 		{
-			Name:      "curve25519_scalar",
-			N:         bigint.MustHex("1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3eb"),
-			KnownBest: 284,
+			Name:        "curve25519_scalar",
+			N:           bigint.MustHex("1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3eb"),
+			HandCrafted: 284,
 		},
 	}
 	as := Ensemble()
@@ -94,7 +94,8 @@ func TestEfficientInversionChains(t *testing.T) {
 			b := rs[best]
 			t.Logf("algorithm: %s", b.Algorithm)
 			t.Logf("total: %d", len(b.Program))
-			t.Logf("known: %d", c.KnownBest)
+			t.Logf(" hand: %d", c.HandCrafted)
+			t.Logf("delta: %+d", len(b.Program)-c.HandCrafted)
 		})
 	}
 }

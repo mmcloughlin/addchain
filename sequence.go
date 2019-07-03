@@ -8,8 +8,11 @@ import (
 // SequenceAlgorithm is a method of generating an addition sequence for a set of
 // target values.
 type SequenceAlgorithm interface {
-	fmt.Stringer
+	// FindSequence generates an addition chain containing every element of targets.
 	FindSequence(targets []*big.Int) (Chain, error)
+
+	// String method returns a name for the algorithm.
+	fmt.Stringer
 }
 
 // AsChainAlgorithm adapts a sequence algorithm to a chain algorithm.
