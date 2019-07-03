@@ -25,6 +25,9 @@ func TestChainAlgorithms(t *testing.T) {
 			FixedWindow{K: 7},
 			NewContinuedFractions(BinaryStrategy{}),
 		),
+
+		// Runs algorithm.
+		NewRunsAlgorithm(NewContinuedFractions(DichotomicStrategy{})),
 	}
 	for _, a := range as {
 		t.Run(a.String(), ChainAlgorithmSuite(a))

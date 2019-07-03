@@ -5,9 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/mmcloughlin/addchain/internal/bigint"
+
 	"github.com/mmcloughlin/addchain/internal/test"
 
-	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/prime"
 )
 

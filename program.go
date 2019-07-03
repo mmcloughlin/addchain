@@ -1,6 +1,10 @@
 package addchain
 
-import "math/big"
+import (
+	"math/big"
+
+	"github.com/mmcloughlin/addchain/internal/bigint"
+)
 
 // Op is an instruction to add positions I and J in a chain.
 type Op struct{ I, J int }
@@ -63,4 +67,16 @@ func (p Program) Evaluate() Chain {
 		c = append(c, sum)
 	}
 	return c
+}
+
+// Dependencies returns an array of bitsets where each bitset contains the set
+// of indicies that contributed to that position.
+func (p Program) Dependencies() []*big.Int {
+	bitsets := []*big.Int{bigint.One()}
+	for i, op := range p {
+		bitset := new(big.Int).Or(bitsets[op.I], bitsets[op.J])
+		bitset.SetBit(bitset, i+1, 1)
+		bitsets = append(bitsets, bitset)
+	}
+	return bitsets
 }

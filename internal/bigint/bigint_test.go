@@ -2,6 +2,7 @@ package bigint
 
 import (
 	"math/big"
+	"reflect"
 	"testing"
 )
 
@@ -48,6 +49,15 @@ func TestMask(t *testing.T) {
 func TestOnes(t *testing.T) {
 	if Ones(8).Uint64() != 0xff {
 		t.Fail()
+	}
+}
+
+func TestBitsSet(t *testing.T) {
+	x := big.NewInt(0x130)
+	got := BitsSet(x)
+	expect := []int{4, 5, 8}
+	if !reflect.DeepEqual(got, expect) {
+		t.FailNow()
 	}
 }
 

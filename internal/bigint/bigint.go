@@ -112,6 +112,17 @@ func Ones(n uint) *big.Int {
 	return Mask(0, n)
 }
 
+// BitsSet returns the positions of set bits in x.
+func BitsSet(x *big.Int) []int {
+	set := []int{}
+	for i := 0; i < x.BitLen(); i++ {
+		if x.Bit(i) == 1 {
+			set = append(set, i)
+		}
+	}
+	return set
+}
+
 // MinMax returns the minimum and maximum of x and y.
 func MinMax(x, y *big.Int) (min, max *big.Int) {
 	if x.Cmp(y) < 0 {

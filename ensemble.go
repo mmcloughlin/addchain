@@ -47,6 +47,12 @@ func Ensemble() []ChainAlgorithm {
 		}
 	}
 
+	// Add the runs algorithm.
+	for _, strategy := range ContinuedFractionStrategies {
+		a := NewRunsAlgorithm(NewContinuedFractions(strategy))
+		as = append(as, a)
+	}
+
 	// Wrap in an optimization layer.
 	for i, a := range as {
 		as[i] = Optimized{Algorithm: a}

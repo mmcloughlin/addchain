@@ -1,9 +1,12 @@
 package addchain
 
 import (
+	"errors"
 	"fmt"
 	"math/big"
 	"sort"
+
+	"github.com/mmcloughlin/addchain/internal/bigvector"
 
 	"github.com/mmcloughlin/addchain/internal/ints"
 
@@ -274,7 +277,26 @@ func (a DictAlgorithm) FindChain(n *big.Int) (Chain, error) {
 		return nil, err
 	}
 
+	// Reduce.
+	sum, c, err = primitive(sum, c)
+	if err != nil {
+		return nil, err
+	}
+
 	// Build chain for n out of the dictionary.
+	dc := dictsumchain(sum)
+	c = append(c, dc...)
+	bigints.Sort(c)
+	c = Chain(bigints.Unique(c))
+
+	return c, nil
+}
+
+// dictsumchain builds a chain for the integer represented by sum, assuming that
+// all the terms of the sum are already present. Therefore this is intended to
+// be appended to a chain that already contains the dictionary terms.
+func dictsumchain(sum DictSum) Chain {
+	c := Chain{}
 	k := len(sum) - 1
 	cur := bigint.Clone(sum[k].D)
 	for ; k > 0; k-- {
@@ -294,9 +316,101 @@ func (a DictAlgorithm) FindChain(n *big.Int) (Chain, error) {
 		c.AppendClone(cur)
 	}
 
-	// Prepare chain for returning.
-	bigints.Sort(c)
-	c = Chain(bigints.Unique(c))
+	return c
+}
 
-	return c, nil
+// primitive removes terms from the dictionary that are only required once.
+//
+// The general structure of dictionary based algorithm is to decompose the
+// target into a sum of dictionary terms, then create a chain for the
+// dictionary, and then create the target from that. In a case where a
+// dictionary term is only required once in the target, this can cause extra
+// work. In such a case, we will spend operations on creating the dictionary
+// term independently, and then later add it into the result. Since it is only
+// needed once, we can effectively construct the dictionary term "on the fly" as
+// we build up the final target.
+//
+// This function looks for such opportunities. If it finds them it will produce
+// an alternative dictionary sum that replaces that term with a sum of smaller
+// terms.
+func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
+	// This optimization cannot apply if the sum has only one term.
+	if len(sum) == 1 {
+		return sum, c, nil
+	}
+
+	// We'll need a mapping from chain elements to where they appear in the chain.
+	idx := map[string]int{}
+	for i, x := range c {
+		idx[x.String()] = i
+	}
+
+	// Build program for the chain.
+	p, err := c.Program()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// Bitsets for indicies used to create each position in the chain.
+	deps := p.Dependencies()
+
+	// Now, for every index in the chain we count how many terms in the dictionary
+	// sum depend on it.
+	n := len(c)
+	depterms := make([]int, n)
+
+	for _, t := range sum {
+		i := idx[t.D.String()]
+		for _, j := range bigint.BitsSet(deps[i]) {
+			depterms[j]++
+		}
+	}
+
+	// Express every position in the chain as a linear combination of dictionary
+	// terms that are used more than once.
+	vc := []bigvector.Vector{bigvector.NewBasis(n, 0)}
+	for i, op := range p {
+		var next bigvector.Vector
+		if depterms[i+1] > 1 {
+			next = bigvector.NewBasis(n, i+1)
+		} else {
+			next = bigvector.Add(vc[op.I], vc[op.J])
+		}
+		vc = append(vc, next)
+	}
+
+	// Now express the target sum in terms that are used more than once.
+	v := bigvector.New(n)
+	for _, t := range sum {
+		i := idx[t.D.String()]
+		v = bigvector.Add(v, bigvector.Lsh(vc[i], t.E))
+	}
+
+	// Rebuild this into a dictionary sum.
+	out := DictSum{}
+	for i, coeff := range v {
+		for _, e := range bigint.BitsSet(coeff) {
+			out = append(out, DictTerm{
+				D: c[i],
+				E: uint(e),
+			})
+		}
+	}
+
+	out.SortByExponent()
+
+	// We should have not changed the sum.
+	if !bigint.Equal(out.Int(), sum.Int()) {
+		return nil, nil, errors.New("reconstruction does not match")
+	}
+
+	// Prune any elements of the chain that are used only once.
+	pruned := Chain{}
+	for i, x := range c {
+		if depterms[i] > 1 {
+			pruned = append(pruned, x)
+		}
+	}
+
+	return out, pruned, nil
 }
