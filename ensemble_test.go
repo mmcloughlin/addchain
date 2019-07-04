@@ -1,7 +1,9 @@
 package addchain
 
 import (
+	"log"
 	"math/big"
+	"os"
 	"testing"
 	"time"
 
@@ -18,9 +20,11 @@ import (
 //	               Scalar Inversion for the Most Popular and Most Unpopular Elliptic Curves. 2017.
 //	               https://briansmith.org/ecc-inversion-addition-chains-01 (accessed June 30, 2019)
 
-// TestEfficientInversionChains compares our methods against the efficient
-// chains listed for inversion in [curvechains].
-func TestEfficientInversionChains(t *testing.T) {
+// TestEnsembleResultsInversionChains tests our methods against inversion
+// exponents for various interesting or popular fields. This is used to set a
+// baseline to prevent regressions, as well as to compare against the best
+// hand-crafted chains [curvechains].
+func TestEnsembleResultsInversionChains(t *testing.T) {
 	cases := []struct {
 		Name  string
 		N     *big.Int
@@ -87,6 +91,78 @@ func TestEfficientInversionChains(t *testing.T) {
 			Baseline:      283,
 			BestPublished: 284,
 		},
+		{
+			Name:     "p2213_field",
+			N:        prime.P2213.Int(),
+			Delta:    2,
+			Baseline: 231,
+		},
+		{
+			Name:     "p222117_field",
+			N:        prime.P222117.Int(),
+			Delta:    2,
+			Baseline: 233,
+		},
+		{
+			Name:     "p2519_field",
+			N:        prime.P2519.Int(),
+			Delta:    2,
+			Baseline: 263,
+		},
+		{
+			Name:     "p382105_field",
+			N:        prime.P382105.Int(),
+			Delta:    2,
+			Baseline: 395,
+		},
+		{
+			Name:     "p383187_field",
+			N:        prime.P383187.Int(),
+			Delta:    2,
+			Baseline: 396,
+		},
+		{
+			Name:     "p41417_field",
+			N:        prime.P41417.Int(),
+			Delta:    2,
+			Baseline: 426,
+		},
+		{
+			Name:     "p511187_field",
+			N:        prime.P511187.Int(),
+			Delta:    2,
+			Baseline: 525,
+		},
+		{
+			Name:     "p192_field",
+			N:        prime.NISTP192.Int(),
+			Delta:    2,
+			Baseline: 203,
+		},
+		{
+			Name:     "p224_field",
+			N:        prime.NISTP224.Int(),
+			Delta:    2,
+			Baseline: 234,
+		},
+		{
+			Name:     "goldilocks_field",
+			N:        prime.Goldilocks.Int(),
+			Delta:    2,
+			Baseline: 460,
+		},
+		{
+			Name:     "secp192k1_field",
+			N:        prime.Secp192k1.Int(),
+			Delta:    2,
+			Baseline: 205,
+		},
+		{
+			Name:     "secp224k1_field",
+			N:        prime.Secp224k1.Int(),
+			Delta:    2,
+			Baseline: 238,
+		},
 	}
 	as := Ensemble()
 	for _, c := range cases {
@@ -99,6 +175,7 @@ func TestEfficientInversionChains(t *testing.T) {
 
 			// Execute.
 			p := NewParallel()
+			p.SetLogger(log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds))
 			rs := p.Execute(n, as)
 
 			// Process results.
