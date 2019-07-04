@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/mmcloughlin/addchain/internal/bigint"
-
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
