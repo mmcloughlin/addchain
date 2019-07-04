@@ -74,15 +74,14 @@ func TestExpressions(t *testing.T) {
 		},
 		{
 			Source: "2 * [3]",
-			Expect: ast.Shift{
+			Expect: ast.Double{
 				X: ast.Operand(3),
-				S: 1,
 			},
 		},
 		{
 			Source: "dbl [3] add [5] << 3",
 			Expect: ast.Add{
-				X: ast.Shift{X: ast.Operand(3), S: 1},
+				X: ast.Double{X: ast.Operand(3)},
 				Y: ast.Shift{X: ast.Operand(5), S: 3},
 			},
 		},

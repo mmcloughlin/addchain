@@ -22,6 +22,10 @@ type Shift struct {
 	S uint
 }
 
+type Double struct {
+	X Expr
+}
+
 type Intermediate struct {
 	Name Identifier
 	Expr Expr

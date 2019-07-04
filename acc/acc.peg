@@ -66,9 +66,8 @@ ShiftExpr <- _ x:BaseExpr _ ShiftOperator _ s:UintLiteral _ {
         S: s.(uint),
     }, nil
 } / _ DoubleOperator _ x:BaseExpr {
-    return ast.Shift{
+    return ast.Double{
         X: x.(ast.Expr),
-        S: 1,
     }, nil
 } / BaseExpr
 
