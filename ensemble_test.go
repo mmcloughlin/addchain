@@ -5,12 +5,9 @@ import (
 	"math/big"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/mmcloughlin/addchain/internal/bigint"
-
 	"github.com/mmcloughlin/addchain/internal/test"
-
 	"github.com/mmcloughlin/addchain/prime"
 )
 
@@ -168,7 +165,13 @@ func TestEnsembleResultsInversionChains(t *testing.T) {
 	for _, c := range cases {
 		c := c // scopelint
 		t.Run(c.Name, func(t *testing.T) {
-			test.RequireDuration(t, 30*time.Second)
+			// Tests with a best known result are prioritized. Only run all tests in
+			// stress test mode.
+			if c.BestPublished == 0 {
+				test.RequireStress(t)
+			} else {
+				test.RequireLong(t)
+			}
 
 			n := new(big.Int).Sub(c.N, big.NewInt(c.Delta))
 			t.Logf("n-%d=%x", c.Delta, n)

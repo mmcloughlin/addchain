@@ -8,16 +8,13 @@ import (
 
 // Custom test command line flags.
 var (
-	long     = flag.Bool("long", false, "allow more time for trial-based tests")
-	stress   = flag.Bool("stress", false, "run stress tests for trial-based tests")
-	duration = flag.Duration("duration", 0, "duration for trial-based tests")
+	long   = flag.Bool("long", false, "enable long running tests")
+	stress = flag.Bool("stress", false, "enable stress tests (implies -long)")
 )
 
 // timeallowed returns how long a single test is allowed to take.
 func timeallowed() time.Duration {
 	switch {
-	case *duration > 0:
-		return *duration
 	case testing.Short():
 		return time.Second / 10
 	case *long:
@@ -29,10 +26,29 @@ func timeallowed() time.Duration {
 	}
 }
 
-// RequireDuration skips the test unless at least duration d is allowed.
-func RequireDuration(t *testing.T, d time.Duration) {
-	if timeallowed() < d {
-		t.Skipf("test requires at least %s: use the -long, -stress or -duration=<duration> options", d)
+// Long reports whether long tests are enabled.
+func Long() bool {
+	return *long || *stress
+}
+
+// Stress reports whether stress tests are enabled.
+func Stress() bool {
+	return *stress
+}
+
+// RequireLong marks this test as a long test. Test will be skipped if long
+// tests are not enabled.
+func RequireLong(t *testing.T) {
+	if !Long() {
+		t.Skipf("long test: use -long or -stress to enable")
+	}
+}
+
+// RequireStress marks this test as a stress test. Test will be skipped if stress
+// tests are not enabled.
+func RequireStress(t *testing.T) {
+	if !Stress() {
+		t.Skipf("stress test: use -stress to enable")
 	}
 }
 
