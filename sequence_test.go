@@ -97,6 +97,11 @@ func CheckKnownSequences(a SequenceAlgorithm) func(t *testing.T) {
 			Targets:  bigints.Int64s(30, 32, 255),
 			Solution: bigints.Int64s(1, 2, 3, 6, 12, 15, 30, 32, 60, 120, 240, 255),
 		},
+		// secp256k1 field inversion in [curvechains].
+		{
+			Targets:  bigints.Int64s(22, 223),
+			Solution: bigints.Int64s(1, 2, 3, 6, 9, 11, 22, 44, 88, 176, 220, 223),
+		},
 	}
 
 	for _, c := range cases {

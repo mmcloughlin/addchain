@@ -83,6 +83,7 @@ func RunsChain(lc Chain) (Chain, error) {
 	}
 
 	c := New()
+	s := map[uint]uint{} // current largest shift of each run length
 	for _, op := range p {
 		a, b := bigint.MinMax(lc[op.I], lc[op.J])
 		if !a.IsUint64() || !b.IsUint64() {
@@ -92,17 +93,13 @@ func RunsChain(lc Chain) (Chain, error) {
 		la := uint(a.Uint64())
 		lb := uint(b.Uint64())
 
-		ra := bigint.Ones(la)
 		rb := bigint.Ones(lb)
-
-		cur := bigint.Clone(rb)
-		for s := uint(0); s < la; s++ {
-			cur.Lsh(cur, 1)
-			c.AppendClone(cur)
+		for ; s[lb] < la; s[lb]++ {
+			shift := new(big.Int).Lsh(rb, s[lb]+1)
+			c = append(c, shift)
 		}
 
-		cur.Add(cur, ra)
-		c.AppendClone(cur)
+		c = append(c, bigint.Ones(la+lb))
 	}
 
 	return c, nil

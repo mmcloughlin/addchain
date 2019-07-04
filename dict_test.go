@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/mmcloughlin/addchain/internal/bigint"
+	"github.com/mmcloughlin/addchain/internal/bigints"
 	"github.com/mmcloughlin/addchain/internal/test"
 )
 
@@ -152,6 +153,56 @@ func TestDictAlgorithm(t *testing.T) {
 	n := big.NewInt(587257)
 	c := AssertChainAlgorithmProduces(t, a, n)
 	t.Log(c)
+}
+
+func TestDictAlgorithmPrimitive(t *testing.T) {
+	// These tests are designed to verify that primitive dictionary reduction is
+	// doing sensible things, therefore we construct a dictionary algorithm with a
+	// decomposer that's going to have obvious results. We'll use the run length
+	// decomposer.
+	a := NewDictAlgorithm(
+		RunLength{T: 0},
+		NewContinuedFractions(TotalStrategy{}),
+	)
+
+	// Cases are accompanied by an example of how this chain might be constructed
+	// if dictionary reduction is working. We simply confirm that the resulting
+	// chain is valid and at least as good as the example.
+	cases := []struct {
+		N       *big.Int
+		Example Chain
+	}{
+		{
+			N: bigint.MustBinary("1111_0_1_0"),
+			Example: bigints.Int64s(
+				1, 2, 3, // prep
+				6, 12, 15, // << 2 and add 3
+				30, 60, 61, // << 2 and add 1
+				122, // << 1
+			),
+		},
+		{
+			N: bigint.MustBinary("11_0_11111111_0"),
+			Example: bigints.Int64s(
+				1, 2, 3, 6, 12, 15, // prepare 11 and 1111
+				24, 48, 96, 111, // << 5 add 1111
+				222, 444, 888, 1776, 1791, // << 4 add 1111
+				3582, // << 1
+			),
+		},
+	}
+
+	for _, c := range cases {
+		got := AssertChainAlgorithmProduces(t, a, c.N)
+		if err := c.Example.Produces(c.N); err != nil {
+			t.Fatalf("example is invalid: %s", err)
+		}
+		if len(got) > len(c.Example) {
+			t.Logf("    got: %v", got)
+			t.Logf("example: %v", c.Example)
+			t.Errorf("suboptimal result: length %d but possible in %d", len(got), len(c.Example))
+		}
+	}
 }
 
 func DictSumEquals(a, b DictSum) bool {

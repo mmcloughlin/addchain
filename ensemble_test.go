@@ -81,11 +81,13 @@ func TestEfficientInversionChains(t *testing.T) {
 			n := new(big.Int).Sub(c.N, big.NewInt(c.Delta))
 			t.Logf("n-%d=%x", c.Delta, n)
 
-			rs := NewParallel().Execute(n, as)
+			p := NewParallel()
+			rs := p.Execute(n, as)
 			best := 0
 			for i, r := range rs {
 				if r.Err != nil {
-					t.Fatal(r.Err)
+					t.Logf("error with %s", r.Algorithm)
+					t.Error(r.Err)
 					continue
 				}
 				if len(r.Program) <= len(rs[best].Program) {
@@ -93,7 +95,7 @@ func TestEfficientInversionChains(t *testing.T) {
 				}
 			}
 			b := rs[best]
-			t.Logf("algorithm: %s", b.Algorithm)
+			t.Logf(" best: %s", b.Algorithm)
 			t.Logf("total: %d", len(b.Program))
 			t.Logf(" hand: %d", c.HandCrafted)
 			t.Logf("delta: %+d", len(b.Program)-c.HandCrafted)

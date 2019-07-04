@@ -339,6 +339,8 @@ func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
 		return sum, c, nil
 	}
 
+	n := len(c)
+
 	// We'll need a mapping from chain elements to where they appear in the chain.
 	idx := map[string]int{}
 	for i, x := range c {
@@ -351,18 +353,30 @@ func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
 		return nil, nil, err
 	}
 
-	// Bitsets for indicies used to create each position in the chain.
-	deps := p.Dependencies()
-
-	// Now, for every index in the chain we count how many terms in the dictionary
-	// sum depend on it.
-	n := len(c)
-	depterms := make([]int, n)
+	// How many times is each index read during construction, and during its use in the dictionary chain.
+	reads := make([]int, n)
+	for _, op := range p {
+		for _, i := range op.Operands() {
+			reads[i]++
+		}
+	}
 
 	for _, t := range sum {
 		i := idx[t.D.String()]
+		reads[i]++
+	}
+
+	// Now, the primitive dictionary elements are those that are read at least twice, and their dependencies.
+	deps := p.Dependencies()
+	primitive := make([]bool, n)
+
+	for i, numreads := range reads {
+		if numreads < 2 {
+			continue
+		}
+		primitive[i] = true
 		for _, j := range bigint.BitsSet(deps[i]) {
-			depterms[j]++
+			primitive[j] = true
 		}
 	}
 
@@ -371,7 +385,7 @@ func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
 	vc := []bigvector.Vector{bigvector.NewBasis(n, 0)}
 	for i, op := range p {
 		var next bigvector.Vector
-		if depterms[i+1] > 1 {
+		if primitive[i+1] {
 			next = bigvector.NewBasis(n, i+1)
 		} else {
 			next = bigvector.Add(vc[op.I], vc[op.J])
@@ -407,7 +421,7 @@ func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
 	// Prune any elements of the chain that are used only once.
 	pruned := Chain{}
 	for i, x := range c {
-		if depterms[i] > 1 {
+		if primitive[i] {
 			pruned = append(pruned, x)
 		}
 	}
