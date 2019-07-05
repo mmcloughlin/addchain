@@ -9,40 +9,42 @@ import (
 
 func TestTranslateBasicOps(t *testing.T) {
 	src := "a = 1+1\nd = 2 * 1\n1 << 42"
-	expect := ir.Program{
-		{
-			Output: &ir.Operand{
-				Index:      1,
-				Identifier: "a",
+	expect := &ir.Program{
+		Instructions: []ir.Instruction{
+			{
+				Output: &ir.Operand{
+					Index:      1,
+					Identifier: "a",
+				},
+				Op: ir.Add{
+					X: &ir.Operand{Index: 0},
+					Y: &ir.Operand{Index: 0},
+				},
 			},
-			Op: ir.Add{
-				X: &ir.Operand{Index: 0},
-				Y: &ir.Operand{Index: 0},
+			{
+				Output: &ir.Operand{
+					Index:      2,
+					Identifier: "d",
+				},
+				Op: ir.Double{
+					X: &ir.Operand{Index: 0},
+				},
 			},
-		},
-		{
-			Output: &ir.Operand{
-				Index:      2,
-				Identifier: "d",
-			},
-			Op: ir.Double{
-				X: &ir.Operand{Index: 0},
-			},
-		},
-		{
-			Output: &ir.Operand{
-				Index: 44,
-			},
-			Op: ir.Shift{
-				X: &ir.Operand{Index: 0},
-				S: 42,
+			{
+				Output: &ir.Operand{
+					Index: 44,
+				},
+				Op: ir.Shift{
+					X: &ir.Operand{Index: 0},
+					S: 42,
+				},
 			},
 		},
 	}
 	AssertTranslate(t, src, expect)
 }
 
-func AssertTranslate(t *testing.T, src string, expect ir.Program) {
+func AssertTranslate(t *testing.T, src string, expect *ir.Program) {
 	t.Helper()
 
 	s, err := String(src)

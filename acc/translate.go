@@ -8,7 +8,7 @@ import (
 )
 
 // Translate converts an abstract syntax tree to an intermediate representation.
-func Translate(c *ast.Chain) (ir.Program, error) {
+func Translate(c *ast.Chain) (*ir.Program, error) {
 	s := newstate()
 	for _, stmt := range c.Statements {
 		if err := s.statement(stmt); err != nil {
@@ -19,14 +19,14 @@ func Translate(c *ast.Chain) (ir.Program, error) {
 }
 
 type state struct {
-	prog     ir.Program
+	prog     *ir.Program
 	n        int
 	variable map[ast.Identifier]*ir.Operand
 }
 
 func newstate() *state {
 	return &state{
-		prog:     ir.Program{},
+		prog:     &ir.Program{},
 		n:        1,
 		variable: map[ast.Identifier]*ir.Operand{},
 	}
@@ -78,7 +78,7 @@ func (s *state) add(a ast.Add) (*ir.Operand, error) {
 		Output: out,
 		Op:     ir.Add{X: x, Y: y},
 	}
-	s.prog = append(s.prog, inst)
+	s.prog.AddInstruction(inst)
 	s.n++
 
 	return out, nil
@@ -97,7 +97,7 @@ func (s *state) double(d ast.Double) (*ir.Operand, error) {
 		Output: out,
 		Op:     ir.Double{X: x},
 	}
-	s.prog = append(s.prog, inst)
+	s.prog.AddInstruction(inst)
 	s.n++
 
 	return out, nil
@@ -117,7 +117,7 @@ func (s *state) shift(sh ast.Shift) (*ir.Operand, error) {
 		Output: out,
 		Op:     ir.Shift{X: x, S: sh.S},
 	}
-	s.prog = append(s.prog, inst)
+	s.prog.AddInstruction(inst)
 
 	return out, nil
 }

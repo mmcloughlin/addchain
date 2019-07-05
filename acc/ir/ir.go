@@ -5,11 +5,17 @@ import (
 	"strings"
 )
 
-type Program []Instruction
+type Program struct {
+	Instructions []Instruction
+}
+
+func (p *Program) AddInstruction(i Instruction) {
+	p.Instructions = append(p.Instructions, i)
+}
 
 func (p Program) String() string {
 	var b strings.Builder
-	for _, i := range p {
+	for _, i := range p.Instructions {
 		fmt.Fprintln(&b, i)
 	}
 	return b.String()

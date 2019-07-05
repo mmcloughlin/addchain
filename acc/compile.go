@@ -9,9 +9,9 @@ import (
 
 // Compile converts a program intermediate representation to a full addition
 // chain program.
-func Compile(p ir.Program) (addchain.Program, error) {
+func Compile(p *ir.Program) (addchain.Program, error) {
 	c := addchain.Program{}
-	for _, i := range p {
+	for _, i := range p.Instructions {
 		var out int
 		var err error
 
@@ -36,15 +36,15 @@ func Compile(p ir.Program) (addchain.Program, error) {
 	return c, nil
 }
 
-// Decompile an unrolled program into intermediate representation.
-func Decompile(c addchain.Program) (ir.Program, error) {
-	p := ir.Program{}
+// Decompile an unrolled program into concise intermediate representation.
+func Decompile(c addchain.Program) (*ir.Program, error) {
+	p := &ir.Program{}
 	for i := 0; i < len(c); i++ {
 		op := c[i]
 
 		// Regular addition.
 		if !op.IsDouble() {
-			p = append(p, ir.Instruction{
+			p.AddInstruction(ir.Instruction{
 				Output: ir.Index(i + 1),
 				Op: ir.Add{
 					X: ir.Index(op.I),
@@ -64,7 +64,7 @@ func Decompile(c addchain.Program) (ir.Program, error) {
 
 		// Shift size 1 encoded as a double.
 		if s == 1 {
-			p = append(p, ir.Instruction{
+			p.AddInstruction(ir.Instruction{
 				Output: ir.Index(i + 1),
 				Op: ir.Double{
 					X: ir.Index(op.I),
@@ -74,7 +74,7 @@ func Decompile(c addchain.Program) (ir.Program, error) {
 		}
 
 		i = j - 1
-		p = append(p, ir.Instruction{
+		p.AddInstruction(ir.Instruction{
 			Output: ir.Index(i + 1),
 			Op: ir.Shift{
 				X: ir.Index(op.I),
