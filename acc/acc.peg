@@ -17,27 +17,27 @@ func exprs(first, rest interface{}) []ast.Expr {
 
 // Chain
 
-Chain <- is:Intermediate* r:Return EOF {
-    ch := &ast.Chain{
-        Result: r.(ast.Expr),
+Chain <- as:Assignment* r:Return EOF {
+    ch := &ast.Chain{}
+    for _, a := range as.([]interface{}) {
+        ch.Statements = append(ch.Statements, a.(ast.Statement))
     }
-    for _, i := range is.([]interface{}) {
-        ch.Intermediates = append(ch.Intermediates, i.(ast.Intermediate))
-    }
+    ch.Statements = append(ch.Statements, r.(ast.Statement))
     return ch, nil
 }
 
-// Return
+// Statements
 
-Return <- _ ("return" __)? e:Expr _ {
-    return e, nil
+Assignment <- _ n:Identifier _ '=' _ e:Expr _ EOL {
+    return ast.Statement{
+        Name: n.(ast.Identifier),
+        Expr: e.(ast.Expr),
+    }, nil
 }
 
-// Intermediate
-
-Intermediate <- _ v:Identifier _ '=' _ e:Expr _ EOL {
-    return ast.Intermediate{
-        Name: v.(ast.Identifier),
+Return <- _ ("return" __)? e:Expr _ {
+    return ast.Statement{
+        Name: "",
         Expr: e.(ast.Expr),
     }, nil
 }

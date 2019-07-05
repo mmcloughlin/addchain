@@ -52,6 +52,10 @@ func TestExpressions(t *testing.T) {
 			},
 		},
 		{
+			Source: "1 << 5",
+			Expect: ast.Shift{X: ast.Operand(0), S: 5},
+		},
+		{
 			Source: "[3] shl 5 add 1",
 			Expect: ast.Add{
 				X: ast.Shift{X: ast.Operand(3), S: 5},
@@ -99,7 +103,7 @@ func TestChains(t *testing.T) {
 		{
 			Source: "x = 1 + 1\nreturn x<<3",
 			Expect: &ast.Chain{
-				Intermediates: []ast.Intermediate{
+				Statements: []ast.Statement{
 					{
 						Name: "x",
 						Expr: ast.Add{
@@ -107,10 +111,12 @@ func TestChains(t *testing.T) {
 							Y: ast.Operand(0),
 						},
 					},
-				},
-				Result: ast.Shift{
-					X: ast.Identifier("x"),
-					S: 3,
+					{
+						Expr: ast.Shift{
+							X: ast.Identifier("x"),
+							S: 3,
+						},
+					},
 				},
 			},
 		},
@@ -123,8 +129,7 @@ func TestChains(t *testing.T) {
 func AssertParseResult(t *testing.T, src string, expect ast.Expr) {
 	t.Helper()
 	AssertParse(t, src, &ast.Chain{
-		Intermediates: nil,
-		Result:        expect,
+		Statements: []ast.Statement{{Expr: expect}},
 	})
 }
 

@@ -1,17 +1,21 @@
 package ast
 
 type Chain struct {
-	Intermediates []Intermediate
-	Result        Expr
+	Statements []Statement
 }
+
+type Statement struct {
+	Name Identifier
+	Expr Expr
+}
+
+type Expr interface{}
 
 // Operand is an index into an addition chain.
 type Operand int
 
 // Identifier is a variable reference.
 type Identifier string
-
-type Expr interface{}
 
 type Add struct {
 	X, Y Expr
@@ -24,9 +28,4 @@ type Shift struct {
 
 type Double struct {
 	X Expr
-}
-
-type Intermediate struct {
-	Name Identifier
-	Expr Expr
 }
