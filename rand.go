@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/mmcloughlin/addchain/internal/bigint"
-
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
