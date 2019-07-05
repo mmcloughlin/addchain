@@ -17,7 +17,7 @@ func exprs(first, rest interface{}) []ast.Expr {
 
 // Chain
 
-Chain <- as:Assignment* r:Return EOF {
+Chain <- as:Assignment* r:Return _ EOF {
     ch := &ast.Chain{}
     for _, a := range as.([]interface{}) {
         ch.Statements = append(ch.Statements, a.(ast.Statement))
@@ -35,7 +35,7 @@ Assignment <- _ n:Identifier _ '=' _ e:Expr _ EOL {
     }, nil
 }
 
-Return <- _ ("return" __)? e:Expr _ {
+Return <- _ ("return" __)? e:Expr _ EOL? {
     return ast.Statement{
         Name: "",
         Expr: e.(ast.Expr),

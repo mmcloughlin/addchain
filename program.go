@@ -1,6 +1,7 @@
 package addchain
 
 import (
+	"fmt"
 	"math/big"
 
 	"github.com/mmcloughlin/addchain/internal/bigint"
@@ -29,13 +30,43 @@ func (o Op) Uses(i int) bool {
 // Program is a sequence of operations.
 type Program []Op
 
-func (p *Program) Double(i int) int {
+func (p *Program) Shift(i int, s uint) (int, error) {
+	for ; s > 0; s-- {
+		next, err := p.Double(i)
+		if err != nil {
+			return 0, err
+		}
+		i = next
+	}
+	return i, nil
+}
+
+func (p *Program) Double(i int) (int, error) {
 	return p.Add(i, i)
 }
 
-func (p *Program) Add(i, j int) int {
+func (p *Program) Add(i, j int) (int, error) {
+	if err := p.boundscheck(i); err != nil {
+		return 0, err
+	}
+	if err := p.boundscheck(j); err != nil {
+		return 0, err
+	}
 	*p = append(*p, Op{i, j})
-	return len(*p)
+	return len(*p), nil
+}
+
+// boundscheck returns an error if i is out of bounds.
+func (p Program) boundscheck(i int) error {
+	// Note the corresponding chain is one longer than the program.
+	n := len(p)
+	switch {
+	case i < 0:
+		return fmt.Errorf("negative index %d", i)
+	case i > n:
+		return fmt.Errorf("index %d out of bounds", i)
+	}
+	return nil
 }
 
 func (p Program) Doubles() int {

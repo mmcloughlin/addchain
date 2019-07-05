@@ -11,6 +11,7 @@ import (
 
 // String parses s.
 func String(s string) (*ast.Chain, error) {
+	// TODO(mbm): rename to something with parse in the name, or move
 	r := strings.NewReader(s)
 	i, err := parser.ParseReader("string", r)
 	if err != nil {

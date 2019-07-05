@@ -21,6 +21,7 @@ func TestOperands(t *testing.T) {
 	}
 	for expr, idx := range exprs {
 		AssertParseResult(t, expr, idx)
+		AssertParseResult(t, expr+"\n", idx)
 	}
 }
 
