@@ -7,6 +7,9 @@ import (
 
 type Program struct {
 	Instructions []Instruction
+
+	// Analysis results.
+	ReadCount map[int]int
 }
 
 func (p *Program) AddInstruction(i Instruction) {
@@ -47,11 +50,16 @@ func (i Instruction) String() string {
 }
 
 type Op interface {
+	Inputs() []*Operand
 	fmt.Stringer
 }
 
 type Add struct {
 	X, Y *Operand
+}
+
+func (a Add) Inputs() []*Operand {
+	return []*Operand{a.X, a.Y}
 }
 
 func (a Add) String() string {
@@ -62,6 +70,10 @@ type Double struct {
 	X *Operand
 }
 
+func (d Double) Inputs() []*Operand {
+	return []*Operand{d.X}
+}
+
 func (d Double) String() string {
 	return fmt.Sprintf("2 * %s", d.X)
 }
@@ -69,6 +81,10 @@ func (d Double) String() string {
 type Shift struct {
 	X *Operand
 	S uint
+}
+
+func (s Shift) Inputs() []*Operand {
+	return []*Operand{s.X}
 }
 
 func (s Shift) String() string {
