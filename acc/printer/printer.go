@@ -1,0 +1,108 @@
+package printer
+
+import (
+	"io"
+	"os"
+
+	"github.com/mmcloughlin/addchain/acc/ast"
+	"github.com/mmcloughlin/addchain/internal/errutil"
+	"github.com/mmcloughlin/addchain/internal/print"
+)
+
+// Print an AST node to standard out.
+func Print(n interface{}) error {
+	return Fprint(os.Stderr, n)
+}
+
+// Fprint writes the AST node n to w.
+func Fprint(w io.Writer, n interface{}) error {
+	p := newprinter(w)
+	p.node(n)
+	return p.Error()
+}
+
+type printer struct {
+	print.Printer
+}
+
+func newprinter(w io.Writer) *printer {
+	return &printer{
+		Printer: print.New(w),
+	}
+}
+
+func (p *printer) node(n interface{}) {
+	switch n := n.(type) {
+	case *ast.Chain:
+		for _, stmt := range n.Statements {
+			p.statement(stmt)
+		}
+	case ast.Statement:
+		p.statement(n)
+	case ast.Expr:
+		p.expr(n, nil)
+	default:
+		p.SetError(errutil.UnexpectedType(n))
+	}
+}
+
+func (p *printer) statement(stmt ast.Statement) {
+	if len(stmt.Name) > 0 {
+		p.Printf("%s = ", stmt.Name)
+	}
+	p.expr(stmt.Expr, nil)
+	p.NL()
+}
+
+func (p *printer) expr(e, parent ast.Expr) {
+	// Parens required if the precence of this operator is less than its parent.
+	if parent != nil && e.Precedence() < parent.Precedence() {
+		p.Printf("(")
+		p.expr(e, nil)
+		p.Printf(")")
+		return
+	}
+
+	switch e := e.(type) {
+	case ast.Operand:
+		p.operand(e)
+	case ast.Identifier:
+		p.identifier(e)
+	case ast.Add:
+		p.add(e)
+	case ast.Double:
+		p.double(e)
+	case ast.Shift:
+		p.shift(e)
+	default:
+		p.SetError(errutil.UnexpectedType(e))
+	}
+}
+
+func (p *printer) add(a ast.Add) {
+	p.expr(a.X, a)
+	p.Printf(" + ")
+	p.expr(a.Y, a)
+}
+
+func (p *printer) double(d ast.Double) {
+	p.Printf("2 * ")
+	p.expr(d.X, d)
+}
+
+func (p *printer) shift(s ast.Shift) {
+	p.expr(s.X, s)
+	p.Printf(" << %d", s.S)
+}
+
+func (p *printer) identifier(name ast.Identifier) {
+	p.Printf("%s", name)
+}
+
+func (p *printer) operand(op ast.Operand) {
+	if op == 0 {
+		p.Printf("1")
+	} else {
+		p.Printf("[%d]", op)
+	}
+}
