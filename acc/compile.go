@@ -35,3 +35,19 @@ func Compile(p ir.Program) (addchain.Program, error) {
 	}
 	return c, nil
 }
+
+// Decompile an unrolled program into intermediate representation.
+func Decompile(c addchain.Program) (ir.Program, error) {
+	p := ir.Program{}
+	for _, op := range c {
+		inst := ir.Instruction{
+			Output: ir.Index(len(p) + 1),
+			Op: ir.Add{
+				X: ir.Index(op.I),
+				Y: ir.Index(op.J),
+			},
+		}
+		p = append(p, inst)
+	}
+	return p, nil
+}

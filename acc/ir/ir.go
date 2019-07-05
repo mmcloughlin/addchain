@@ -20,6 +20,10 @@ type Operand struct {
 	Identifier string
 }
 
+func Index(i int) *Operand {
+	return &Operand{Index: i}
+}
+
 func (o Operand) String() string {
 	if len(o.Identifier) > 0 {
 		return o.Identifier
