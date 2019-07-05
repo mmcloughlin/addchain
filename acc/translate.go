@@ -5,6 +5,7 @@ import (
 
 	"github.com/mmcloughlin/addchain/acc/ast"
 	"github.com/mmcloughlin/addchain/acc/ir"
+	"github.com/mmcloughlin/addchain/internal/errutil"
 )
 
 // Translate converts an abstract syntax tree to an intermediate representation.
@@ -56,7 +57,7 @@ func (s *state) expr(expr ast.Expr) (*ir.Operand, error) {
 	case ast.Shift:
 		return s.shift(e)
 	default:
-		return nil, fmt.Errorf("unexpected type %T", e)
+		return nil, errutil.UnexpectedType(e)
 	}
 }
 

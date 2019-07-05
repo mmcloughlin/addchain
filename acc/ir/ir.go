@@ -45,6 +45,11 @@ type Instruction struct {
 	Op     Op
 }
 
+// Operands returns the input and output operands.
+func (i Instruction) Operands() []*Operand {
+	return append(i.Op.Inputs(), i.Output)
+}
+
 func (i Instruction) String() string {
 	return fmt.Sprintf("%s \u2190 %s", i.Output, i.Op)
 }

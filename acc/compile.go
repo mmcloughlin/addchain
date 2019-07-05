@@ -5,6 +5,7 @@ import (
 
 	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/acc/ir"
+	"github.com/mmcloughlin/addchain/internal/errutil"
 )
 
 // Compile converts a program intermediate representation to a full addition
@@ -23,7 +24,7 @@ func Compile(p *ir.Program) (addchain.Program, error) {
 		case ir.Shift:
 			out, err = c.Shift(op.X.Index, op.S)
 		default:
-			return nil, fmt.Errorf("unexpected type %T", op)
+			return nil, errutil.UnexpectedType(op)
 		}
 
 		if err != nil {

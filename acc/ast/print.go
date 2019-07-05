@@ -72,6 +72,7 @@ func (p *printer) add(a Add) {
 	p.node(a.Y)
 	p.leave()
 }
+
 func (p *printer) double(d Double) {
 	p.enter("double")
 	p.printf("x = ")
