@@ -13,7 +13,7 @@ func Decompile(c addchain.Program) (*ir.Program, error) {
 
 		// Regular addition.
 		if !op.IsDouble() {
-			p.AddInstruction(ir.Instruction{
+			p.AddInstruction(&ir.Instruction{
 				Output: ir.Index(i + 1),
 				Op: ir.Add{
 					X: ir.Index(op.I),
@@ -33,7 +33,7 @@ func Decompile(c addchain.Program) (*ir.Program, error) {
 
 		// Shift size 1 encoded as a double.
 		if s == 1 {
-			p.AddInstruction(ir.Instruction{
+			p.AddInstruction(&ir.Instruction{
 				Output: ir.Index(i + 1),
 				Op: ir.Double{
 					X: ir.Index(op.I),
@@ -43,7 +43,7 @@ func Decompile(c addchain.Program) (*ir.Program, error) {
 		}
 
 		i = j - 1
-		p.AddInstruction(ir.Instruction{
+		p.AddInstruction(&ir.Instruction{
 			Output: ir.Index(i + 1),
 			Op: ir.Shift{
 				X: ir.Index(op.I),

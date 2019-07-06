@@ -11,7 +11,7 @@ import (
 func TestTranslateBasicOps(t *testing.T) {
 	src := "a = 1+1\nd = 2 * 1\n1 << 42"
 	expect := &ir.Program{
-		Instructions: []ir.Instruction{
+		Instructions: []*ir.Instruction{
 			{
 				Output: &ir.Operand{
 					Index:      1,

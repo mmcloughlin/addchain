@@ -79,7 +79,7 @@ func (s *state) add(a ast.Add) (*ir.Operand, error) {
 	out := &ir.Operand{
 		Index: int(s.n),
 	}
-	inst := ir.Instruction{
+	inst := &ir.Instruction{
 		Output: out,
 		Op:     ir.Add{X: x, Y: y},
 	}
@@ -98,7 +98,7 @@ func (s *state) double(d ast.Double) (*ir.Operand, error) {
 	out := &ir.Operand{
 		Index: int(s.n),
 	}
-	inst := ir.Instruction{
+	inst := &ir.Instruction{
 		Output: out,
 		Op:     ir.Double{X: x},
 	}
@@ -118,7 +118,7 @@ func (s *state) shift(sh ast.Shift) (*ir.Operand, error) {
 	out := &ir.Operand{
 		Index: int(s.n) - 1,
 	}
-	inst := ir.Instruction{
+	inst := &ir.Instruction{
 		Output: out,
 		Op:     ir.Shift{X: x, S: sh.S},
 	}

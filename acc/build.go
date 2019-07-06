@@ -10,12 +10,12 @@ import (
 // Build AST from a program in intermediate representation.
 func Build(p *ir.Program) (*ast.Chain, error) {
 	// Run some analysis passes first.
-	prepare := pass.Concat(
+	err := pass.Exec(p,
 		pass.Func(pass.ReadCounts),
+		pass.NameByteValues,
 		pass.NameByIndex("i"),
 	)
-
-	if err := prepare.Execute(p); err != nil {
+	if err != nil {
 		return nil, err
 	}
 

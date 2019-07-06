@@ -8,15 +8,16 @@ import (
 )
 
 type Program struct {
-	Instructions []Instruction
+	Instructions []*Instruction
 
 	// Pass/analysis results.
+	Operands  map[int]*Operand
 	ReadCount map[int]int
 	Program   addchain.Program
 	Chain     addchain.Chain
 }
 
-func (p *Program) AddInstruction(i Instruction) {
+func (p *Program) AddInstruction(i *Instruction) {
 	p.Instructions = append(p.Instructions, i)
 }
 
@@ -29,13 +30,22 @@ func (p Program) String() string {
 }
 
 type Operand struct {
-	Index      int
 	Identifier string
+	Index      int
+}
+
+func NewOperand(name string, i int) *Operand {
+	return &Operand{
+		Identifier: name,
+		Index:      i,
+	}
 }
 
 func Index(i int) *Operand {
-	return &Operand{Index: i}
+	return NewOperand("", i)
 }
+
+var One = Index(0)
 
 func (o Operand) String() string {
 	if len(o.Identifier) > 0 {

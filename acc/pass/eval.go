@@ -44,6 +44,10 @@ func Compile(p *ir.Program) error {
 
 // Eval evaluates the program and places the result in the Chain field.
 func Eval(p *ir.Program) error {
+	if p.Chain != nil {
+		return nil
+	}
+
 	if err := Compile(p); err != nil {
 		return err
 	}

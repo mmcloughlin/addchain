@@ -18,7 +18,7 @@ func TestDecompileExample(t *testing.T) {
 	t.Log(p)
 
 	expect := &ir.Program{
-		Instructions: []ir.Instruction{
+		Instructions: []*ir.Instruction{
 			{
 				Output: ir.Index(1),
 				Op: ir.Double{
