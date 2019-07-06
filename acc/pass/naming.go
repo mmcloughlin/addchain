@@ -2,7 +2,10 @@ package pass
 
 import (
 	"fmt"
+	"math/big"
 	"strconv"
+
+	"github.com/mmcloughlin/addchain/internal/bigint"
 
 	"github.com/mmcloughlin/addchain/acc/ir"
 	"github.com/mmcloughlin/addchain/internal/errutil"
@@ -14,13 +17,39 @@ import (
 //	               Scalar Inversion for the Most Popular and Most Unpopular Elliptic Curves. 2017.
 //	               https://briansmith.org/ecc-inversion-addition-chains-01 (accessed June 30, 2019)
 
-// Naming schemes described in [curvechains].
-var NameByteValues = NameBinaryValues(8, "_%b")
+// Naming conventions described in [curvechains].
+var (
+	NameByteValues = NameBinaryValues(8, "_%b")
+	NameXRuns      = NameBinaryRuns("x%d")
+)
 
 // NameBinaryValues assigns variable names to operands with values less than 2ᵏ.
 // The identifier is determined from the format string, which should expect to
 // take one *big.Int argument.
 func NameBinaryValues(k int, format string) Interface {
+	return NameByValue(func(x *big.Int) string {
+		if x.BitLen() > k {
+			return ""
+		}
+		return fmt.Sprintf(format, x)
+	})
+}
+
+// NameBinaryRuns assigns variable names to operands with values of the form 2^n
+// - 1. The identifier is determined from the format string, which takes the
+// length of the run as a parameter.
+func NameBinaryRuns(format string) Interface {
+	return NameByValue(func(x *big.Int) string {
+		n := uint(x.BitLen())
+		if !bigint.Equal(x, bigint.Ones(n)) {
+			return ""
+		}
+		return fmt.Sprintf(format, n)
+	})
+}
+
+// NameByValue builds a pass that names operands by the value they take.
+func NameByValue(name func(*big.Int) string) Interface {
 	return Func(func(p *ir.Program) error {
 		// We need canonical operands, and we need to know the chain values.
 		if err := Exec(p, Func(CanonicalizeOperands), Func(Eval)); err != nil {
@@ -40,16 +69,13 @@ func NameBinaryValues(k int, format string) Interface {
 			}
 			x := p.Chain[idx]
 
-			// Skip if too large.
-			if x.BitLen() > k {
-				continue
-			}
-
-			operand.Identifier = fmt.Sprintf(format, x)
+			// Set name.
+			operand.Identifier = name(x)
 		}
 
 		return nil
 	})
+
 }
 
 // NameByIndex builds a pass that sets any unnamed operands to have name prefix

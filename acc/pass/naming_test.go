@@ -6,7 +6,7 @@ import (
 	"github.com/mmcloughlin/addchain/acc/ir"
 )
 
-func TestNameBinaryValues(t *testing.T) {
+func TestNaming(t *testing.T) {
 	p := &ir.Program{
 		Instructions: []*ir.Instruction{
 			{
@@ -23,17 +23,27 @@ func TestNameBinaryValues(t *testing.T) {
 				},
 			},
 			{
-				Output: ir.Index(5),
+				Output: ir.Index(4),
 				Op: ir.Shift{
-					X: ir.Index(1),
-					S: 3,
+					X: ir.Index(2),
+					S: 2,
+				},
+			},
+			{
+				Output: ir.Index(5),
+				Op: ir.Add{
+					X: ir.Index(4),
+					Y: ir.Index(2),
 				},
 			},
 		},
 	}
 
-	// Pass to name 4-bit values.
-	n := NameBinaryValues(4, "_%b")
+	// Name 3-bit values and runs.
+	n := Concat(
+		NameBinaryValues(3, "_%b"),
+		NameXRuns,
+	)
 
 	t.Logf("pre:\n%s", p)
 
@@ -48,7 +58,8 @@ func TestNameBinaryValues(t *testing.T) {
 		0: "_1",
 		1: "_10",
 		2: "_11",
-		5: "", // should be larger than 4 bits
+		4: "", // 4-bit value that's not a run
+		5: "x4",
 	}
 
 	for idx, name := range expect {
