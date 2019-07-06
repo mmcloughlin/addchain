@@ -4,6 +4,7 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/mmcloughlin/addchain/acc/parse"
 	"github.com/mmcloughlin/addchain/prime"
 )
 
@@ -66,7 +67,7 @@ func TestEvaluate(t *testing.T) {
 			}
 
 			// Parse to AST.
-			s, err := String(src)
+			s, err := parse.String(src)
 			if err != nil {
 				t.Fatal(err)
 			}

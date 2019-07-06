@@ -95,3 +95,12 @@ func (s Shift) Inputs() []*Operand {
 func (s Shift) String() string {
 	return fmt.Sprintf("%s \u226a %d", s.X, s.S)
 }
+
+func HasInput(op Op, idx int) bool {
+	for _, input := range op.Inputs() {
+		if input.Index == idx {
+			return true
+		}
+	}
+	return false
+}

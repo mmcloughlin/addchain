@@ -1,4 +1,4 @@
-package acc
+package parse
 
 import (
 	"reflect"

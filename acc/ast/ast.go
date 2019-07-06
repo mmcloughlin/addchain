@@ -46,3 +46,11 @@ type Double struct {
 }
 
 func (Double) Precedence() int { return 3 }
+
+func IsOp(e Expr) bool {
+	switch e.(type) {
+	case Add, Shift, Double:
+		return true
+	}
+	return false
+}

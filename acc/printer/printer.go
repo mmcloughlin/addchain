@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"bytes"
 	"io"
 	"os"
 
@@ -9,9 +10,18 @@ import (
 	"github.com/mmcloughlin/addchain/internal/print"
 )
 
+// Bytes prints the AST and returns resulting bytes.
+func Bytes(n interface{}) ([]byte, error) {
+	var buf bytes.Buffer
+	if err := Fprint(&buf, n); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
 // Print an AST node to standard out.
 func Print(n interface{}) error {
-	return Fprint(os.Stderr, n)
+	return Fprint(os.Stdout, n)
 }
 
 // Fprint writes the AST node n to w.
@@ -86,7 +96,7 @@ func (p *printer) add(a ast.Add) {
 }
 
 func (p *printer) double(d ast.Double) {
-	p.Printf("2 * ")
+	p.Printf("2*")
 	p.expr(d.X, d)
 }
 

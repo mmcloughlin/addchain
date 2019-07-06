@@ -10,7 +10,7 @@ import (
 
 // Print an AST node to standard out.
 func Print(n interface{}) error {
-	return Fprint(os.Stderr, n)
+	return Fprint(os.Stdout, n)
 }
 
 // Fprint writes the AST node n to w.

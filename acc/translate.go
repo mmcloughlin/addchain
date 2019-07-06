@@ -72,6 +72,10 @@ func (s *state) add(a ast.Add) (*ir.Operand, error) {
 		return nil, err
 	}
 
+	if x.Index > y.Index {
+		x, y = y, x
+	}
+
 	out := &ir.Operand{
 		Index: int(s.n),
 	}

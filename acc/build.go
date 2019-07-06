@@ -19,14 +19,12 @@ func Build(p *ir.Program) (*ast.Chain, error) {
 		return nil, err
 	}
 
-	// Maintain an expression for each index.
+	// Delegate to builder.
 	b := newbuilder(p)
-	for _, i := range p.Instructions {
-		if err := b.instruction(i); err != nil {
-			return nil, err
-		}
+	if err := b.process(); err != nil {
+		return nil, err
 	}
-	b.finalize()
+
 	return b.chain, nil
 }
 
@@ -34,7 +32,6 @@ type builder struct {
 	chain *ast.Chain
 	prog  *ir.Program
 	expr  map[int]ast.Expr
-	last  *ir.Operand
 }
 
 func newbuilder(p *ir.Program) *builder {
@@ -45,35 +42,35 @@ func newbuilder(p *ir.Program) *builder {
 	}
 }
 
-func (b *builder) finalize() {
-	result := ast.Statement{
-		Expr: b.operand(b.last),
-	}
-	b.chain.Statements = append(b.chain.Statements, result)
-	return
-}
+func (b *builder) process() error {
+	insts := b.prog.Instructions
+	n := len(insts)
+	for i := 0; i < n; i++ {
+		inst := insts[i]
+		out := inst.Output
 
-func (b *builder) instruction(i ir.Instruction) error {
-	e, err := b.operator(i.Op)
-	if err != nil {
-		return err
+		// Build expression for the result of this instruction.
+		e, err := b.operator(inst.Op)
+		if err != nil {
+			return err
+		}
+
+		b.expr[out.Index] = e
+
+		// If this output is read only by the following instruction, we don't need to
+		// commit it to a variable.
+		usedonce := b.prog.ReadCount[out.Index] == 1
+		usednext := i+1 < n && ir.HasInput(insts[i+1].Op, out.Index)
+		if usedonce && usednext {
+			continue
+		}
+
+		// Otherwise write a statement for it.
+		b.commit(inst.Output)
 	}
 
-	out := i.Output
-	b.last = out
-	idx := out.Index
-	if b.prog.ReadCount[idx] <= 1 {
-		b.expr[idx] = e
-		return nil
-	}
-
-	name := ast.Identifier(out.Identifier)
-	stmt := ast.Statement{
-		Name: name,
-		Expr: e,
-	}
-	b.chain.Statements = append(b.chain.Statements, stmt)
-	b.expr[idx] = name
+	// Clear the name of the final statement.
+	b.chain.Statements[len(b.chain.Statements)-1].Name = ""
 
 	return nil
 }
@@ -81,10 +78,7 @@ func (b *builder) instruction(i ir.Instruction) error {
 func (b *builder) operator(op ir.Op) (ast.Expr, error) {
 	switch o := op.(type) {
 	case ir.Add:
-		return ast.Add{
-			X: b.operand(o.X),
-			Y: b.operand(o.Y),
-		}, nil
+		return b.add(o)
 	case ir.Double:
 		return ast.Double{
 			X: b.operand(o.X),
@@ -97,6 +91,43 @@ func (b *builder) operator(op ir.Op) (ast.Expr, error) {
 	default:
 		return nil, errutil.UnexpectedType(op)
 	}
+}
+
+func (b *builder) add(a ir.Add) (ast.Expr, error) {
+	// Addition operator construction is slightly delcate, since operand order
+	// determines ordering of execution. By the design of instruction processing
+	// above, the only way we can have multi-operator expressions is with a
+	// sequence of operands that are used only once and in the following
+	// instruction. This implies that only one of x and y can be an operator
+	// expression. In order to preserve execution order, whichever one that is
+	// needs to be the first operand.
+
+	x := b.operand(a.X)
+	y := b.operand(a.Y)
+
+	switch {
+	case ast.IsOp(x) && ast.IsOp(y):
+		return nil, errutil.AssertionFailure("only one of x and y should be an operator expression")
+	case ast.IsOp(y):
+		x, y = y, x
+	case ast.IsOp(x):
+		// Nothing, it's already the first operand.
+	}
+
+	return ast.Add{
+		X: x,
+		Y: y,
+	}, nil
+}
+
+func (b *builder) commit(op *ir.Operand) {
+	name := ast.Identifier(op.Identifier)
+	stmt := ast.Statement{
+		Name: name,
+		Expr: b.operand(op),
+	}
+	b.chain.Statements = append(b.chain.Statements, stmt)
+	b.expr[op.Index] = name
 }
 
 func (b *builder) operand(op *ir.Operand) ast.Expr {
