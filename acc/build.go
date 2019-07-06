@@ -13,6 +13,7 @@ func Build(p *ir.Program) (*ast.Chain, error) {
 	err := pass.Exec(p,
 		pass.Func(pass.ReadCounts),
 		pass.NameByteValues,
+		pass.NameXRuns,
 		pass.NameByIndex("i"),
 	)
 	if err != nil {

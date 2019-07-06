@@ -7,6 +7,9 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/mmcloughlin/addchain/acc"
+	"github.com/mmcloughlin/addchain/acc/printer"
+
 	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/internal/calc"
 )
@@ -33,15 +36,16 @@ func main() {
 		l.Fatalf("failed to evaluate %q: %s", expr, err)
 	}
 
-	l.Printf("n: %s", n)
+	l.Printf("hex: %x", n)
+	l.Printf("dec: %d", n)
 
 	// Execute an ensemble of algorithms.
-	p := addchain.NewParallel()
-	p.SetLogger(l)
-	p.SetConcurrency(*concurrency)
+	ex := addchain.NewParallel()
+	ex.SetLogger(l)
+	ex.SetConcurrency(*concurrency)
 
 	as := addchain.Ensemble()
-	rs := p.Execute(n, as)
+	rs := ex.Execute(n, as)
 
 	// Report results.
 	best := 0
@@ -60,7 +64,22 @@ func main() {
 	// Details for the best chain.
 	b := rs[best]
 	for n, op := range b.Program {
-		log.Printf("%3d:\t%d+%d\t%x", n+1, op.I, op.J, b.Chain[n+1])
+		log.Printf("[%3d] %3d+%3d\t%x", n+1, op.I, op.J, b.Chain[n+1])
 	}
 	log.Printf("best: %s", b.Algorithm)
+
+	// Produce a program for it.
+	p, err := acc.Decompile(b.Program)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	syntax, err := acc.Build(p)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := printer.Print(syntax); err != nil {
+		log.Fatal(err)
+	}
 }
