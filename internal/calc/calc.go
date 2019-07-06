@@ -149,7 +149,11 @@ func number(b []byte) (*big.Int, []byte, error) {
 		i++
 	}
 	isdigit := isdecimal
-	if bytes.HasPrefix(b[i:], []byte("0x")) {
+	switch {
+	case bytes.HasPrefix(b[i:], []byte("0b")):
+		isdigit = isbinary
+		i += 2
+	case bytes.HasPrefix(b[i:], []byte("0x")):
 		isdigit = ishex
 		i += 2
 	}
@@ -175,7 +179,12 @@ func isdecimal(b byte) bool {
 	return '0' <= b && b <= '9'
 }
 
-// idhex reports whether b is a hex digit.
+// ishex reports whether b is a hex digit.
 func ishex(b byte) bool {
 	return isdecimal(b) || ('a' <= b && b <= 'f')
+}
+
+// isbinary reports whether b is a binary digit.
+func isbinary(b byte) bool {
+	return b == '0' || b == '1'
 }

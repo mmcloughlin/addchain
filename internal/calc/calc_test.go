@@ -16,6 +16,7 @@ func TestEval(t *testing.T) {
 		{"34534", 34534},
 		{"-42", -42},
 		{"-0xab", -0xab},
+		{"0b1011", 11},
 
 		// Single operators.
 		{"15-2", 15 - 2},
