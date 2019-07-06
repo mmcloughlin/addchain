@@ -37,7 +37,7 @@ func main() {
 	}
 
 	l.Printf("hex: %x", n)
-	l.Printf("dec: %d", n)
+	l.Printf("dec: %s", n)
 
 	// Execute an ensemble of algorithms.
 	ex := addchain.NewParallel()
