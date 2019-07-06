@@ -10,7 +10,7 @@ import (
 type Program struct {
 	Instructions []Instruction
 
-	// Analysis results.
+	// Pass/analysis results.
 	ReadCount map[int]int
 	Program   addchain.Program
 	Chain     addchain.Chain
@@ -100,6 +100,7 @@ func (s Shift) String() string {
 	return fmt.Sprintf("%s \u226a %d", s.X, s.S)
 }
 
+// HasInput reports whether the given operation takes idx as an input.
 func HasInput(op Op, idx int) bool {
 	for _, input := range op.Inputs() {
 		if input.Index == idx {

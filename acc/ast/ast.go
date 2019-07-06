@@ -47,6 +47,7 @@ type Double struct {
 
 func (Double) Precedence() int { return 3 }
 
+// IsOp reports whether the expression is the result of an operator.
 func IsOp(e Expr) bool {
 	switch e.(type) {
 	case Add, Shift, Double:

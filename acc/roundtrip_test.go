@@ -15,23 +15,23 @@ import (
 // The purpose of this test is to verify the full round trip from an addition
 // chain program to source and back.
 //
-//            addchain.Chain		c
+//            addchain.Chain        c
 //                |   ^
 //        Program |   | Evaluate
 //                v   |
-//           addchain.Program		p
+//           addchain.Program       p
 //                |   ^
 //      Decompile |   | Compile
 //                v   |
-//              ir.Program			r
+//              ir.Program          r
 //                |   ^
 //          Build |   | Translate
 //                v   |
-//              ast.Chain			s
+//              ast.Chain           s
 //                |   ^
 //          Print |   | Parse
 //                v   |
-//              acc source			src
+//              acc source          src
 
 func TestRandomRoundTrip(t *testing.T) {
 	gs := []addchain.Generator{
