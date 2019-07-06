@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/mmcloughlin/addchain/acc/parse"
+	"github.com/mmcloughlin/addchain/acc/pass"
 	"github.com/mmcloughlin/addchain/prime"
 )
 
@@ -78,21 +79,17 @@ func TestEvaluate(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			// Compile to Program.
-			prog, err := Compile(p)
-			if err != nil {
+			// Evaluate the program.
+			if err := pass.Eval(p); err != nil {
 				t.Fatal(err)
 			}
 
-			// Evaluate chain.
-			ch := prog.Evaluate()
-
 			// Report.
-			for i, x := range ch {
+			for i, x := range p.Chain {
 				t.Logf("[%3d] bin=%b", i, x)
 			}
 
-			if err := ch.Produces(c.Expect); err != nil {
+			if err := p.Chain.Produces(c.Expect); err != nil {
 				t.Fatalf("chain does not produce %d: %s", c.Expect, err)
 			}
 		})

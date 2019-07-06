@@ -3,6 +3,8 @@ package ir
 import (
 	"fmt"
 	"strings"
+
+	"github.com/mmcloughlin/addchain"
 )
 
 type Program struct {
@@ -10,6 +12,8 @@ type Program struct {
 
 	// Analysis results.
 	ReadCount map[int]int
+	Program   addchain.Program
+	Chain     addchain.Chain
 }
 
 func (p *Program) AddInstruction(i Instruction) {

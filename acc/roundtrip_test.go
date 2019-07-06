@@ -7,6 +7,7 @@ import (
 
 	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/acc/parse"
+	"github.com/mmcloughlin/addchain/acc/pass"
 	"github.com/mmcloughlin/addchain/acc/printer"
 	"github.com/mmcloughlin/addchain/internal/test"
 )
@@ -89,10 +90,10 @@ func TestRandomRoundTrip(t *testing.T) {
 			}
 
 			// Compile back to a program.
-			p2, err := Compile(r2)
-			if err != nil {
+			if err := pass.Compile(r2); err != nil {
 				t.Fatal(err)
 			}
+			p2 := r2.Program
 
 			if !reflect.DeepEqual(p, p2) {
 				t.Logf("p:\n%v", p)

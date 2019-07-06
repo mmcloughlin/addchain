@@ -1,41 +1,9 @@
 package acc
 
 import (
-	"fmt"
-
 	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/acc/ir"
-	"github.com/mmcloughlin/addchain/internal/errutil"
 )
-
-// Compile converts a program intermediate representation to a full addition
-// chain program.
-func Compile(p *ir.Program) (addchain.Program, error) {
-	c := addchain.Program{}
-	for _, i := range p.Instructions {
-		var out int
-		var err error
-
-		switch op := i.Op.(type) {
-		case ir.Add:
-			out, err = c.Add(op.X.Index, op.Y.Index)
-		case ir.Double:
-			out, err = c.Double(op.X.Index)
-		case ir.Shift:
-			out, err = c.Shift(op.X.Index, op.S)
-		default:
-			return nil, errutil.UnexpectedType(op)
-		}
-
-		if err != nil {
-			return nil, err
-		}
-		if out != i.Output.Index {
-			return nil, fmt.Errorf("incorrect output index")
-		}
-	}
-	return c, nil
-}
 
 // Decompile an unrolled program into concise intermediate representation.
 func Decompile(c addchain.Program) (*ir.Program, error) {
