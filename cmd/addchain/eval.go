@@ -57,5 +57,8 @@ func (cmd *eval) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) s
 		fmt.Printf("[%3d] %3d+%3d\t%x\n", n+1, op.I, op.J, p.Chain[n+1])
 	}
 
+	doubles, adds := p.Program.Count()
+	fmt.Printf("total: %d\tdoubles: \t%d adds: %d\n", doubles+adds, doubles, adds)
+
 	return subcommands.ExitSuccess
 }
