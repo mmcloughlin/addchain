@@ -2,10 +2,9 @@ package acc
 
 import (
 	"math/big"
+	"strings"
 	"testing"
 
-	"github.com/mmcloughlin/addchain/acc/parse"
-	"github.com/mmcloughlin/addchain/acc/pass"
 	"github.com/mmcloughlin/addchain/prime"
 )
 
@@ -62,25 +61,11 @@ func TestEvaluate(t *testing.T) {
 	for _, c := range cases {
 		c := c // scopelint
 		t.Run(c.Name, func(t *testing.T) {
-			var src string
-			for _, line := range c.Lines {
-				src += line + "\n"
-			}
+			src := strings.Join(c.Lines, "\n") + "\n"
 
-			// Parse to AST.
-			s, err := parse.String(src)
+			// Load and evaluate.
+			p, err := LoadString(src)
 			if err != nil {
-				t.Fatal(err)
-			}
-
-			// Translate to IR.
-			p, err := Translate(s)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			// Evaluate the program.
-			if err := pass.Eval(p); err != nil {
 				t.Fatal(err)
 			}
 
