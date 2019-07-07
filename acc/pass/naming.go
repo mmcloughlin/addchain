@@ -3,7 +3,6 @@ package pass
 import (
 	"fmt"
 	"math/big"
-	"strconv"
 
 	"github.com/mmcloughlin/addchain/acc/ir"
 	"github.com/mmcloughlin/addchain/internal/bigint"
@@ -26,7 +25,7 @@ var (
 // The identifier is determined from the format string, which should expect to
 // take one *big.Int argument.
 func NameBinaryValues(k int, format string) Interface {
-	return NameByValue(func(x *big.Int) string {
+	return NameOperands(func(_ int, x *big.Int) string {
 		if x.BitLen() > k {
 			return ""
 		}
@@ -38,7 +37,7 @@ func NameBinaryValues(k int, format string) Interface {
 // - 1. The identifier is determined from the format string, which takes the
 // length of the run as a parameter.
 func NameBinaryRuns(format string) Interface {
-	return NameByValue(func(x *big.Int) string {
+	return NameOperands(func(_ int, x *big.Int) string {
 		n := uint(x.BitLen())
 		if !bigint.Equal(x, bigint.Ones(n)) {
 			return ""
@@ -47,8 +46,8 @@ func NameBinaryRuns(format string) Interface {
 	})
 }
 
-// NameByValue builds a pass that names operands by the value they take.
-func NameByValue(name func(*big.Int) string) Interface {
+// NameOperands builds a pass that names operands according to the given scheme.
+func NameOperands(name func(int, *big.Int) string) Interface {
 	return Func(func(p *ir.Program) error {
 		// We need canonical operands, and we need to know the chain values.
 		if err := Exec(p, Func(CanonicalizeOperands), Func(Eval)); err != nil {
@@ -69,26 +68,9 @@ func NameByValue(name func(*big.Int) string) Interface {
 			x := p.Chain[idx]
 
 			// Set name.
-			operand.Identifier = name(x)
+			operand.Identifier = name(idx, x)
 		}
 
-		return nil
-	})
-}
-
-// NameByIndex builds a pass that sets any unnamed operands to have name prefix
-// + index.
-func NameByIndex(prefix string) Interface {
-	return Func(func(p *ir.Program) error {
-		if err := CanonicalizeOperands(p); err != nil {
-			return err
-		}
-		for _, operand := range p.Operands {
-			if operand.Identifier != "" {
-				continue
-			}
-			operand.Identifier = prefix + strconv.Itoa(operand.Index)
-		}
 		return nil
 	})
 }

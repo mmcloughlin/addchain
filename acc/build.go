@@ -1,11 +1,17 @@
 package acc
 
 import (
+	"fmt"
+
 	"github.com/mmcloughlin/addchain/acc/ast"
 	"github.com/mmcloughlin/addchain/acc/ir"
 	"github.com/mmcloughlin/addchain/acc/pass"
 	"github.com/mmcloughlin/addchain/internal/errutil"
 )
+
+// complexitylimit is the maximum number of operators the builder will allow an
+// expression to have.
+const complexitylimit = 5
 
 // Build AST from a program in intermediate representation.
 func Build(p *ir.Program) (*ast.Chain, error) {
@@ -14,7 +20,6 @@ func Build(p *ir.Program) (*ast.Chain, error) {
 		pass.Func(pass.ReadCounts),
 		pass.NameByteValues,
 		pass.NameXRuns,
-		pass.NameByIndex("i"),
 	)
 	if err != nil {
 		return nil, err
@@ -46,7 +51,9 @@ func newbuilder(p *ir.Program) *builder {
 func (b *builder) process() error {
 	insts := b.prog.Instructions
 	n := len(insts)
+	complexity := 0
 	for i := 0; i < n; i++ {
+		complexity++
 		inst := insts[i]
 		out := inst.Output
 
@@ -60,14 +67,16 @@ func (b *builder) process() error {
 
 		// If this output is read only by the following instruction, we don't need to
 		// commit it to a variable.
+		anon := out.Identifier == ""
 		usedonce := b.prog.ReadCount[out.Index] == 1
 		usednext := i+1 < n && ir.HasInput(insts[i+1].Op, out.Index)
-		if usedonce && usednext {
+		if anon && usedonce && usednext && complexity < complexitylimit {
 			continue
 		}
 
 		// Otherwise write a statement for it.
 		b.commit(inst.Output)
+		complexity = 0
 	}
 
 	// Clear the name of the final statement.
@@ -122,13 +131,22 @@ func (b *builder) add(a ir.Add) (ast.Expr, error) {
 }
 
 func (b *builder) commit(op *ir.Operand) {
-	name := ast.Identifier(op.Identifier)
+	name := ast.Identifier(b.name(op))
 	stmt := ast.Statement{
 		Name: name,
 		Expr: b.operand(op),
 	}
 	b.chain.Statements = append(b.chain.Statements, stmt)
 	b.expr[op.Index] = name
+}
+
+// name returns the name for this operand. This is the identifier if available,
+// otherwise a sensible default based on the index.
+func (b *builder) name(op *ir.Operand) string {
+	if op.Identifier != "" {
+		return op.Identifier
+	}
+	return fmt.Sprintf("i%d", op.Index)
 }
 
 func (b *builder) operand(op *ir.Operand) ast.Expr {
