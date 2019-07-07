@@ -4,8 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"io"
-	"os"
 
 	"github.com/google/subcommands"
 
@@ -29,37 +27,29 @@ Evaluate an addition chain script.
  `
 }
 
-func (e *eval) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	// Read input file if provided, default to standard in.
-	var r io.Reader
-	input := f.Arg(0)
-	if input != "" {
-		f, err := os.Open(input)
-		if err != nil {
-			return e.Error(err)
-		}
-		defer f.Close()
-		r = f
-	} else {
-		r = os.Stdin
-		input = "<stdin>"
+func (cmd *eval) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	// Read input.
+	input, r, err := OpenInput(f.Arg(0))
+	if err != nil {
+		return cmd.Error(err)
 	}
+	defer r.Close()
 
 	// Parse to a syntax tree.
 	s, err := parse.Reader(input, r)
 	if err != nil {
-		return e.Error(err)
+		return cmd.Error(err)
 	}
 
 	// Generate intermediate representation.
 	p, err := acc.Translate(s)
 	if err != nil {
-		return e.Error(err)
+		return cmd.Error(err)
 	}
 
 	// Evaluate and compile.
 	if err := pass.Eval(p); err != nil {
-		return e.Error(err)
+		return cmd.Error(err)
 	}
 
 	// Dump.

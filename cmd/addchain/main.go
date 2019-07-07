@@ -4,6 +4,8 @@ package main
 import (
 	"context"
 	"flag"
+	"io"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -17,6 +19,7 @@ func main() {
 
 	subcommands.Register(&search{command: base}, "")
 	subcommands.Register(&eval{command: base}, "")
+	subcommands.Register(&format{command: base}, "")
 	subcommands.Register(subcommands.HelpCommand(), "")
 
 	flag.Parse()
@@ -43,4 +46,13 @@ func (c command) Fail(format string, args ...interface{}) subcommands.ExitStatus
 
 func (c command) Error(err error) subcommands.ExitStatus {
 	return c.Fail(err.Error())
+}
+
+// OpenInput is a convenience for possibly opening an input file, or otherwise returning standard in.
+func OpenInput(filename string) (string, io.ReadCloser, error) {
+	if filename == "" {
+		return "<stdin>", ioutil.NopCloser(os.Stdin), nil
+	}
+	f, err := os.Open(filename)
+	return filename, f, err
 }
