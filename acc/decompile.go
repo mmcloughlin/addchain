@@ -6,14 +6,15 @@ import (
 )
 
 // Decompile an unrolled program into concise intermediate representation.
-func Decompile(c addchain.Program) (*ir.Program, error) {
-	p := &ir.Program{}
-	for i := 0; i < len(c); i++ {
-		op := c[i]
+func Decompile(p addchain.Program) (*ir.Program, error) {
+	numreads := p.ReadCounts()
+	r := &ir.Program{}
+	for i := 0; i < len(p); i++ {
+		op := p[i]
 
 		// Regular addition.
 		if !op.IsDouble() {
-			p.AddInstruction(&ir.Instruction{
+			r.AddInstruction(&ir.Instruction{
 				Output: ir.Index(i + 1),
 				Op: ir.Add{
 					X: ir.Index(op.I),
@@ -26,14 +27,14 @@ func Decompile(c addchain.Program) (*ir.Program, error) {
 		// We have a double. Look ahead to see if this is a chain of doublings, which
 		// can be encoded as a shift.
 		j := i + 1
-		for ; j < len(c) && c[j].I == j && c[j].J == j; j++ {
+		for ; j < len(p) && numreads[j] == 1 && p[j].I == j && p[j].J == j; j++ {
 		}
 
 		s := j - i
 
 		// Shift size 1 encoded as a double.
 		if s == 1 {
-			p.AddInstruction(&ir.Instruction{
+			r.AddInstruction(&ir.Instruction{
 				Output: ir.Index(i + 1),
 				Op: ir.Double{
 					X: ir.Index(op.I),
@@ -43,7 +44,7 @@ func Decompile(c addchain.Program) (*ir.Program, error) {
 		}
 
 		i = j - 1
-		p.AddInstruction(&ir.Instruction{
+		r.AddInstruction(&ir.Instruction{
 			Output: ir.Index(i + 1),
 			Op: ir.Shift{
 				X: ir.Index(op.I),
@@ -51,5 +52,5 @@ func Decompile(c addchain.Program) (*ir.Program, error) {
 			},
 		})
 	}
-	return p, nil
+	return r, nil
 }

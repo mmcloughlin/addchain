@@ -352,12 +352,7 @@ func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
 	}
 
 	// How many times is each index read during construction, and during its use in the dictionary chain.
-	reads := make([]int, n)
-	for _, op := range p {
-		for _, i := range op.Operands() {
-			reads[i]++
-		}
-	}
+	reads := p.ReadCounts()
 
 	for _, t := range sum {
 		i := idx[t.D.String()]

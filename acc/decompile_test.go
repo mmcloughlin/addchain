@@ -6,6 +6,7 @@ import (
 
 	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/acc/ir"
+	"github.com/mmcloughlin/addchain/acc/pass"
 )
 
 func TestDecompileExample(t *testing.T) {
@@ -60,4 +61,17 @@ func TestDecompileExample(t *testing.T) {
 		t.Logf("expect:\n%s", expect)
 		t.Fatal("mismatch")
 	}
+}
+
+func TestDecompileRandom(t *testing.T) {
+	CheckRandom(t, func(t *testing.T, p addchain.Program) {
+		r, err := Decompile(p)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := pass.Validate(r); err != nil {
+			t.Fatal(err)
+		}
+	})
 }

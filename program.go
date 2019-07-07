@@ -100,6 +100,17 @@ func (p Program) Evaluate() Chain {
 	return c
 }
 
+// ReadCounts returns how many times each index is read in the program.
+func (p Program) ReadCounts() []int {
+	reads := make([]int, len(p)+1)
+	for _, op := range p {
+		for _, i := range op.Operands() {
+			reads[i]++
+		}
+	}
+	return reads
+}
+
 // Dependencies returns an array of bitsets where each bitset contains the set
 // of indicies that contributed to that position.
 func (p Program) Dependencies() []*big.Int {
