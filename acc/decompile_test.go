@@ -7,14 +7,19 @@ import (
 	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/acc/ir"
 	"github.com/mmcloughlin/addchain/acc/pass"
+	"github.com/mmcloughlin/addchain/internal/assert"
 )
 
 func TestDecompileExample(t *testing.T) {
 	p := addchain.Program{}
-	p.Double(0)
-	p.Add(0, 1)
-	p.Shift(1, 3)
-	p.Add(0, 5)
+	_, err := p.Double(0)
+	assert.NoError(t, err)
+	_, err = p.Add(0, 1)
+	assert.NoError(t, err)
+	_, err = p.Shift(1, 3)
+	assert.NoError(t, err)
+	_, err = p.Add(0, 5)
+	assert.NoError(t, err)
 
 	t.Log(p)
 

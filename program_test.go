@@ -1,13 +1,18 @@
 package addchain
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/mmcloughlin/addchain/internal/assert"
+)
 
 func TestProgramEvaluateDoublings(t *testing.T) {
 	// Build a chain of doublings.
 	p := Program{}
 	n := 17
 	for i := 0; i < n; i++ {
-		p.Double(i)
+		_, err := p.Double(i)
+		assert.NoError(t, err)
 	}
 
 	// Evaluate.
