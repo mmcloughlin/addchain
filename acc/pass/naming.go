@@ -5,9 +5,8 @@ import (
 	"math/big"
 	"strconv"
 
-	"github.com/mmcloughlin/addchain/internal/bigint"
-
 	"github.com/mmcloughlin/addchain/acc/ir"
+	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/errutil"
 )
 
@@ -35,7 +34,7 @@ func NameBinaryValues(k int, format string) Interface {
 	})
 }
 
-// NameBinaryRuns assigns variable names to operands with values of the form 2^n
+// NameBinaryRuns assigns variable names to operands with values of the form 2ⁿ
 // - 1. The identifier is determined from the format string, which takes the
 // length of the run as a parameter.
 func NameBinaryRuns(format string) Interface {
@@ -75,7 +74,6 @@ func NameByValue(name func(*big.Int) string) Interface {
 
 		return nil
 	})
-
 }
 
 // NameByIndex builds a pass that sets any unnamed operands to have name prefix

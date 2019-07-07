@@ -2,47 +2,93 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 	"os"
 	"runtime"
 
-	"github.com/mmcloughlin/addchain/acc"
-	"github.com/mmcloughlin/addchain/acc/printer"
+	"github.com/google/subcommands"
 
 	"github.com/mmcloughlin/addchain"
+	"github.com/mmcloughlin/addchain/acc"
+	"github.com/mmcloughlin/addchain/acc/printer"
 	"github.com/mmcloughlin/addchain/internal/calc"
 )
 
-// l is the global logger.
-var l = log.New(os.Stderr, "addchain: ", 0)
-
-var concurrency = flag.Int("concurrency", runtime.NumCPU(), "number of algorithms to run concurrently")
-
 func main() {
-	// Parse command-line.
-	flag.Parse()
-
-	if flag.NArg() < 1 {
-		l.Fatal("usage: addchain expr")
+	base := command{
+		log: log.New(os.Stderr, "addchain: ", 0),
 	}
-	expr := flag.Arg(0)
+
+	subcommands.Register(&search{command: base}, "")
+	subcommands.Register(subcommands.HelpCommand(), "")
+
+	flag.Parse()
+	ctx := context.Background()
+	os.Exit(int(subcommands.Execute(ctx)))
+}
+
+type command struct {
+	log *log.Logger
+}
+
+func (c command) UsageError(format string, args ...interface{}) subcommands.ExitStatus {
+	c.log.Printf(format, args...)
+	return subcommands.ExitUsageError
+}
+
+func (c command) Fail(format string, args ...interface{}) subcommands.ExitStatus {
+	c.log.Printf(format, args...)
+	return subcommands.ExitFailure
+}
+
+func (c command) Error(err error) subcommands.ExitStatus {
+	return c.Fail(err.Error())
+}
+
+// search subcommand.
+type search struct {
+	command
+
+	concurrency int
+}
+
+func (*search) Name() string     { return "search" }
+func (*search) Synopsis() string { return "search for an addition chain." }
+func (*search) Usage() string {
+	return `Usage: search [-p <N>] <expr>
+
+Search for an addition chain for <expr>.
+
+ `
+}
+
+func (s *search) SetFlags(f *flag.FlagSet) {
+	f.IntVar(&s.concurrency, "p", runtime.NumCPU(), "number of algorithms to run in parallel")
+}
+
+func (s *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	if f.NArg() < 1 {
+		return s.UsageError("missing expression")
+	}
+	expr := f.Arg(0)
 
 	// Evaluate expression.
-	l.Printf("expr: %q", expr)
+	s.log.Printf("expr: %q", expr)
 
 	n, err := calc.Eval(expr)
 	if err != nil {
-		l.Fatalf("failed to evaluate %q: %s", expr, err)
+		return s.Fail("failed to evaluate %q: %s", expr, err)
 	}
 
-	l.Printf("hex: %x", n)
-	l.Printf("dec: %s", n)
+	s.log.Printf("hex: %x", n)
+	s.log.Printf("dec: %s", n)
 
 	// Execute an ensemble of algorithms.
 	ex := addchain.NewParallel()
-	ex.SetLogger(l)
-	ex.SetConcurrency(*concurrency)
+	ex.SetLogger(s.log)
+	ex.SetConcurrency(s.concurrency)
 
 	as := addchain.Ensemble()
 	rs := ex.Execute(n, as)
@@ -50,12 +96,12 @@ func main() {
 	// Report results.
 	best := 0
 	for i, r := range rs {
-		log.Printf("algorithm: %s", r.Algorithm)
+		s.log.Printf("algorithm: %s", r.Algorithm)
 		if r.Err != nil {
-			log.Fatalf("error: %s", r.Err)
+			return s.Error(err)
 		}
 		doubles, adds := r.Program.Count()
-		log.Printf("total: %d\tdoubles: \t%d adds: %d", doubles+adds, doubles, adds)
+		s.log.Printf("total: %d\tdoubles: \t%d adds: %d", doubles+adds, doubles, adds)
 		if len(r.Program) < len(rs[best].Program) {
 			best = i
 		}
@@ -64,22 +110,24 @@ func main() {
 	// Details for the best chain.
 	b := rs[best]
 	for n, op := range b.Program {
-		log.Printf("[%3d] %3d+%3d\t%x", n+1, op.I, op.J, b.Chain[n+1])
+		s.log.Printf("[%3d] %3d+%3d\t%x", n+1, op.I, op.J, b.Chain[n+1])
 	}
-	log.Printf("best: %s", b.Algorithm)
+	s.log.Printf("best: %s", b.Algorithm)
 
 	// Produce a program for it.
 	p, err := acc.Decompile(b.Program)
 	if err != nil {
-		log.Fatal(err)
+		return s.Error(err)
 	}
 
 	syntax, err := acc.Build(p)
 	if err != nil {
-		log.Fatal(err)
+		return s.Error(err)
 	}
 
 	if err := printer.Print(syntax); err != nil {
-		log.Fatal(err)
+		return s.Error(err)
 	}
+
+	return subcommands.ExitSuccess
 }
