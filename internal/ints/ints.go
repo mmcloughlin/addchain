@@ -1,6 +1,13 @@
 // Package ints provides simple integer utilities.
 package ints
 
+// NextMultiple returns the next multiple of n greater than or equal to a.
+func NextMultiple(a, n int) int {
+	a += n - 1
+	a -= a % n
+	return a - (a % n)
+}
+
 // MinMax returns the min and max of x and y.
 func MinMax(x, y int) (min, max int) {
 	if x > y {
