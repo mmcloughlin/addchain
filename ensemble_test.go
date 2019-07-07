@@ -1,4 +1,4 @@
-package addchain
+package addchain_test
 
 import (
 	"log"
@@ -6,6 +6,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/mmcloughlin/addchain"
+
+	"github.com/mmcloughlin/addchain/acc"
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/test"
 	"github.com/mmcloughlin/addchain/prime"
@@ -27,10 +30,6 @@ func TestEnsembleResultsInversionChains(t *testing.T) {
 		N     *big.Int
 		Delta int64
 
-		// Baseline program length obtained by previous versions, to prevent
-		// regressions and highlight improvements.
-		Baseline int
-
 		// BestPublished is the length of the most efficient chain seen published
 		// somewhere. These are currently all from [curvechains], it's possible there
 		// are better results elsewhere.
@@ -40,128 +39,108 @@ func TestEnsembleResultsInversionChains(t *testing.T) {
 			Name:          "curve25519_field",
 			N:             prime.P25519.Int(),
 			Delta:         2,
-			Baseline:      266,
 			BestPublished: 265,
 		},
 		{
 			Name:          "p256_field",
 			N:             prime.NISTP256.Int(),
 			Delta:         3,
-			Baseline:      266,
 			BestPublished: 266,
 		},
 		{
 			Name:          "p384_field",
 			N:             prime.NISTP384.Int(),
 			Delta:         3,
-			Baseline:      397,
 			BestPublished: 396,
 		},
 		{
 			Name:          "secp256k1_field",
 			N:             prime.Secp256k1.Int(),
 			Delta:         3,
-			Baseline:      269,
 			BestPublished: 269,
 		},
 		{
 			Name:          "secp256k1_scalar",
 			N:             bigint.MustHex("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413f"),
-			Baseline:      293,
 			BestPublished: 290,
 		},
 		{
 			Name:          "p256_scalar",
 			N:             bigint.MustHex("ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc63254f"),
-			Baseline:      294,
 			BestPublished: 292,
 		},
 		{
 			Name:          "p384_scalar",
 			N:             bigint.MustHex("ffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52971"),
-			Baseline:      434,
 			BestPublished: 433,
 		},
 		{
 			Name:          "curve25519_scalar",
 			N:             bigint.MustHex("1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3eb"),
-			Baseline:      283,
 			BestPublished: 284,
 		},
 		{
-			Name:     "p2213_field",
-			N:        prime.P2213.Int(),
-			Delta:    2,
-			Baseline: 231,
+			Name:  "p2213_field",
+			N:     prime.P2213.Int(),
+			Delta: 2,
 		},
 		{
-			Name:     "p222117_field",
-			N:        prime.P222117.Int(),
-			Delta:    2,
-			Baseline: 233,
+			Name:  "p222117_field",
+			N:     prime.P222117.Int(),
+			Delta: 2,
 		},
 		{
-			Name:     "p2519_field",
-			N:        prime.P2519.Int(),
-			Delta:    2,
-			Baseline: 263,
+			Name:  "p2519_field",
+			N:     prime.P2519.Int(),
+			Delta: 2,
 		},
 		{
-			Name:     "p382105_field",
-			N:        prime.P382105.Int(),
-			Delta:    2,
-			Baseline: 395,
+			Name:  "p382105_field",
+			N:     prime.P382105.Int(),
+			Delta: 2,
 		},
 		{
-			Name:     "p383187_field",
-			N:        prime.P383187.Int(),
-			Delta:    2,
-			Baseline: 396,
+			Name:  "p383187_field",
+			N:     prime.P383187.Int(),
+			Delta: 2,
 		},
 		{
-			Name:     "p41417_field",
-			N:        prime.P41417.Int(),
-			Delta:    2,
-			Baseline: 426,
+			Name:  "p41417_field",
+			N:     prime.P41417.Int(),
+			Delta: 2,
 		},
 		{
-			Name:     "p511187_field",
-			N:        prime.P511187.Int(),
-			Delta:    2,
-			Baseline: 525,
+			Name:  "p511187_field",
+			N:     prime.P511187.Int(),
+			Delta: 2,
 		},
 		{
-			Name:     "p192_field",
-			N:        prime.NISTP192.Int(),
-			Delta:    2,
-			Baseline: 203,
+			Name:  "p192_field",
+			N:     prime.NISTP192.Int(),
+			Delta: 2,
 		},
 		{
-			Name:     "p224_field",
-			N:        prime.NISTP224.Int(),
-			Delta:    2,
-			Baseline: 234,
+			Name:  "p224_field",
+			N:     prime.NISTP224.Int(),
+			Delta: 2,
 		},
 		{
-			Name:     "goldilocks_field",
-			N:        prime.Goldilocks.Int(),
-			Delta:    2,
-			Baseline: 460,
+			Name:  "goldilocks_field",
+			N:     prime.Goldilocks.Int(),
+			Delta: 2,
 		},
 		{
-			Name:     "secp192k1_field",
-			N:        prime.Secp192k1.Int(),
-			Delta:    2,
-			Baseline: 205,
+			Name:  "secp192k1_field",
+			N:     prime.Secp192k1.Int(),
+			Delta: 2,
 		},
 		{
-			Name:     "secp224k1_field",
-			N:        prime.Secp224k1.Int(),
-			Delta:    2,
-			Baseline: 238,
+			Name:  "secp224k1_field",
+			N:     prime.Secp224k1.Int(),
+			Delta: 2,
 		},
 	}
-	as := Ensemble()
+	as := addchain.Ensemble()
 	for _, c := range cases {
 		c := c // scopelint
 		t.Run(c.Name, func(t *testing.T) {
@@ -177,9 +156,9 @@ func TestEnsembleResultsInversionChains(t *testing.T) {
 			t.Logf("n-%d=%x", c.Delta, n)
 
 			// Execute.
-			p := NewParallel()
-			p.SetLogger(log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds))
-			rs := p.Execute(n, as)
+			ex := addchain.NewParallel()
+			ex.SetLogger(log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds))
+			rs := ex.Execute(n, as)
 
 			// Process results.
 			best := 0
@@ -204,11 +183,33 @@ func TestEnsembleResultsInversionChains(t *testing.T) {
 				t.Logf("delta: %+d", len(b.Program)-c.BestPublished)
 			}
 
-			// Report on differences from baseline in either direction.
-			if c.Baseline == 0 {
-				t.Errorf("missing baseline: set to %d", len(b.Program))
-			} else if len(b.Program) != c.Baseline {
-				t.Errorf("change from baseline: %+d", len(b.Program)-c.Baseline)
+			// Compare to golden file.
+			golden, err := acc.LoadFile(test.GoldenName(c.Name))
+			if err != nil {
+				t.Logf("failed to load golden file: %s", err)
+			}
+
+			save := test.Golden()
+			switch {
+			case golden == nil:
+				t.Errorf("missing golden file")
+				save = true
+			case len(golden.Program) < len(b.Program):
+				t.Errorf("regression from golden: %d to %d", len(golden.Program), len(b.Program))
+			case len(golden.Program) > len(b.Program):
+				t.Logf("improvement: %d to %d", len(golden.Program), len(b.Program))
+				save = true
+			}
+
+			if save {
+				r, err := acc.Decompile(b.Program)
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				if err := acc.Save(test.GoldenName(c.Name), r); err != nil {
+					t.Fatal(err)
+				}
 			}
 		})
 	}
