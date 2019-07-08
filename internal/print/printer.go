@@ -1,6 +1,7 @@
 package print
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"strings"
@@ -66,4 +67,22 @@ func (p *Printer) SetError(err error) {
 	if p.err == nil {
 		p.err = err
 	}
+}
+
+// Buffer is a convenience wrapper for printing into a byte buffer.
+type Buffer struct {
+	buf *bytes.Buffer
+	Printer
+}
+
+func NewBuffer() Buffer {
+	buf := bytes.NewBuffer(nil)
+	return Buffer{
+		buf:     buf,
+		Printer: New(buf),
+	}
+}
+
+func (b *Buffer) Result() ([]byte, error) {
+	return b.buf.Bytes(), b.Error()
 }
