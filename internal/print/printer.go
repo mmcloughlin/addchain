@@ -71,22 +71,18 @@ func (p *Printer) SetError(err error) {
 
 // Buffer is a convenience wrapper for printing into a byte buffer.
 type Buffer struct {
-	buf *bytes.Buffer
+	Buf *bytes.Buffer
 	Printer
 }
 
 func NewBuffer() Buffer {
 	buf := bytes.NewBuffer(nil)
 	return Buffer{
-		buf:     buf,
+		Buf:     buf,
 		Printer: New(buf),
 	}
 }
 
-func (b *Buffer) Reset() {
-	b.buf.Reset()
-}
-
 func (b *Buffer) Result() ([]byte, error) {
-	return b.buf.Bytes(), b.Error()
+	return b.Buf.Bytes(), b.Error()
 }
