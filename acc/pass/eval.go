@@ -1,7 +1,7 @@
 package pass
 
 import (
-	"fmt"
+	"golang.org/x/xerrors"
 
 	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/acc/ir"
@@ -35,7 +35,7 @@ func Compile(p *ir.Program) error {
 			return err
 		}
 		if out != i.Output.Index {
-			return fmt.Errorf("incorrect output index")
+			return xerrors.Errorf("incorrect output index")
 		}
 	}
 
