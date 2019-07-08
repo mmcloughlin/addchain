@@ -21,6 +21,12 @@ func (p *Program) AddInstruction(i *Instruction) {
 	p.Instructions = append(p.Instructions, i)
 }
 
+// Output returns the output of the last instruction.
+func (p Program) Output() *Operand {
+	last := len(p.Instructions) - 1
+	return p.Instructions[last].Output
+}
+
 func (p Program) String() string {
 	var b strings.Builder
 	for _, i := range p.Instructions {

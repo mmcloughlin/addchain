@@ -21,6 +21,19 @@ var (
 	NameXRuns      = NameBinaryRuns("x%d")
 )
 
+// ClearNames deletes all operand names.
+func ClearNames(p *ir.Program) error {
+	if err := CanonicalizeOperands(p); err != nil {
+		return err
+	}
+
+	for _, operand := range p.Operands {
+		operand.Identifier = ""
+	}
+
+	return nil
+}
+
 // NameBinaryValues assigns variable names to operands with values less than 2ᵏ.
 // The identifier is determined from the format string, which should expect to
 // take one *big.Int argument.
