@@ -83,6 +83,10 @@ func NewBuffer() Buffer {
 	}
 }
 
+func (b *Buffer) Reset() {
+	b.buf.Reset()
+}
+
 func (b *Buffer) Result() ([]byte, error) {
 	return b.buf.Bytes(), b.Error()
 }
