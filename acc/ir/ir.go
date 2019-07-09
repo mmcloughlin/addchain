@@ -11,10 +11,11 @@ type Program struct {
 	Instructions []*Instruction
 
 	// Pass/analysis results.
-	Operands  map[int]*Operand
-	ReadCount map[int]int
-	Program   addchain.Program
-	Chain     addchain.Chain
+	Operands    map[int]*Operand
+	ReadCount   map[int]int
+	Program     addchain.Program
+	Chain       addchain.Chain
+	Temporaries []string
 }
 
 func (p *Program) AddInstruction(i *Instruction) {

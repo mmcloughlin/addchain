@@ -72,10 +72,16 @@ func (a Allocator) Execute(p *ir.Program) error {
 		}
 	}
 
-	// Set names.
+	// Record allocation.
 	for _, op := range p.Operands {
 		op.Identifier = a.name(allocation[op.Index])
 	}
+
+	temps := []string{}
+	for i := 2; i < n; i++ {
+		temps = append(temps, a.name(i))
+	}
+	p.Temporaries = temps
 
 	return nil
 }
