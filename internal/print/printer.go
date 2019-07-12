@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"text/tabwriter"
 )
 
 const DefaultIndent = "\t"
@@ -85,4 +86,21 @@ func NewBuffer() Buffer {
 
 func (b *Buffer) Result() ([]byte, error) {
 	return b.Buf.Bytes(), b.Error()
+}
+
+type TabWriter struct {
+	tw *tabwriter.Writer
+	Printer
+}
+
+func NewTabWriter(w io.Writer, minwidth, tabwidth, padding int, padchar byte, flags uint) *TabWriter {
+	tw := tabwriter.NewWriter(w, minwidth, tabwidth, padding, padchar, flags)
+	return &TabWriter{
+		tw:      tw,
+		Printer: New(tw),
+	}
+}
+
+func (p *TabWriter) Flush() {
+	p.SetError(p.tw.Flush())
 }

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"os"
-	"text/tabwriter"
 
 	"github.com/mmcloughlin/addchain/acc/ast"
 	"github.com/mmcloughlin/addchain/internal/errutil"
@@ -29,25 +28,18 @@ func Print(n interface{}) error {
 func Fprint(w io.Writer, n interface{}) error {
 	p := newprinter(w)
 	p.node(n)
-	p.flush()
+	p.Flush()
 	return p.Error()
 }
 
 type printer struct {
-	tw *tabwriter.Writer
-	print.Printer
+	print.TabWriter
 }
 
 func newprinter(w io.Writer) *printer {
-	tw := tabwriter.NewWriter(w, 1, 4, 1, ' ', 0)
 	return &printer{
-		tw:      tw,
-		Printer: print.New(tw),
+		Printer: print.NewTabWriter(w, 1, 4, 4, ' ', 0),
 	}
-}
-
-func (p *printer) flush() {
-	p.SetError(p.tw.Flush())
 }
 
 func (p *printer) node(n interface{}) {
