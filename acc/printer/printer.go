@@ -33,12 +33,12 @@ func Fprint(w io.Writer, n interface{}) error {
 }
 
 type printer struct {
-	print.TabWriter
+	*print.TabWriter
 }
 
 func newprinter(w io.Writer) *printer {
 	return &printer{
-		Printer: print.NewTabWriter(w, 1, 4, 4, ' ', 0),
+		TabWriter: print.NewTabWriter(w, 1, 4, 4, ' ', 0),
 	}
 }
 
