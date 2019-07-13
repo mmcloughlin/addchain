@@ -67,3 +67,15 @@ func TestExtract(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestUint64s(t *testing.T) {
+	x := MustHex("deadbeef_fedcba98_76543210")
+	got := Uint64s(x)
+	expect := []uint64{
+		0xfedcba9876543210,
+		0x00000000deadbeef,
+	}
+	if !reflect.DeepEqual(expect, got) {
+		t.Fail()
+	}
+}

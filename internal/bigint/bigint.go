@@ -166,3 +166,17 @@ func TrailingZeros(x *big.Int) int {
 	}
 	return n
 }
+
+// Uint64s representsx in 64-bit limbs.
+func Uint64s(x *big.Int) []uint64 {
+	z := Clone(x)
+	mask := Ones(64)
+	word := new(big.Int)
+	words := []uint64{}
+	for IsNonZero(z) {
+		word.And(z, mask)
+		words = append(words, word.Uint64())
+		z.Rsh(z, 64)
+	}
+	return words
+}
