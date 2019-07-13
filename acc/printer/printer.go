@@ -38,7 +38,7 @@ type printer struct {
 
 func newprinter(w io.Writer) *printer {
 	return &printer{
-		TabWriter: print.NewTabWriter(w, 1, 4, 4, ' ', 0),
+		TabWriter: print.NewTabWriter(w, 1, 4, 1, ' ', 0),
 	}
 }
 
