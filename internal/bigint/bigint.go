@@ -167,7 +167,7 @@ func TrailingZeros(x *big.Int) int {
 	return n
 }
 
-// Uint64s representsx in 64-bit limbs.
+// Uint64s represents x in 64-bit limbs.
 func Uint64s(x *big.Int) []uint64 {
 	z := Clone(x)
 	mask := Ones(64)
@@ -179,4 +179,13 @@ func Uint64s(x *big.Int) []uint64 {
 		z.Rsh(z, 64)
 	}
 	return words
+}
+
+// BytesLittleEndian returns the absolute value of x as a little-endian byte slice.
+func BytesLittleEndian(x *big.Int) []byte {
+	b := x.Bytes()
+	for l, r := 0, len(b)-1; l < r; l, r = l+1, r-1 {
+		b[l], b[r] = b[r], b[l]
+	}
+	return b
 }

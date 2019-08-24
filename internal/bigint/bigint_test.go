@@ -79,3 +79,12 @@ func TestUint64s(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBytesLittleEndian(t *testing.T) {
+	x := MustHex("fe_ed_be_ef")
+	got := BytesLittleEndian(x)
+	expect := []byte{0xfe, 0xef, 0xbe, 0xef}
+	if !reflect.DeepEqual(expect, got) {
+		t.Fail()
+	}
+}
