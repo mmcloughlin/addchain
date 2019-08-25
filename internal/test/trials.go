@@ -59,7 +59,6 @@ func RequireStress(t *testing.T) {
 //	-short		run for less time than usual
 //	-long		allow more time
 //	-stress		run for an extremely long time
-//	-duration	set a custom duration
 func Repeat(t *testing.T, trial func(t *testing.T) bool) {
 	start := time.Now()
 	d := timeallowed()
