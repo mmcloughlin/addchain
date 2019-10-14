@@ -2,10 +2,10 @@ package pass
 
 import (
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/mmcloughlin/addchain/acc/ir"
+	"github.com/mmcloughlin/addchain/internal/assert"
 )
 
 func TestCanonicalizeOperands(t *testing.T) {
@@ -88,14 +88,7 @@ func TestCanonicalizeOperandsIdentifierConflict(t *testing.T) {
 	}
 
 	err := CanonicalizeOperands(p)
-
-	if err == nil {
-		t.Fatal("expected error")
-	}
-
-	if !strings.Contains(err.Error(), "conflict") {
-		t.Fatalf("unexpected error message: got %q", err)
-	}
+	assert.ErrorContains(t, err, "conflict")
 }
 
 func TestReadCounts(t *testing.T) {
