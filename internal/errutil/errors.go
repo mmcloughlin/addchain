@@ -23,9 +23,9 @@ func UnexpectedType(t interface{}) error {
 // Errors is a collection of errors.
 type Errors []error
 
-// Add appends an error to the list.
-func (e *Errors) Add(err error) {
-	*e = append(*e, err)
+// Add appends errors to the list.
+func (e *Errors) Add(err ...error) {
+	*e = append(*e, err...)
 }
 
 // Err returns an error equivalent to this error list.
