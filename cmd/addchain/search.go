@@ -11,11 +11,12 @@ import (
 	"github.com/mmcloughlin/addchain/acc"
 	"github.com/mmcloughlin/addchain/acc/printer"
 	"github.com/mmcloughlin/addchain/internal/calc"
+	"github.com/mmcloughlin/addchain/internal/cli"
 )
 
 // search subcommand.
 type search struct {
-	command
+	cli.Command
 
 	concurrency int
 }
@@ -41,19 +42,19 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	expr := f.Arg(0)
 
 	// Evaluate expression.
-	cmd.log.Printf("expr: %q", expr)
+	cmd.Log.Printf("expr: %q", expr)
 
 	n, err := calc.Eval(expr)
 	if err != nil {
 		return cmd.Fail("failed to evaluate %q: %s", expr, err)
 	}
 
-	cmd.log.Printf("hex: %x", n)
-	cmd.log.Printf("dec: %s", n)
+	cmd.Log.Printf("hex: %x", n)
+	cmd.Log.Printf("dec: %s", n)
 
 	// Execute an ensemble of algorithms.
 	ex := addchain.NewParallel()
-	ex.SetLogger(cmd.log)
+	ex.SetLogger(cmd.Log)
 	ex.SetConcurrency(cmd.concurrency)
 
 	as := addchain.Ensemble()
@@ -62,12 +63,12 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	// Report results.
 	best := 0
 	for i, r := range rs {
-		cmd.log.Printf("algorithm: %s", r.Algorithm)
+		cmd.Log.Printf("algorithm: %s", r.Algorithm)
 		if r.Err != nil {
 			return cmd.Error(err)
 		}
 		doubles, adds := r.Program.Count()
-		cmd.log.Printf("total: %d\tdoubles: \t%d adds: %d", doubles+adds, doubles, adds)
+		cmd.Log.Printf("total: %d\tdoubles: \t%d adds: %d", doubles+adds, doubles, adds)
 		if len(r.Program) < len(rs[best].Program) {
 			best = i
 		}
@@ -76,9 +77,9 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	// Details for the best chain.
 	b := rs[best]
 	for n, op := range b.Program {
-		cmd.log.Printf("[%3d] %3d+%3d\t%x", n+1, op.I, op.J, b.Chain[n+1])
+		cmd.Log.Printf("[%3d] %3d+%3d\t%x", n+1, op.I, op.J, b.Chain[n+1])
 	}
-	cmd.log.Printf("best: %s", b.Algorithm)
+	cmd.Log.Printf("best: %s", b.Algorithm)
 
 	// Produce a program for it.
 	p, err := acc.Decompile(b.Program)

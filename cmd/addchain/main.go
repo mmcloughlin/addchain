@@ -6,46 +6,23 @@ import (
 	"flag"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/google/subcommands"
+
+	"github.com/mmcloughlin/addchain/internal/cli"
 )
 
 func main() {
-	base := command{
-		log: log.New(os.Stderr, "addchain: ", 0),
-	}
-
-	subcommands.Register(&search{command: base}, "")
-	subcommands.Register(&eval{command: base}, "")
-	subcommands.Register(&format{command: base}, "")
+	base := cli.NewBaseCommand("addchain")
+	subcommands.Register(&search{Command: base}, "")
+	subcommands.Register(&eval{Command: base}, "")
+	subcommands.Register(&format{Command: base}, "")
 	subcommands.Register(subcommands.HelpCommand(), "")
 
 	flag.Parse()
 	ctx := context.Background()
 	os.Exit(int(subcommands.Execute(ctx)))
-}
-
-// command is a base for all subcommands.
-type command struct {
-	log *log.Logger
-}
-
-func (c command) SetFlags(f *flag.FlagSet) {}
-
-func (c command) UsageError(format string, args ...interface{}) subcommands.ExitStatus {
-	c.log.Printf(format, args...)
-	return subcommands.ExitUsageError
-}
-
-func (c command) Fail(format string, args ...interface{}) subcommands.ExitStatus {
-	c.log.Printf(format, args...)
-	return subcommands.ExitFailure
-}
-
-func (c command) Error(err error) subcommands.ExitStatus {
-	return c.Fail(err.Error())
 }
 
 // OpenInput is a convenience for possibly opening an input file, or otherwise returning standard in.
