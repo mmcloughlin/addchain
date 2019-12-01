@@ -35,7 +35,7 @@ func (cmd *format) SetFlags(f *flag.FlagSet) {
 
 func (cmd *format) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	// Read input.
-	input, r, err := OpenInput(f.Arg(0))
+	input, r, err := cli.OpenInput(f.Arg(0))
 	if err != nil {
 		return cmd.Error(err)
 	}
