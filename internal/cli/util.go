@@ -18,7 +18,7 @@ func OpenInput(filename string) (string, io.ReadCloser, error) {
 // OpenOutput is a convenience for possibly opening an output file, or otherwise returning standard out.
 func OpenOutput(filename string) (string, io.WriteCloser, error) {
 	if filename == "" {
-		return "<stdout>", nopwritercloser{os.Stdin}, nil
+		return "<stdout>", nopwritercloser{os.Stdout}, nil
 	}
 	f, err := os.Create(filename)
 	return filename, f, err
