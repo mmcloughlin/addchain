@@ -25,7 +25,7 @@ import "github.com/mmcloughlin/addchain/polynomial"
 //	              elliptic-curve cryptography. https://safecurves.cr.yp.to
 //	[sec2]        Certicom Research. SEC 2: Recommended Elliptic Curve Domain Parameters, Version
 //	              2.0. Standards for Efficient Cryptography 2. 2010.
-//	              http://safecurves.cr.yp.to/www.secg.org/sec2-v2.pdf
+//	              https://safecurves.cr.yp.to/www.secg.org/sec2-v2.pdf
 
 var (
 	// P2213 is the prime 2²²¹ - 3 used in curve M-221 [aranha].
