@@ -9,7 +9,6 @@ import (
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/bigints"
 	"github.com/mmcloughlin/addchain/internal/bigvector"
-	"github.com/mmcloughlin/addchain/internal/ints"
 )
 
 // References:
@@ -83,7 +82,7 @@ func (w FixedWindow) Decompose(x *big.Int) DictSum {
 	sum := DictSum{}
 	h := x.BitLen()
 	for h > 0 {
-		l := ints.Max(h-int(w.K), 0)
+		l := max(h-int(w.K), 0)
 		d := bigint.Extract(x, uint(l), uint(h))
 		if bigint.IsNonZero(d) {
 			sum = append(sum, DictTerm{D: d, E: uint(l)})
@@ -118,7 +117,7 @@ func (w SlidingWindow) Decompose(x *big.Int) DictSum {
 		}
 
 		// Look down k positions.
-		l := ints.Max(h-int(w.K)+1, 0)
+		l := max(h-int(w.K)+1, 0)
 
 		// Advance to the next 1.
 		for x.Bit(l) == 0 {
@@ -420,4 +419,12 @@ func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
 	}
 
 	return out, pruned, nil
+}
+
+// max returns the maximum of a and b.
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
