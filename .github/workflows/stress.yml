@@ -19,7 +19,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v1
     - name: Stress Test
-      run: go test -stress -coverprofile=coverage.out -covermode=set
+      run: go test -stress -timeout=0 -coverprofile=coverage.out -covermode=set
     - name: Upload Coverage
       uses: codecov/codecov-action@v1.0.5
       with:
