@@ -1,7 +1,6 @@
 on:
-  pull_request:
   schedule:
-    - cron: '42 10 * * *'
+    - cron: '42 10 * * 0,3'
 
 name: stress
 jobs:
