@@ -31,3 +31,11 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: coverage.out
         flags: unittests
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Bootstrap
+      run: make bootstrap
+    - name: Lint
+      run: make lint
