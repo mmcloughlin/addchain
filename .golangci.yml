@@ -4,3 +4,13 @@ linters:
     - lll
     - gochecknoglobals
     - funlen
+
+issues:
+  exclude-use-default: false
+  exclude:
+    # Ignore missing documentation comments.
+    - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
+    # gosec: G304: Potential file inclusion via variable.
+    - G304
+    # Ignore missed error checks on Close() fuctions.
+    - Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*printf?|os\.(Un)?Setenv). is not checked
