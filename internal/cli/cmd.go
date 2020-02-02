@@ -2,6 +2,7 @@ package cli
 
 import (
 	"flag"
+	"io"
 	"log"
 	"os"
 
@@ -38,4 +39,12 @@ func (c Command) Fail(format string, args ...interface{}) subcommands.ExitStatus
 // Error logs err and returns a failing exit code.
 func (c Command) Error(err error) subcommands.ExitStatus {
 	return c.Fail(err.Error())
+}
+
+// CheckClose closes cl. On error it logs and writes to the status pointer.
+// Intended for deferred Close() calls.
+func (c Command) CheckClose(statusp *subcommands.ExitStatus, cl io.Closer) {
+	if err := cl.Close(); err != nil {
+		*statusp = c.Error(err)
+	}
 }
