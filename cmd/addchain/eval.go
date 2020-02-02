@@ -28,13 +28,13 @@ Evaluate an addition chain script.
  `
 }
 
-func (cmd *eval) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+func (cmd *eval) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) (status subcommands.ExitStatus) {
 	// Read input.
 	input, r, err := cli.OpenInput(f.Arg(0))
 	if err != nil {
 		return cmd.Error(err)
 	}
-	defer r.Close()
+	defer cmd.CheckClose(&status, r)
 
 	// Parse to a syntax tree.
 	s, err := parse.Reader(input, r)

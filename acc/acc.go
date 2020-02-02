@@ -10,15 +10,16 @@ import (
 	"github.com/mmcloughlin/addchain/acc/parse"
 	"github.com/mmcloughlin/addchain/acc/pass"
 	"github.com/mmcloughlin/addchain/acc/printer"
+	"github.com/mmcloughlin/addchain/internal/errutil"
 )
 
 // LoadFile is a convenience for loading an addition chain script from a file.
-func LoadFile(filename string) (*ir.Program, error) {
+func LoadFile(filename string) (p *ir.Program, err error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer errutil.CheckClose(&err, f)
 	return LoadReader(filename, f)
 }
 
@@ -68,12 +69,12 @@ func Write(w io.Writer, p *ir.Program) error {
 }
 
 // Save is a convenience for writing a program to a file.
-func Save(filename string, p *ir.Program) error {
+func Save(filename string, p *ir.Program) (err error) {
 	f, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer errutil.CheckClose(&err, f)
 	return Write(f, p)
 }
 
