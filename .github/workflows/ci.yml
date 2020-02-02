@@ -45,7 +45,7 @@ jobs:
       run: make bootstrap
     - name: Lint
       run: make lint
-	  - name: Generate
+    - name: Generate
       run: make generate
     - name: Git Status
       run: |
