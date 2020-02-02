@@ -45,3 +45,15 @@ jobs:
       run: make bootstrap
     - name: Lint
       run: make lint
+    - name: Generate
+      run: make generate
+    - name: Git Status
+      run: |
+        git diff
+        test -z "$(git status --porcelain)"
+    - name: Format
+      run: make fmt
+    - name: Git Status
+      run: |
+        git diff
+        test -z "$(git status --porcelain)"
