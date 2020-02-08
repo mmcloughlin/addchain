@@ -1,6 +1,6 @@
 on:
   schedule:
-    - cron: '42 10 * * 0,3'
+    - cron: '42 10 * * 3'
 
 name: stress
 jobs:
