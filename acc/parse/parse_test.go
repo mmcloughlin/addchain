@@ -12,7 +12,7 @@ func TestOperands(t *testing.T) {
 		"1":       ast.Operand(0),
 		"[23]":    ast.Operand(23),
 		"[0x2a]":  ast.Operand(0x2a),
-		"[0644]":  ast.Operand(0644),
+		"[0644]":  ast.Operand(0o644),
 		"(1)":     ast.Operand(0),
 		"( [3] )": ast.Operand(3),
 		"_101":    ast.Identifier("_101"),
