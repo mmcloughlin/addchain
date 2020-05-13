@@ -161,7 +161,7 @@ func (Halving) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 	n := len(f)
 	max, next := target, f[n-1]
 
-	// Check the condition f / f_1 ⩾ 2ᵘ
+	// Check the condition f / f₁ ⩾ 2ᵘ
 	r := new(big.Int).Div(max, next)
 	if r.BitLen() < 2 {
 		return nil

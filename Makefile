@@ -5,6 +5,7 @@ fmt:
 	find . -name '*.go' | xargs grep -L '// Code generated' | xargs sed -i.fmtbackup '/^import (/,/)/ { /^$$/ d; }'
 	find . -name '*.fmtbackup' -delete
 	find . -name '*.go' | xargs grep -L '// Code generated' | xargs gofumports -w -local $(REPO)
+	find . -name '*.go' | grep -v _test | xargs grep -L '// Code generated' | xargs mathfmt -w
 
 .PHONY: lint
 lint:
@@ -18,5 +19,6 @@ generate:
 bootstrap:
 	GO111MODULE=off go get -u \
 		mvdan.cc/gofumpt/gofumports \
-		github.com/mna/pigeon
+		github.com/mna/pigeon \
+		github.com/mmcloughlin/mathfmt
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b ${GOPATH}/bin v1.19.1

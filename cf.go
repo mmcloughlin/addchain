@@ -143,7 +143,7 @@ func (CoBinaryStrategy) K(n *big.Int) []*big.Int {
 }
 
 // TotalStrategy returns all possible values of k less than n. This will result
-// in the optimal continued fraction chain at a complexity of O(n^2 log^2(n)).
+// in the optimal continued fraction chain at a complexity of O(n² log²(n)).
 // Note that the optimal continued fraction chain is not necessarily the optimal
 // chain. Must not be used for large inputs.
 type TotalStrategy struct{}
@@ -167,7 +167,7 @@ func (TotalStrategy) K(n *big.Int) []*big.Int {
 
 // DyadicStrategy implements the Dyadic Strategy, defined in
 // [efficientcompaddchain] page 28. This gives rise to a sequence algorithm with
-// complexity O(n*log^3(n)). Must not be used for large inputs.
+// complexity O(n*log³(n)). Must not be used for large inputs.
 type DyadicStrategy struct{}
 
 func (DyadicStrategy) String() string { return "dyadic" }

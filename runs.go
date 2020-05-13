@@ -11,7 +11,7 @@ import (
 
 // RunsAlgorithm is a custom variant of the dictionary approach that decomposes
 // a target into runs of ones. It leverages the observation that building a
-// dictionary consisting of runs of 1s of lengths l_1, l_2, ..., l_k can itself
+// dictionary consisting of runs of 1s of lengths l₁, l₂, ..., l_k can itself
 // be reduced to first finding an addition chain for the run lengths. Then from
 // this chain we can build a chain for the runs themselves.
 type RunsAlgorithm struct {
@@ -74,8 +74,8 @@ func (a RunsAlgorithm) FindChain(n *big.Int) (Chain, error) {
 }
 
 // RunsChain takes a chain for the run lengths and generates a chain for the
-// runs themselves. That is, if the provided chain is l_1, l_2, ..., l_k then
-// the result will contain r(l_1), r(l_2), ..., r(l_k) where r(n) = 2ⁿ - 1.
+// runs themselves. That is, if the provided chain is l₁, l₂, ..., l_k then
+// the result will contain r(l₁), r(l₂), ..., r(l_k) where r(n) = 2ⁿ - 1.
 func RunsChain(lc Chain) (Chain, error) {
 	p, err := lc.Program()
 	if err != nil {

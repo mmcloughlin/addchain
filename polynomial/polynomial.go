@@ -10,7 +10,7 @@ import (
 	"github.com/mmcloughlin/addchain/internal/bigint"
 )
 
-// Term is the term A*x^N in a polynomial.
+// Term is the term A*xᴺ in a polynomial.
 type Term struct {
 	A int64
 	N uint
