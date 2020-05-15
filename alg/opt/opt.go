@@ -1,4 +1,4 @@
-package addchain
+package opt
 
 import (
 	"fmt"

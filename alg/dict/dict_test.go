@@ -1,4 +1,4 @@
-package addchain
+package dict
 
 import (
 	"math/big"

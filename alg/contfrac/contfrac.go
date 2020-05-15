@@ -1,4 +1,4 @@
-package addchain
+package contfrac
 
 import (
 	"fmt"
