@@ -51,13 +51,13 @@ func TestFixedWindow(t *testing.T) {
 	n := big.NewInt(0xbeef0 << 3)
 	f := FixedWindow{K: 4}
 	got := f.Decompose(n)
-	expect := DictSum{
+	expect := Sum{
 		{D: big.NewInt(0xf), E: 7},
 		{D: big.NewInt(0xe), E: 11},
 		{D: big.NewInt(0xe), E: 15},
 		{D: big.NewInt(0xb), E: 19},
 	}
-	if !DictSumEquals(got, expect) {
+	if !SumEquals(got, expect) {
 		t.Fatalf("got %v expect %v", got, expect)
 	}
 }
@@ -66,12 +66,12 @@ func TestSlidingWindow(t *testing.T) {
 	n := big.NewInt(0xf143)
 	f := SlidingWindow{K: 4}
 	got := f.Decompose(n)
-	expect := DictSum{
+	expect := Sum{
 		{D: big.NewInt(0x3), E: 0},
 		{D: big.NewInt(0x5), E: 6},
 		{D: big.NewInt(0xf), E: 12},
 	}
-	if !DictSumEquals(got, expect) {
+	if !SumEquals(got, expect) {
 		t.Fatalf("got %v expect %v", got, expect)
 	}
 }
@@ -80,12 +80,12 @@ func TestRunLength(t *testing.T) {
 	cases := []struct {
 		T      uint
 		X      int64
-		Expect DictSum
+		Expect Sum
 	}{
 		{
 			T: 4,
 			X: 0xff,
-			Expect: DictSum{
+			Expect: Sum{
 				{D: big.NewInt(0xf), E: 0},
 				{D: big.NewInt(0xf), E: 4},
 			},
@@ -93,14 +93,14 @@ func TestRunLength(t *testing.T) {
 		{
 			T: 0,
 			X: 0xff,
-			Expect: DictSum{
+			Expect: Sum{
 				{D: big.NewInt(0xff), E: 0},
 			},
 		},
 		{
 			T: 4,
 			X: 0xf0f0,
-			Expect: DictSum{
+			Expect: Sum{
 				{D: big.NewInt(0xf), E: 4},
 				{D: big.NewInt(0xf), E: 12},
 			},
@@ -108,7 +108,7 @@ func TestRunLength(t *testing.T) {
 		{
 			T: 0,
 			X: 0xf0f0,
-			Expect: DictSum{
+			Expect: Sum{
 				{D: big.NewInt(0xf), E: 4},
 				{D: big.NewInt(0xf), E: 12},
 			},
@@ -116,7 +116,7 @@ func TestRunLength(t *testing.T) {
 		{
 			T: 3,
 			X: 0xff,
-			Expect: DictSum{
+			Expect: Sum{
 				{D: big.NewInt(0x3), E: 0},
 				{D: big.NewInt(0x7), E: 2},
 				{D: big.NewInt(0x7), E: 5},
@@ -125,7 +125,7 @@ func TestRunLength(t *testing.T) {
 	}
 	for _, c := range cases {
 		d := RunLength{T: c.T}
-		if got := d.Decompose(big.NewInt(c.X)); !DictSumEquals(got, c.Expect) {
+		if got := d.Decompose(big.NewInt(c.X)); !SumEquals(got, c.Expect) {
 			t.Fatalf("Decompose(%#x) = %v; expect %v", c.X, got, c.Expect)
 		}
 	}
@@ -135,7 +135,7 @@ func TestHybrid(t *testing.T) {
 	n := bigint.MustBinary("11111111_11111111_000_111_000000_1_0_111111_0_11_0")
 	f := Hybrid{K: 4, T: 8}
 	got := f.Decompose(n)
-	expect := DictSum{
+	expect := Sum{
 		{D: big.NewInt(0x3), E: 1},
 		{D: big.NewInt(0x3f), E: 4},
 		{D: big.NewInt(0x1), E: 11},
@@ -143,13 +143,13 @@ func TestHybrid(t *testing.T) {
 		{D: big.NewInt(0xff), E: 24},
 		{D: big.NewInt(0xff), E: 32},
 	}
-	if !DictSumEquals(got, expect) {
+	if !SumEquals(got, expect) {
 		t.Fatalf("got %v expect %v", got, expect)
 	}
 }
 
-func TestDictAlgorithm(t *testing.T) {
-	a := NewDictAlgorithm(
+func TestAlgorithm(t *testing.T) {
+	a := NewAlgorithm(
 		SlidingWindow{K: 4},
 		contfrac.NewContinuedFractions(contfrac.DichotomicStrategy{}),
 	)
@@ -158,12 +158,12 @@ func TestDictAlgorithm(t *testing.T) {
 	t.Log(c)
 }
 
-func TestDictAlgorithmPrimitive(t *testing.T) {
+func TestPrimitive(t *testing.T) {
 	// These tests are designed to verify that primitive dictionary reduction is
 	// doing sensible things, therefore we construct a dictionary algorithm with a
 	// decomposer that's going to have obvious results. We'll use the run length
 	// decomposer.
-	a := NewDictAlgorithm(
+	a := NewAlgorithm(
 		RunLength{T: 0},
 		contfrac.NewContinuedFractions(contfrac.TotalStrategy{}),
 	)
@@ -208,7 +208,7 @@ func TestDictAlgorithmPrimitive(t *testing.T) {
 	}
 }
 
-func DictSumEquals(a, b DictSum) bool {
+func SumEquals(a, b Sum) bool {
 	if len(a) != len(b) {
 		return false
 	}

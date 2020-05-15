@@ -11,11 +11,11 @@ import (
 func TestAlgorithms(t *testing.T) {
 	as := []alg.ChainAlgorithm{
 		// Dictionary-based algorithms.
-		NewDictAlgorithm(
+		NewAlgorithm(
 			SlidingWindow{K: 4},
 			contfrac.NewContinuedFractions(contfrac.DichotomicStrategy{}),
 		),
-		NewDictAlgorithm(
+		NewAlgorithm(
 			FixedWindow{K: 7},
 			contfrac.NewContinuedFractions(contfrac.BinaryStrategy{}),
 		),

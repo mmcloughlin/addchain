@@ -12,11 +12,11 @@ import (
 func Ensemble() []alg.ChainAlgorithm {
 	// Choose sequence algorithms.
 	seqalgs := []alg.SequenceAlgorithm{
-		heuristic.NewHeuristicAlgorithm(heuristic.UseFirstHeuristic{
+		heuristic.NewAlgorithm(heuristic.UseFirstHeuristic{
 			heuristic.Halving{},
 			heuristic.DeltaLargest{},
 		}),
-		heuristic.NewHeuristicAlgorithm(heuristic.UseFirstHeuristic{
+		heuristic.NewAlgorithm(heuristic.UseFirstHeuristic{
 			heuristic.Halving{},
 			heuristic.Approximation{},
 		}),
@@ -50,7 +50,7 @@ func Ensemble() []alg.ChainAlgorithm {
 	as := []alg.ChainAlgorithm{}
 	for _, decomp := range decomposers {
 		for _, seqalg := range seqalgs {
-			a := dict.NewDictAlgorithm(decomp, seqalg)
+			a := dict.NewAlgorithm(decomp, seqalg)
 			as = append(as, a)
 		}
 	}

@@ -22,7 +22,7 @@ func TestAlgorithms(t *testing.T) {
 	}
 	for _, heuristic := range heuristics {
 		suite := algtest.SequenceAlgorithmSuite{
-			Algorithm:          NewHeuristicAlgorithm(heuristic),
+			Algorithm:          NewAlgorithm(heuristic),
 			AcceptsLargeInputs: true,
 		}
 		t.Run(suite.Algorithm.String(), suite.Tests())

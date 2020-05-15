@@ -17,12 +17,18 @@ type SequenceAlgorithm interface {
 	fmt.Stringer
 }
 
-// AsChainAlgorithm adapts a sequence algorithm to a chain algorithm.
-type AsChainAlgorithm struct {
+// AsChainAlgorithm adapts a sequence algorithm to a chain algorithm. The
+// resulting algorithm calls the sequence algorithm with a singleton list
+// containing the target.
+func AsChainAlgorithm(s SequenceAlgorithm) ChainAlgorithm {
+	return asChainAlgorithm{s}
+}
+
+type asChainAlgorithm struct {
 	SequenceAlgorithm
 }
 
 // FindChain calls FindSequence with a singleton list containing the target.
-func (a AsChainAlgorithm) FindChain(target *big.Int) (addchain.Chain, error) {
+func (a asChainAlgorithm) FindChain(target *big.Int) (addchain.Chain, error) {
 	return a.FindSequence([]*big.Int{target})
 }

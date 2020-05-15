@@ -38,26 +38,26 @@ type Heuristic interface {
 	Suggest(f []*big.Int, target *big.Int) []*big.Int
 }
 
-// HeuristicAlgorithm searches for an addition sequence using a heuristic at
-// each step. This implements the framework given in [mpnt], page 63, with the
-// heuristic playing the role of the "newnumbers" function.
-type HeuristicAlgorithm struct {
+// Algorithm searches for an addition sequence using a heuristic at each step.
+// This implements the framework given in [mpnt], page 63, with the heuristic
+// playing the role of the "newnumbers" function.
+type Algorithm struct {
 	heuristic Heuristic
 }
 
-// NewHeuristicAlgorithm builds a heuristic algorithm.
-func NewHeuristicAlgorithm(h Heuristic) *HeuristicAlgorithm {
-	return &HeuristicAlgorithm{
+// NewAlgorithm builds a heuristic algorithm.
+func NewAlgorithm(h Heuristic) *Algorithm {
+	return &Algorithm{
 		heuristic: h,
 	}
 }
 
-func (h HeuristicAlgorithm) String() string {
+func (h Algorithm) String() string {
 	return fmt.Sprintf("heuristic(%v)", h.heuristic)
 }
 
 // FindSequence searches for an addition sequence for the given targets.
-func (h HeuristicAlgorithm) FindSequence(targets []*big.Int) (addchain.Chain, error) {
+func (h Algorithm) FindSequence(targets []*big.Int) (addchain.Chain, error) {
 	// Skip the special case when targets is just {1}.
 	if len(targets) == 1 && bigint.EqualInt64(targets[0], 1) {
 		return targets, nil

@@ -16,7 +16,7 @@ func CheckRandom(t *testing.T, check func(t *testing.T, p addchain.Program)) {
 		rand.RandomAddsGenerator{N: 10},
 		rand.NewRandomSolverGenerator(
 			160,
-			dict.NewDictAlgorithm(
+			dict.NewAlgorithm(
 				dict.SlidingWindow{K: 5},
 				contfrac.NewContinuedFractions(contfrac.DichotomicStrategy{}),
 			),

@@ -31,7 +31,7 @@ func (s SequenceAlgorithmSuite) Tests() func(t *testing.T) {
 	return func(t *testing.T) {
 		t.Run("known_sequences", CheckKnownSequences(s.Algorithm))
 		if s.AcceptsLargeInputs {
-			t.Run("as_chain_algorithm", ChainAlgorithmSuite(alg.AsChainAlgorithm{s.Algorithm}))
+			t.Run("as_chain_algorithm", ChainAlgorithmSuite(alg.AsChainAlgorithm(s.Algorithm)))
 		}
 	}
 }
