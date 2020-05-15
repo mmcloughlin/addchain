@@ -1,7 +1,7 @@
 package pass
 
 import (
-	"golang.org/x/xerrors"
+	"fmt"
 
 	"github.com/mmcloughlin/addchain/acc/ir"
 	"github.com/mmcloughlin/addchain/internal/errutil"
@@ -65,7 +65,7 @@ func CanonicalizeOperands(p *ir.Program) error {
 
 			// They're different objects. Check for a name conflict.
 			if existing.Identifier != "" && operand.Identifier != "" && existing.Identifier != operand.Identifier {
-				return xerrors.Errorf("identifier conflict: index %d named %q and %q", operand.Index, operand.Identifier, existing.Identifier)
+				return fmt.Errorf("identifier conflict: index %d named %q and %q", operand.Index, operand.Identifier, existing.Identifier)
 			}
 
 			if operand.Identifier != "" {

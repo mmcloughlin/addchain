@@ -2,9 +2,8 @@ package addchain
 
 import (
 	"errors"
+	"fmt"
 	"math/big"
-
-	"golang.org/x/xerrors"
 
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/bigints"
@@ -64,7 +63,7 @@ func (c Chain) Ops(k int) []Op {
 func (c Chain) Op(k int) (Op, error) {
 	ops := c.Ops(k)
 	if len(ops) == 0 {
-		return Op{}, xerrors.Errorf("position %d is not the sum of previous entries", k)
+		return Op{}, fmt.Errorf("position %d is not the sum of previous entries", k)
 	}
 	return ops[0], nil
 }
@@ -87,7 +86,7 @@ func (c Chain) Program() (Program, error) {
 	for i := 0; i < len(c); i++ {
 		for j := i + 1; j < len(c); j++ {
 			if bigint.Equal(c[i], c[j]) {
-				return nil, xerrors.Errorf("chain contains duplicate: %v at positions %d and %d", c[i], i, j)
+				return nil, fmt.Errorf("chain contains duplicate: %v at positions %d and %d", c[i], i, j)
 			}
 		}
 	}
@@ -129,7 +128,7 @@ func (c Chain) Superset(targets []*big.Int) error {
 	}
 	for _, target := range targets {
 		if !bigints.Contains(target, c) {
-			return xerrors.Errorf("chain does not contain %v", target)
+			return fmt.Errorf("chain does not contain %v", target)
 		}
 	}
 	return nil

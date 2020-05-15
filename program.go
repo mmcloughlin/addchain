@@ -1,9 +1,8 @@
 package addchain
 
 import (
+	"fmt"
 	"math/big"
-
-	"golang.org/x/xerrors"
 
 	"github.com/mmcloughlin/addchain/internal/bigint"
 )
@@ -63,9 +62,9 @@ func (p Program) boundscheck(i int) error {
 	n := len(p)
 	switch {
 	case i < 0:
-		return xerrors.Errorf("negative index %d", i)
+		return fmt.Errorf("negative index %d", i)
 	case i > n:
-		return xerrors.Errorf("index %d out of bounds", i)
+		return fmt.Errorf("index %d out of bounds", i)
 	}
 	return nil
 }

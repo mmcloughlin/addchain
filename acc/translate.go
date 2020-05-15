@@ -1,7 +1,7 @@
 package acc
 
 import (
-	"golang.org/x/xerrors"
+	"fmt"
 
 	"github.com/mmcloughlin/addchain/acc/ast"
 	"github.com/mmcloughlin/addchain/acc/ir"
@@ -123,7 +123,7 @@ func (s *state) shift(sh ast.Shift) (*ir.Operand, error) {
 
 func (s *state) define(name ast.Identifier, op *ir.Operand) error {
 	if _, found := s.variable[name]; found {
-		return xerrors.Errorf("cannot redefine %q", name)
+		return fmt.Errorf("cannot redefine %q", name)
 	}
 	op.Identifier = string(name)
 	s.variable[name] = op
@@ -133,7 +133,7 @@ func (s *state) define(name ast.Identifier, op *ir.Operand) error {
 func (s state) lookup(name ast.Identifier) (*ir.Operand, error) {
 	operand, ok := s.variable[name]
 	if !ok {
-		return nil, xerrors.Errorf("variable %q undefined", name)
+		return nil, fmt.Errorf("variable %q undefined", name)
 	}
 	return operand, nil
 }

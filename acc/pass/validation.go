@@ -1,7 +1,7 @@
 package pass
 
 import (
-	"golang.org/x/xerrors"
+	"fmt"
 
 	"github.com/mmcloughlin/addchain/acc/ir"
 )
@@ -19,7 +19,7 @@ func CheckDanglingInputs(p *ir.Program) error {
 	for _, i := range p.Instructions {
 		for _, input := range i.Op.Inputs() {
 			if !outputset[input.Index] {
-				return xerrors.Errorf("no output instruction for input index %d", input.Index)
+				return fmt.Errorf("no output instruction for input index %d", input.Index)
 			}
 		}
 		outputset[i.Output.Index] = true
