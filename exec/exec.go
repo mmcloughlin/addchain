@@ -7,20 +7,22 @@ import (
 	"math/big"
 	"runtime"
 
+	"github.com/mmcloughlin/addchain"
+	"github.com/mmcloughlin/addchain/alg"
 	"github.com/mmcloughlin/addchain/internal/bigint"
 )
 
 // Result from applying an algorithm to a target.
 type Result struct {
 	Target    *big.Int
-	Algorithm ChainAlgorithm
+	Algorithm alg.ChainAlgorithm
 	Err       error
-	Chain     Chain
-	Program   Program
+	Chain     addchain.Chain
+	Program   addchain.Program
 }
 
 // Execute the algorithm on the target number n.
-func Execute(n *big.Int, a ChainAlgorithm) Result {
+func Execute(n *big.Int, a alg.ChainAlgorithm) Result {
 	r := Result{
 		Target:    n,
 		Algorithm: a,
@@ -70,7 +72,7 @@ func (p *Parallel) SetLogger(l *log.Logger) {
 }
 
 // Execute all algorithms against the provided target.
-func (p Parallel) Execute(n *big.Int, as []ChainAlgorithm) []Result {
+func (p Parallel) Execute(n *big.Int, as []alg.ChainAlgorithm) []Result {
 	rs := make([]Result, len(as))
 
 	// Use buffered channel to limit concurrency.
@@ -79,7 +81,7 @@ func (p Parallel) Execute(n *big.Int, as []ChainAlgorithm) []Result {
 
 	for i, a := range as {
 		sem <- token{}
-		go func(i int, a ChainAlgorithm) {
+		go func(i int, a alg.ChainAlgorithm) {
 			p.logger.Printf("start: %s", a)
 			rs[i] = Execute(n, a)
 			p.logger.Printf("done: %s", a)

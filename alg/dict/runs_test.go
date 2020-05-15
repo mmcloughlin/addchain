@@ -1,4 +1,4 @@
-package runs
+package dict
 
 import (
 	"math/big"

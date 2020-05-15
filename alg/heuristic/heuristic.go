@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
@@ -56,7 +57,7 @@ func (h HeuristicAlgorithm) String() string {
 }
 
 // FindSequence searches for an addition sequence for the given targets.
-func (h HeuristicAlgorithm) FindSequence(targets []*big.Int) (Chain, error) {
+func (h HeuristicAlgorithm) FindSequence(targets []*big.Int) (addchain.Chain, error) {
 	// Skip the special case when targets is just {1}.
 	if len(targets) == 1 && bigint.EqualInt64(targets[0], 1) {
 		return targets, nil
@@ -89,7 +90,7 @@ func (h HeuristicAlgorithm) FindSequence(targets []*big.Int) (Chain, error) {
 	// Prepare the chain to return.
 	c = bigints.MergeUnique(leader, c)
 
-	return Chain(c), nil
+	return addchain.Chain(c), nil
 }
 
 // DeltaLargest implements the simple heuristic of adding the delta between the

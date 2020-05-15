@@ -7,9 +7,10 @@ import (
 
 	"github.com/google/subcommands"
 
-	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/acc"
 	"github.com/mmcloughlin/addchain/acc/printer"
+	"github.com/mmcloughlin/addchain/alg/ensemble"
+	"github.com/mmcloughlin/addchain/exec"
 	"github.com/mmcloughlin/addchain/internal/calc"
 	"github.com/mmcloughlin/addchain/internal/cli"
 )
@@ -53,11 +54,11 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	cmd.Log.Printf("dec: %s", n)
 
 	// Execute an ensemble of algorithms.
-	ex := addchain.NewParallel()
+	ex := exec.NewParallel()
 	ex.SetLogger(cmd.Log)
 	ex.SetConcurrency(cmd.concurrency)
 
-	as := addchain.Ensemble()
+	as := ensemble.Ensemble()
 	rs := ex.Execute(n, as)
 
 	// Report results.

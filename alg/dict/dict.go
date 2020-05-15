@@ -6,6 +6,8 @@ import (
 	"math/big"
 	"sort"
 
+	"github.com/mmcloughlin/addchain"
+	"github.com/mmcloughlin/addchain/alg"
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/bigints"
 	"github.com/mmcloughlin/addchain/internal/bigvector"
@@ -239,12 +241,12 @@ func (h Hybrid) Decompose(x *big.Int) DictSum {
 // dictionary terms.
 type DictAlgorithm struct {
 	decomp Decomposer
-	seqalg SequenceAlgorithm
+	seqalg alg.SequenceAlgorithm
 }
 
 // NewDictAlgorithm builds a dictionary algorithm that breaks up integers using
 // the decomposer d and uses the sequence algorithm s to generate dictionary entries.
-func NewDictAlgorithm(d Decomposer, a SequenceAlgorithm) *DictAlgorithm {
+func NewDictAlgorithm(d Decomposer, a alg.SequenceAlgorithm) *DictAlgorithm {
 	return &DictAlgorithm{
 		decomp: d,
 		seqalg: a,
@@ -260,7 +262,7 @@ func (a DictAlgorithm) String() string {
 // delegating to the SequenceAlgorithm to build a chain producing the
 // dictionary, and finally using the dictionary terms to construct n. See
 // [genshortchains] Section 2 for a full description.
-func (a DictAlgorithm) FindChain(n *big.Int) (Chain, error) {
+func (a DictAlgorithm) FindChain(n *big.Int) (addchain.Chain, error) {
 	// Decompose the target.
 	sum := a.decomp.Decompose(n)
 	sum.SortByExponent()
@@ -284,7 +286,7 @@ func (a DictAlgorithm) FindChain(n *big.Int) (Chain, error) {
 	dc := dictsumchain(sum)
 	c = append(c, dc...)
 	bigints.Sort(c)
-	c = Chain(bigints.Unique(c))
+	c = addchain.Chain(bigints.Unique(c))
 
 	return c, nil
 }
@@ -292,8 +294,8 @@ func (a DictAlgorithm) FindChain(n *big.Int) (Chain, error) {
 // dictsumchain builds a chain for the integer represented by sum, assuming that
 // all the terms of the sum are already present. Therefore this is intended to
 // be appended to a chain that already contains the dictionary terms.
-func dictsumchain(sum DictSum) Chain {
-	c := Chain{}
+func dictsumchain(sum DictSum) addchain.Chain {
+	c := addchain.Chain{}
 	k := len(sum) - 1
 	cur := bigint.Clone(sum[k].D)
 	for ; k > 0; k-- {
@@ -330,7 +332,7 @@ func dictsumchain(sum DictSum) Chain {
 // This function looks for such opportunities. If it finds them it will produce
 // an alternative dictionary sum that replaces that term with a sum of smaller
 // terms.
-func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
+func primitive(sum DictSum, c addchain.Chain) (DictSum, addchain.Chain, error) {
 	// This optimization cannot apply if the sum has only one term.
 	if len(sum) == 1 {
 		return sum, c, nil
@@ -411,7 +413,7 @@ func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
 	}
 
 	// Prune any elements of the chain that are used only once.
-	pruned := Chain{}
+	pruned := addchain.Chain{}
 	for i, x := range c {
 		if primitive[i] {
 			pruned = append(pruned, x)

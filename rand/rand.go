@@ -1,4 +1,4 @@
-package addchain
+package rand
 
 import (
 	"fmt"
@@ -6,13 +6,15 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/mmcloughlin/addchain"
+	"github.com/mmcloughlin/addchain/alg"
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
 // Generator can generate random chains.
 type Generator interface {
-	GenerateChain() (Chain, error)
+	GenerateChain() (addchain.Chain, error)
 	fmt.Stringer
 }
 
@@ -25,8 +27,8 @@ func (r RandomAddsGenerator) String() string {
 	return fmt.Sprintf("random_adds(%d)", r.N)
 }
 
-func (r RandomAddsGenerator) GenerateChain() (Chain, error) {
-	c := New()
+func (r RandomAddsGenerator) GenerateChain() (addchain.Chain, error) {
+	c := addchain.New()
 	for len(c) < r.N {
 		i, j := rand.Intn(len(c)), rand.Intn(len(c))
 		sum := new(big.Int).Add(c[i], c[j])
@@ -39,11 +41,11 @@ func (r RandomAddsGenerator) GenerateChain() (Chain, error) {
 // build a chain for them.
 type RandomSolverGenerator struct {
 	N         uint
-	Algorithm ChainAlgorithm
+	Algorithm alg.ChainAlgorithm
 	rand      *rand.Rand
 }
 
-func NewRandomSolverGenerator(n uint, a ChainAlgorithm) RandomSolverGenerator {
+func NewRandomSolverGenerator(n uint, a alg.ChainAlgorithm) RandomSolverGenerator {
 	return RandomSolverGenerator{
 		N:         n,
 		Algorithm: a,
@@ -55,7 +57,7 @@ func (r RandomSolverGenerator) String() string {
 	return fmt.Sprintf("random_solver(%d,%s)", r.N, r.Algorithm)
 }
 
-func (r RandomSolverGenerator) GenerateChain() (Chain, error) {
+func (r RandomSolverGenerator) GenerateChain() (addchain.Chain, error) {
 	target := bigint.RandBits(r.rand, r.N)
 	return r.Algorithm.FindChain(target)
 }

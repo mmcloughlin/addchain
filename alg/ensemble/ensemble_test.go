@@ -1,4 +1,4 @@
-package addchain_test
+package ensemble
 
 import (
 	"log"
