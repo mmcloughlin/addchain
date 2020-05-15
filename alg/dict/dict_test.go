@@ -6,6 +6,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/mmcloughlin/addchain"
+	"github.com/mmcloughlin/addchain/alg/algtest"
+	"github.com/mmcloughlin/addchain/alg/contfrac"
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/bigints"
 	"github.com/mmcloughlin/addchain/internal/test"
@@ -148,10 +151,10 @@ func TestHybrid(t *testing.T) {
 func TestDictAlgorithm(t *testing.T) {
 	a := NewDictAlgorithm(
 		SlidingWindow{K: 4},
-		NewContinuedFractions(DichotomicStrategy{}),
+		contfrac.NewContinuedFractions(contfrac.DichotomicStrategy{}),
 	)
 	n := big.NewInt(587257)
-	c := AssertChainAlgorithmProduces(t, a, n)
+	c := algtest.AssertChainAlgorithmProduces(t, a, n)
 	t.Log(c)
 }
 
@@ -162,7 +165,7 @@ func TestDictAlgorithmPrimitive(t *testing.T) {
 	// decomposer.
 	a := NewDictAlgorithm(
 		RunLength{T: 0},
-		NewContinuedFractions(TotalStrategy{}),
+		contfrac.NewContinuedFractions(contfrac.TotalStrategy{}),
 	)
 
 	// Cases are accompanied by an example of how this chain might be constructed
@@ -170,7 +173,7 @@ func TestDictAlgorithmPrimitive(t *testing.T) {
 	// chain is valid and at least as good as the example.
 	cases := []struct {
 		N       *big.Int
-		Example Chain
+		Example addchain.Chain
 	}{
 		{
 			N: bigint.MustBinary("1111_0_1_0"),
@@ -193,7 +196,7 @@ func TestDictAlgorithmPrimitive(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		got := AssertChainAlgorithmProduces(t, a, c.N)
+		got := algtest.AssertChainAlgorithmProduces(t, a, c.N)
 		if err := c.Example.Produces(c.N); err != nil {
 			t.Fatalf("example is invalid: %s", err)
 		}

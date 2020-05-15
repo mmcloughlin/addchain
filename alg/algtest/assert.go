@@ -1,12 +1,15 @@
-package addchain
+package algtest
 
 import (
 	"math/big"
 	"reflect"
 	"testing"
+
+	"github.com/mmcloughlin/addchain"
+	"github.com/mmcloughlin/addchain/alg"
 )
 
-func AssertChainAlgorithmGenerates(t *testing.T, a ChainAlgorithm, n *big.Int, expect Chain) {
+func AssertChainAlgorithmGenerates(t *testing.T, a alg.ChainAlgorithm, n *big.Int, expect addchain.Chain) {
 	c, err := a.FindChain(n)
 	if err != nil {
 		t.Fatal(err)
@@ -19,7 +22,7 @@ func AssertChainAlgorithmGenerates(t *testing.T, a ChainAlgorithm, n *big.Int, e
 	}
 }
 
-func AssertChainAlgorithmProduces(t *testing.T, a ChainAlgorithm, n *big.Int) Chain {
+func AssertChainAlgorithmProduces(t *testing.T, a alg.ChainAlgorithm, n *big.Int) addchain.Chain {
 	c, err := a.FindChain(n)
 	if err != nil {
 		t.Fatal(err)
@@ -32,7 +35,7 @@ func AssertChainAlgorithmProduces(t *testing.T, a ChainAlgorithm, n *big.Int) Ch
 	return c
 }
 
-func AssertSequenceAlgorithmProduces(t *testing.T, a SequenceAlgorithm, targets []*big.Int) Chain {
+func AssertSequenceAlgorithmProduces(t *testing.T, a alg.SequenceAlgorithm, targets []*big.Int) addchain.Chain {
 	c, err := a.FindSequence(targets)
 	if err != nil {
 		t.Fatal(err)

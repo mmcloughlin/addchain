@@ -4,19 +4,31 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/mmcloughlin/addchain/alg"
+	"github.com/mmcloughlin/addchain/alg/algtest"
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
+func TestAlgorithms(t *testing.T) {
+	for _, strategy := range ContinuedFractionStrategies {
+		suite := algtest.SequenceAlgorithmSuite{
+			Algorithm:          NewContinuedFractions(strategy),
+			AcceptsLargeInputs: strategy.Singleton(),
+		}
+		t.Run(suite.Algorithm.String(), suite.Tests())
+	}
+}
+
 func TestBinaryStrategy(t *testing.T) {
-	a := AsChainAlgorithm{NewContinuedFractions(BinaryStrategy{})}
+	a := alg.AsChainAlgorithm{NewContinuedFractions(BinaryStrategy{})}
 	n := big.NewInt(87)
 	expect := bigints.Int64s(1, 2, 4, 5, 10, 20, 21, 42, 43, 86, 87)
-	AssertChainAlgorithmGenerates(t, a, n, expect)
+	algtest.AssertChainAlgorithmGenerates(t, a, n, expect)
 }
 
 func TestCoBinaryStrategy(t *testing.T) {
-	a := AsChainAlgorithm{NewContinuedFractions(CoBinaryStrategy{})}
+	a := alg.AsChainAlgorithm{NewContinuedFractions(CoBinaryStrategy{})}
 	n := big.NewInt(87)
 	expect := bigints.Int64s(1, 2, 3, 5, 10, 11, 21, 22, 43, 44, 87)
-	AssertChainAlgorithmGenerates(t, a, n, expect)
+	algtest.AssertChainAlgorithmGenerates(t, a, n, expect)
 }

@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/mmcloughlin/addchain/alg/algtest"
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
@@ -13,6 +14,20 @@ import (
 //	[hehcc:exp]  Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve
 //	             Cryptography, chapter 9. 2006.
 //	             https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+
+func TestAlgorithms(t *testing.T) {
+	heuristics := []Heuristic{
+		UseFirstHeuristic{Halving{}, DeltaLargest{}},
+		UseFirstHeuristic{Halving{}, Approximation{}},
+	}
+	for _, heuristic := range heuristics {
+		suite := algtest.SequenceAlgorithmSuite{
+			Algorithm:          NewHeuristicAlgorithm(heuristic),
+			AcceptsLargeInputs: true,
+		}
+		t.Run(suite.Algorithm.String(), suite.Tests())
+	}
+}
 
 func TestHalving(t *testing.T) {
 	cases := []struct {
