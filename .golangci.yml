@@ -4,6 +4,11 @@ linters:
     - lll
     - gochecknoglobals
     - funlen
+    - testpackage
+    - gomnd
+    - goerr113
+    - wsl
+    - gocognit
 
 issues:
   exclude-use-default: false

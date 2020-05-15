@@ -64,7 +64,7 @@ func (p *Parallel) SetConcurrency(limit int) {
 	p.limit = limit
 }
 
-// SetLogger sets the
+// SetLogger sets logging output.
 func (p *Parallel) SetLogger(l *log.Logger) {
 	p.logger = l
 }

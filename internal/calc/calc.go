@@ -141,7 +141,7 @@ func Eval(expr string) (*big.Int, error) {
 	return y.result()
 }
 
-// number parses a number
+// number parses a number.
 func number(b []byte) (*big.Int, []byte, error) {
 	// Find the end.
 	i := 0
