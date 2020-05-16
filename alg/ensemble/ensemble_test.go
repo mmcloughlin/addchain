@@ -1,6 +1,7 @@
 package ensemble
 
 import (
+	"flag"
 	"log"
 	"math/big"
 	"os"
@@ -12,6 +13,9 @@ import (
 	"github.com/mmcloughlin/addchain/internal/test"
 	"github.com/mmcloughlin/addchain/prime"
 )
+
+// verbose flag for customizing log output from algorithm executor.
+var verbose = flag.Bool("verbose", false, "enable verbose logging")
 
 // References:
 //
@@ -156,7 +160,9 @@ func TestEnsembleResultsInversionChains(t *testing.T) {
 
 			// Execute.
 			ex := exec.NewParallel()
-			ex.SetLogger(log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds))
+			if *verbose {
+				ex.SetLogger(log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds))
+			}
 			rs := ex.Execute(n, as)
 
 			// Process results.
