@@ -24,7 +24,7 @@ import (
 //	                      https://pdfs.semanticscholar.org/b398/d10faca35af9ce5a6026458b251fd0a5640c.pdf
 //	[hehcc:exp]           Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve
 //	                      Cryptography, chapter 9. 2006.
-//	                      https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+//	                      http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
 
 // Term represents the integer D * 2ᴱ.
 type Term struct {

@@ -19,7 +19,7 @@ import (
 //	                         ePrint Archive, Report 2013/466. 2013. https://eprint.iacr.org/2013/466
 //	[hehcc:exp]              Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve
 //	                         Cryptography, chapter 9. 2006.
-//	                         https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+//	                         http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
 
 // Strategy is a method of choosing the auxiliary integer k in the continued
 // fraction method outlined in [efficientcompaddchain].

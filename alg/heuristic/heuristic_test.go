@@ -13,7 +13,7 @@ import (
 //
 //	[hehcc:exp]  Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve
 //	             Cryptography, chapter 9. 2006.
-//	             https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+//	             http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
 
 func TestAlgorithms(t *testing.T) {
 	heuristics := []Heuristic{

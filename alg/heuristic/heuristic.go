@@ -20,7 +20,7 @@ import (
 //	                           2018. https://github.com/kwantam/addchain
 //	[hehcc:exp]                Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve
 //	                           Cryptography, chapter 9. 2006.
-//	                           https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+//	                           http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
 //	[modboscoster]             Ayan Nandy. Modifications of Bos and Coster’s Heuristics in search of a
 //	                           shorter addition chain for faster exponentiation. Masters thesis, Indian
 //	                           Statistical Institute Kolkata. 2011.

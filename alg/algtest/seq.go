@@ -16,7 +16,7 @@ import (
 //	                    https://briansmith.org/ecc-inversion-addition-chains-01 (accessed June 30, 2019)
 //	[hehcc:exp]         Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve
 //	                    Cryptography, chapter 9. 2006.
-//	                    https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+//	                    http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
 //	[pairingsfinalexp]  Michael Scott, Naomi Benger, Manuel Charlemagne, Luis J. Dominguez Perez and
 //	                    Ezekiel J. Kachisa. On the final exponentiation for calculating pairings on
 //	                    ordinary elliptic curves. Cryptology ePrint Archive, Report 2008/490. 2008.
