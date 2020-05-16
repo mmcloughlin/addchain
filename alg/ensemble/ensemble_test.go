@@ -1,4 +1,4 @@
-package addchain_test
+package ensemble
 
 import (
 	"log"
@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/acc"
+	"github.com/mmcloughlin/addchain/alg/exec"
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/test"
 	"github.com/mmcloughlin/addchain/prime"
@@ -139,7 +139,7 @@ func TestEnsembleResultsInversionChains(t *testing.T) {
 			Delta: 2,
 		},
 	}
-	as := addchain.Ensemble()
+	as := Ensemble()
 	for _, c := range cases {
 		c := c // scopelint
 		t.Run(c.Name, func(t *testing.T) {
@@ -155,7 +155,7 @@ func TestEnsembleResultsInversionChains(t *testing.T) {
 			t.Logf("n-%d=%x", c.Delta, n)
 
 			// Execute.
-			ex := addchain.NewParallel()
+			ex := exec.NewParallel()
 			ex.SetLogger(log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds))
 			rs := ex.Execute(n, as)
 

@@ -4,18 +4,21 @@ import (
 	"testing"
 
 	"github.com/mmcloughlin/addchain"
+	"github.com/mmcloughlin/addchain/alg/contfrac"
+	"github.com/mmcloughlin/addchain/alg/dict"
 	"github.com/mmcloughlin/addchain/internal/test"
+	"github.com/mmcloughlin/addchain/rand"
 )
 
 // CheckRandom runs the check function against randomly generated chain programs.
 func CheckRandom(t *testing.T, check func(t *testing.T, p addchain.Program)) {
-	gs := []addchain.Generator{
-		addchain.RandomAddsGenerator{N: 10},
-		addchain.NewRandomSolverGenerator(
+	gs := []rand.Generator{
+		rand.AddsGenerator{N: 10},
+		rand.NewSolverGenerator(
 			160,
-			addchain.NewDictAlgorithm(
-				addchain.SlidingWindow{K: 5},
-				addchain.NewContinuedFractions(addchain.DichotomicStrategy{}),
+			dict.NewAlgorithm(
+				dict.SlidingWindow{K: 5},
+				contfrac.NewAlgorithm(contfrac.DichotomicStrategy{}),
 			),
 		),
 	}

@@ -1,22 +1,25 @@
-package addchain
+package opt
 
 import (
 	"fmt"
 	"math/big"
+
+	"github.com/mmcloughlin/addchain"
+	"github.com/mmcloughlin/addchain/alg"
 )
 
-// Optimized applies chain optimization to the result of a wrapped algorithm.
-type Optimized struct {
-	Algorithm ChainAlgorithm
+// Algorithm applies chain optimization to the result of a wrapped algorithm.
+type Algorithm struct {
+	Algorithm alg.ChainAlgorithm
 }
 
-func (o Optimized) String() string {
-	return fmt.Sprintf("opt(%s)", o.Algorithm)
+func (a Algorithm) String() string {
+	return fmt.Sprintf("opt(%s)", a.Algorithm)
 }
 
 // FindChain delegates to the wrapped algorithm, then runs Optimize on the result.
-func (o Optimized) FindChain(n *big.Int) (Chain, error) {
-	c, err := o.Algorithm.FindChain(n)
+func (a Algorithm) FindChain(n *big.Int) (addchain.Chain, error) {
+	c, err := a.Algorithm.FindChain(n)
 	if err != nil {
 		return nil, err
 	}
@@ -30,9 +33,9 @@ func (o Optimized) FindChain(n *big.Int) (Chain, error) {
 }
 
 // Optimize aims to remove redundancy from an addition chain.
-func Optimize(c Chain) (Chain, error) {
+func Optimize(c addchain.Chain) (addchain.Chain, error) {
 	// Build program for c with all possible options at each step.
-	ops := make([][]Op, len(c))
+	ops := make([][]addchain.Op, len(c))
 	for k := 1; k < len(c); k++ {
 		ops[k] = c.Ops(k)
 	}
@@ -73,7 +76,7 @@ func Optimize(c Chain) (Chain, error) {
 	}
 
 	// Perform removals.
-	pruned := Chain{}
+	pruned := addchain.Chain{}
 	for i, x := range c {
 		if len(remove) > 0 && remove[0] == i {
 			remove = remove[1:]
@@ -86,7 +89,7 @@ func Optimize(c Chain) (Chain, error) {
 }
 
 // pruneuses removes any uses of i from the list of operations.
-func pruneuses(ops []Op, i int) []Op {
+func pruneuses(ops []addchain.Op, i int) []addchain.Op {
 	filtered := ops[:0]
 	for _, op := range ops {
 		if !op.Uses(i) {

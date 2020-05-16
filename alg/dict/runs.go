@@ -1,10 +1,12 @@
-package addchain
+package dict
 
 import (
 	"errors"
 	"fmt"
 	"math/big"
 
+	"github.com/mmcloughlin/addchain"
+	"github.com/mmcloughlin/addchain/alg"
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
@@ -15,14 +17,14 @@ import (
 // be reduced to first finding an addition chain for the run lengths. Then from
 // this chain we can build a chain for the runs themselves.
 type RunsAlgorithm struct {
-	seqalg SequenceAlgorithm
+	seqalg alg.SequenceAlgorithm
 }
 
 // NewRunsAlgorithm constructs a RunsAlgorithm using the given sequence
 // algorithm to generate addition sequences for run lengths. Note that since run
 // lengths are far smaller than the integers themselves, this sequence algorithm
 // does not need to be able to handle large integers.
-func NewRunsAlgorithm(a SequenceAlgorithm) *RunsAlgorithm {
+func NewRunsAlgorithm(a alg.SequenceAlgorithm) *RunsAlgorithm {
 	return &RunsAlgorithm{
 		seqalg: a,
 	}
@@ -33,7 +35,7 @@ func (a RunsAlgorithm) String() string {
 }
 
 // FindChain uses the run lengths method to find a chain for n.
-func (a RunsAlgorithm) FindChain(n *big.Int) (Chain, error) {
+func (a RunsAlgorithm) FindChain(n *big.Int) (addchain.Chain, error) {
 	// Find the runs in n.
 	d := RunLength{T: 0}
 	sum := d.Decompose(n)
@@ -68,7 +70,7 @@ func (a RunsAlgorithm) FindChain(n *big.Int) (Chain, error) {
 	dc := dictsumchain(sum)
 	c = append(c, dc...)
 	bigints.Sort(c)
-	c = Chain(bigints.Unique(c))
+	c = addchain.Chain(bigints.Unique(c))
 
 	return c, nil
 }
@@ -76,13 +78,13 @@ func (a RunsAlgorithm) FindChain(n *big.Int) (Chain, error) {
 // RunsChain takes a chain for the run lengths and generates a chain for the
 // runs themselves. That is, if the provided chain is l₁, l₂, ..., l_k then
 // the result will contain r(l₁), r(l₂), ..., r(l_k) where r(n) = 2ⁿ - 1.
-func RunsChain(lc Chain) (Chain, error) {
+func RunsChain(lc addchain.Chain) (addchain.Chain, error) {
 	p, err := lc.Program()
 	if err != nil {
 		return nil, err
 	}
 
-	c := New()
+	c := addchain.New()
 	s := map[uint]uint{} // current largest shift of each run length
 	for _, op := range p {
 		a, b := bigint.MinMax(lc[op.I], lc[op.J])

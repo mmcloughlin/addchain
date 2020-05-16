@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -exuo pipefail
+
+# Install golangci-lint
+curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b "${GOPATH}/bin" v1.27.0
+
+# Use gobin for tools install.
+GO111MODULE=off go get -u github.com/myitcv/gobin
+
+# gofumports for stricter formatting.
+gobin mvdan.cc/gofumpt/gofumports@v0.0.0-20200412215918-a91da47f375c
+
+# pigeon for PEG parser generation.
+gobin github.com/mna/pigeon@v1.0.1-0.20200224192238-18953b277063
+
+# mathfmt for unicode math formatting.
+gobin github.com/mmcloughlin/mathfmt@v0.0.0-20200207041814-4064651798f4
+
+# bib for bibliography references.
+gobin github.com/mmcloughlin/bib@v0.0.0-20200404191955-f70eedea5933
+
+# covertool for merging coverage reports
+gobin github.com/dlespiau/covertool@v0.0.0-20180314162135-b0c4c6d0583a

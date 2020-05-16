@@ -1,4 +1,4 @@
-package addchain
+package algtest
 
 import (
 	"math"
@@ -6,34 +6,18 @@ import (
 	"math/rand"
 	"testing"
 
+	"github.com/mmcloughlin/addchain/alg"
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/test"
 	"github.com/mmcloughlin/addchain/prime"
 )
 
-func TestChainAlgorithms(t *testing.T) {
-	as := []ChainAlgorithm{
-		BinaryRightToLeft{},
-
-		// Dictionary-based algorithms.
-		NewDictAlgorithm(
-			SlidingWindow{K: 4},
-			NewContinuedFractions(DichotomicStrategy{}),
-		),
-		NewDictAlgorithm(
-			FixedWindow{K: 7},
-			NewContinuedFractions(BinaryStrategy{}),
-		),
-
-		// Runs algorithm.
-		NewRunsAlgorithm(NewContinuedFractions(DichotomicStrategy{})),
-	}
-	for _, a := range as {
-		t.Run(a.String(), ChainAlgorithmSuite(a))
-	}
+func ChainAlgorithm(t *testing.T, a alg.ChainAlgorithm) {
+	suite := ChainAlgorithmSuite(a)
+	suite(t)
 }
 
-func ChainAlgorithmSuite(a ChainAlgorithm) func(t *testing.T) {
+func ChainAlgorithmSuite(a alg.ChainAlgorithm) func(t *testing.T) {
 	return func(t *testing.T) {
 		t.Run("powers_of_two", CheckPowersOfTwo(a, 100))
 		t.Run("binary_runs", CheckBinaryRuns(a, 32))
@@ -42,7 +26,7 @@ func ChainAlgorithmSuite(a ChainAlgorithm) func(t *testing.T) {
 	}
 }
 
-func CheckPowersOfTwo(a ChainAlgorithm, e uint) func(t *testing.T) {
+func CheckPowersOfTwo(a alg.ChainAlgorithm, e uint) func(t *testing.T) {
 	return func(t *testing.T) {
 		n := big.NewInt(1)
 		for i := uint(0); i <= e; i++ {
@@ -52,7 +36,7 @@ func CheckPowersOfTwo(a ChainAlgorithm, e uint) func(t *testing.T) {
 	}
 }
 
-func CheckBinaryRuns(a ChainAlgorithm, n uint) func(t *testing.T) {
+func CheckBinaryRuns(a alg.ChainAlgorithm, n uint) func(t *testing.T) {
 	return func(t *testing.T) {
 		for i := uint(1); i <= n; i++ {
 			r := bigint.Pow2(i)
@@ -62,7 +46,7 @@ func CheckBinaryRuns(a ChainAlgorithm, n uint) func(t *testing.T) {
 	}
 }
 
-func CheckRandomInt64s(a ChainAlgorithm) func(t *testing.T) {
+func CheckRandomInt64s(a alg.ChainAlgorithm) func(t *testing.T) {
 	return test.Trials(func(t *testing.T) bool {
 		r := rand.Int63n(math.MaxInt64)
 		n := big.NewInt(r)
@@ -71,7 +55,7 @@ func CheckRandomInt64s(a ChainAlgorithm) func(t *testing.T) {
 	})
 }
 
-func CheckPrimes(a ChainAlgorithm) func(t *testing.T) {
+func CheckPrimes(a alg.ChainAlgorithm) func(t *testing.T) {
 	// Prepare primes in a random order.
 	ps := []*big.Int{}
 	for _, p := range prime.Distinguished {

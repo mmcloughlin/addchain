@@ -1,4 +1,4 @@
-package addchain
+package dict
 
 import (
 	"errors"
@@ -6,6 +6,8 @@ import (
 	"math/big"
 	"sort"
 
+	"github.com/mmcloughlin/addchain"
+	"github.com/mmcloughlin/addchain/alg"
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/bigints"
 	"github.com/mmcloughlin/addchain/internal/bigvector"
@@ -24,23 +26,23 @@ import (
 //	                      Cryptography, chapter 9. 2006.
 //	                      https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
 
-// DictTerm represents the integer D * 2ᴱ.
-type DictTerm struct {
+// Term represents the integer D * 2ᴱ.
+type Term struct {
 	D *big.Int
 	E uint
 }
 
 // Int converts the term to an integer.
-func (t DictTerm) Int() *big.Int {
+func (t Term) Int() *big.Int {
 	return new(big.Int).Lsh(t.D, t.E)
 }
 
-// DictSum is the representation of an integer as a sum of dictionary terms.
-// See [hehcc:exp] definition 9.34.
-type DictSum []DictTerm
+// Sum is the representation of an integer as a sum of dictionary terms. See
+// [hehcc:exp] definition 9.34.
+type Sum []Term
 
 // Int computes the dictionary sum as an integer.
-func (s DictSum) Int() *big.Int {
+func (s Sum) Int() *big.Int {
 	x := bigint.Zero()
 	for _, t := range s {
 		x.Add(x, t.Int())
@@ -49,13 +51,13 @@ func (s DictSum) Int() *big.Int {
 }
 
 // SortByExponent sorts terms in ascending order of the exponent E.
-func (s DictSum) SortByExponent() {
+func (s Sum) SortByExponent() {
 	sort.Slice(s, func(i, j int) bool { return s[i].E < s[j].E })
 }
 
 // Dictionary returns the distinct D values in the terms of this sum. The values
 // are returned in ascending order.
-func (s DictSum) Dictionary() []*big.Int {
+func (s Sum) Dictionary() []*big.Int {
 	dict := make([]*big.Int, 0, len(s))
 	for _, t := range s {
 		dict = append(dict, t.D)
@@ -67,7 +69,7 @@ func (s DictSum) Dictionary() []*big.Int {
 // Decomposer is a method of breaking an integer into a dictionary sum.
 type Decomposer interface {
 	fmt.Stringer
-	Decompose(x *big.Int) DictSum
+	Decompose(x *big.Int) Sum
 }
 
 // FixedWindow breaks integers into k-bit windows.
@@ -78,14 +80,14 @@ type FixedWindow struct {
 func (w FixedWindow) String() string { return fmt.Sprintf("fixed_window(%d)", w.K) }
 
 // Decompose represents x in terms of k-bit windows from left to right.
-func (w FixedWindow) Decompose(x *big.Int) DictSum {
-	sum := DictSum{}
+func (w FixedWindow) Decompose(x *big.Int) Sum {
+	sum := Sum{}
 	h := x.BitLen()
 	for h > 0 {
 		l := max(h-int(w.K), 0)
 		d := bigint.Extract(x, uint(l), uint(h))
 		if bigint.IsNonZero(d) {
-			sum = append(sum, DictTerm{D: d, E: uint(l)})
+			sum = append(sum, Term{D: d, E: uint(l)})
 		}
 		h = l
 	}
@@ -103,8 +105,8 @@ type SlidingWindow struct {
 func (w SlidingWindow) String() string { return fmt.Sprintf("sliding_window(%d)", w.K) }
 
 // Decompose represents x in base 2ᵏ.
-func (w SlidingWindow) Decompose(x *big.Int) DictSum {
-	sum := DictSum{}
+func (w SlidingWindow) Decompose(x *big.Int) Sum {
+	sum := Sum{}
 	h := x.BitLen() - 1
 	for h >= 0 {
 		// Find first 1.
@@ -124,7 +126,7 @@ func (w SlidingWindow) Decompose(x *big.Int) DictSum {
 			l++
 		}
 
-		sum = append(sum, DictTerm{
+		sum = append(sum, Term{
 			D: bigint.Extract(x, uint(l), uint(h+1)),
 			E: uint(l),
 		})
@@ -144,8 +146,8 @@ type RunLength struct {
 func (r RunLength) String() string { return fmt.Sprintf("run_length(%d)", r.T) }
 
 // Decompose breaks x into runs of 1 bits.
-func (r RunLength) Decompose(x *big.Int) DictSum {
-	sum := DictSum{}
+func (r RunLength) Decompose(x *big.Int) Sum {
+	sum := Sum{}
 	i := x.BitLen() - 1
 	for i >= 0 {
 		// Find first 1.
@@ -164,7 +166,7 @@ func (r RunLength) Decompose(x *big.Int) DictSum {
 		}
 
 		// We have a run from s to i+1.
-		sum = append(sum, DictTerm{
+		sum = append(sum, Term{
 			D: bigint.Ones(uint(s - i)),
 			E: uint(i + 1),
 		})
@@ -183,8 +185,8 @@ type Hybrid struct {
 func (h Hybrid) String() string { return fmt.Sprintf("hybrid(%d,%d)", h.K, h.T) }
 
 // Decompose breaks x into k-bit sliding windows or runs of 1s up to length T.
-func (h Hybrid) Decompose(x *big.Int) DictSum {
-	sum := DictSum{}
+func (h Hybrid) Decompose(x *big.Int) Sum {
+	sum := Sum{}
 
 	// Clone since we'll be modifying it.
 	y := bigint.Clone(x)
@@ -214,7 +216,7 @@ func (h Hybrid) Decompose(x *big.Int) DictSum {
 		}
 
 		// Add it to the sum and remove it from the integer.
-		sum = append(sum, DictTerm{
+		sum = append(sum, Term{
 			D: bigint.Ones(n),
 			E: uint(i + 1),
 		})
@@ -232,26 +234,27 @@ func (h Hybrid) Decompose(x *big.Int) DictSum {
 	return sum
 }
 
-// DictAlgorithm implements a general dictionary-based chain construction
-// algorithm, as in [braueraddsubchains] Algorithm 1.26. This operates in three
-// stages: decompose the target into a sum of dictionray terms, use a sequence
-// algorithm to generate the dictionary, then construct the target from the
-// dictionary terms.
-type DictAlgorithm struct {
+// Algorithm implements a general dictionary-based chain construction algorithm,
+// as in [braueraddsubchains] Algorithm 1.26. This operates in three stages:
+// decompose the target into a sum of dictionray terms, use a sequence algorithm
+// to generate the dictionary, then construct the target from the dictionary
+// terms.
+type Algorithm struct {
 	decomp Decomposer
-	seqalg SequenceAlgorithm
+	seqalg alg.SequenceAlgorithm
 }
 
-// NewDictAlgorithm builds a dictionary algorithm that breaks up integers using
-// the decomposer d and uses the sequence algorithm s to generate dictionary entries.
-func NewDictAlgorithm(d Decomposer, a SequenceAlgorithm) *DictAlgorithm {
-	return &DictAlgorithm{
+// NewAlgorithm builds a dictionary algorithm that breaks up integers using the
+// decomposer d and uses the sequence algorithm s to generate dictionary
+// entries.
+func NewAlgorithm(d Decomposer, a alg.SequenceAlgorithm) *Algorithm {
+	return &Algorithm{
 		decomp: d,
 		seqalg: a,
 	}
 }
 
-func (a DictAlgorithm) String() string {
+func (a Algorithm) String() string {
 	return fmt.Sprintf("dictionary(%s,%s)", a.decomp, a.seqalg)
 }
 
@@ -260,7 +263,7 @@ func (a DictAlgorithm) String() string {
 // delegating to the SequenceAlgorithm to build a chain producing the
 // dictionary, and finally using the dictionary terms to construct n. See
 // [genshortchains] Section 2 for a full description.
-func (a DictAlgorithm) FindChain(n *big.Int) (Chain, error) {
+func (a Algorithm) FindChain(n *big.Int) (addchain.Chain, error) {
 	// Decompose the target.
 	sum := a.decomp.Decompose(n)
 	sum.SortByExponent()
@@ -284,7 +287,7 @@ func (a DictAlgorithm) FindChain(n *big.Int) (Chain, error) {
 	dc := dictsumchain(sum)
 	c = append(c, dc...)
 	bigints.Sort(c)
-	c = Chain(bigints.Unique(c))
+	c = addchain.Chain(bigints.Unique(c))
 
 	return c, nil
 }
@@ -292,8 +295,8 @@ func (a DictAlgorithm) FindChain(n *big.Int) (Chain, error) {
 // dictsumchain builds a chain for the integer represented by sum, assuming that
 // all the terms of the sum are already present. Therefore this is intended to
 // be appended to a chain that already contains the dictionary terms.
-func dictsumchain(sum DictSum) Chain {
-	c := Chain{}
+func dictsumchain(sum Sum) addchain.Chain {
+	c := addchain.Chain{}
 	k := len(sum) - 1
 	cur := bigint.Clone(sum[k].D)
 	for ; k > 0; k-- {
@@ -330,7 +333,7 @@ func dictsumchain(sum DictSum) Chain {
 // This function looks for such opportunities. If it finds them it will produce
 // an alternative dictionary sum that replaces that term with a sum of smaller
 // terms.
-func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
+func primitive(sum Sum, c addchain.Chain) (Sum, addchain.Chain, error) {
 	// This optimization cannot apply if the sum has only one term.
 	if len(sum) == 1 {
 		return sum, c, nil
@@ -393,10 +396,10 @@ func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
 	}
 
 	// Rebuild this into a dictionary sum.
-	out := DictSum{}
+	out := Sum{}
 	for i, coeff := range v {
 		for _, e := range bigint.BitsSet(coeff) {
-			out = append(out, DictTerm{
+			out = append(out, Term{
 				D: c[i],
 				E: uint(e),
 			})
@@ -411,7 +414,7 @@ func primitive(sum DictSum, c Chain) (DictSum, Chain, error) {
 	}
 
 	// Prune any elements of the chain that are used only once.
-	pruned := Chain{}
+	pruned := addchain.Chain{}
 	for i, x := range c {
 		if primitive[i] {
 			pruned = append(pruned, x)

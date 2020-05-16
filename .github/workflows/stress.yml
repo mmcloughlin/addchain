@@ -15,10 +15,16 @@ jobs:
         uses: actions/setup-go@v1
         with:
           go-version: ${{ matrix.go-version }}
+      - name: Configure Go Environment
+        run: |
+          echo ::set-env name=GOPATH::${{ runner.workspace }}
+          echo ::add-path::${{ runner.workspace }}/bin
       - name: Checkout code
         uses: actions/checkout@v1
+      - name: Bootstrap
+        run: ./script/bootstrap
       - name: Stress Test
-        run: go test -stress -timeout=0 -coverprofile=coverage.out -covermode=set
+        run: ./script/stress -c coverage.out
       - name: Upload Coverage
         uses: codecov/codecov-action@v1.0.5
         with:

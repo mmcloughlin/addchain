@@ -1,15 +1,16 @@
-package addchain
+package opt
 
 import (
 	"testing"
 
+	"github.com/mmcloughlin/addchain"
 	"github.com/mmcloughlin/addchain/internal/bigints"
 )
 
 func TestOptimize(t *testing.T) {
 	cases := []struct {
-		Input  Chain
-		Expect Chain
+		Input  addchain.Chain
+		Expect addchain.Chain
 	}{
 		// Sub-optimal case. Should remove 3 or 4.
 		{
