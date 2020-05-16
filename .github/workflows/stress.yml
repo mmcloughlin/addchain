@@ -1,7 +1,6 @@
 on:
   schedule:
     - cron: "42 10 * * 3"
-  pull_request:
 
 name: stress
 jobs:
@@ -25,4 +24,10 @@ jobs:
       - name: Bootstrap
         run: ./script/bootstrap
       - name: Stress Test
-        run: ./script/stress -c stress.out
+        run: ./script/stress -c coverage.out
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v1.0.5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: coverage.out
+          flags: stress
