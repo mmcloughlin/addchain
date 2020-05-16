@@ -1,3 +1,4 @@
+// Package exec implements addition chain algorithm execution.
 package exec
 
 import (

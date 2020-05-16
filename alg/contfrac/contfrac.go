@@ -1,3 +1,4 @@
+// Package contfrac implements addition sequence algorithms based on continued-fraction expansions.
 package contfrac
 
 import (

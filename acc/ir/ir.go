@@ -1,3 +1,4 @@
+// Package ir declares an intermediate representation for acc programs.
 package ir
 
 import (

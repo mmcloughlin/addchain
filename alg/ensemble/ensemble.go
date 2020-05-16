@@ -1,3 +1,5 @@
+// Package ensemble provides a collection of addition chain algorithms intended
+// for target integers of cryptographic interest.
 package ensemble
 
 import (

@@ -1,3 +1,4 @@
+// Package heap implements a heap on specific types.
 package heap
 
 import "container/heap"

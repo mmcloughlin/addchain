@@ -1,3 +1,4 @@
+// Package opt implements generic optimizations that remove redundancy from addition chains.
 package opt
 
 import (
