@@ -18,5 +18,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
       - name: Checkout code
         uses: actions/checkout@v1
+      - name: Bootstrap
+        run: ./script/bootstrap
       - name: Stress Test
         run: ./script/stress -c stress.out
