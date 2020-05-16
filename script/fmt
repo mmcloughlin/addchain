@@ -5,7 +5,7 @@ set -exuo pipefail
 repo="github.com/mmcloughlin/addchain"
 
 # Find files.
-mapfile -t files < <(find . -name '*.go' | xargs grep -L '// Code generated')
+mapfile -t files < <(find . -name '*.go' -print0 | xargs -0 grep -L '// Code generated')
 
 # Go formatting.
 sed -i.fmtbackup '/^import (/,/)/ { /^$$/ d; }' "${files[@]}"
