@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -exuo pipefail
+
+golangci-lint run
