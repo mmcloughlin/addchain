@@ -12,19 +12,19 @@ import (
 func Ensemble() []alg.ChainAlgorithm {
 	// Choose sequence algorithms.
 	seqalgs := []alg.SequenceAlgorithm{
-		heuristic.NewAlgorithm(heuristic.UseFirstHeuristic{
+		heuristic.NewAlgorithm(heuristic.UseFirst(
 			heuristic.Halving{},
 			heuristic.DeltaLargest{},
-		}),
-		heuristic.NewAlgorithm(heuristic.UseFirstHeuristic{
+		)),
+		heuristic.NewAlgorithm(heuristic.UseFirst(
 			heuristic.Halving{},
 			heuristic.Approximation{},
-		}),
+		)),
 	}
 
-	for _, strategy := range contfrac.ContinuedFractionStrategies {
+	for _, strategy := range contfrac.Strategies {
 		if strategy.Singleton() {
-			seqalgs = append(seqalgs, contfrac.NewContinuedFractions(strategy))
+			seqalgs = append(seqalgs, contfrac.NewAlgorithm(strategy))
 		}
 	}
 
@@ -62,7 +62,7 @@ func Ensemble() []alg.ChainAlgorithm {
 
 	// Wrap in an optimization layer.
 	for i, a := range as {
-		as[i] = opt.Optimized{Algorithm: a}
+		as[i] = opt.Algorithm{Algorithm: a}
 	}
 
 	return as

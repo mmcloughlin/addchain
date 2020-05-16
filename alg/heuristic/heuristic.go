@@ -188,10 +188,15 @@ func (Halving) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 	return bigints.InsertSortedUnique(kshifts, d)
 }
 
-// UseFirstHeuristic is a compositite heuristic that will make the first non-nil suggestion from the sub-heuristics.
-type UseFirstHeuristic []Heuristic
+// UseFirst builds a compositite heuristic that will make the first non-nil
+// suggestion from the sub-heuristics.
+func UseFirst(heuristics ...Heuristic) Heuristic {
+	return useFirst(heuristics)
+}
 
-func (h UseFirstHeuristic) String() string {
+type useFirst []Heuristic
+
+func (h useFirst) String() string {
 	names := []string{}
 	for _, sub := range h {
 		names = append(names, sub.String())
@@ -200,7 +205,7 @@ func (h UseFirstHeuristic) String() string {
 }
 
 // Suggest delegates to each sub-heuristic in turn and returns the first non-nil suggestion.
-func (h UseFirstHeuristic) Suggest(f []*big.Int, target *big.Int) []*big.Int {
+func (h useFirst) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 	for _, heuristic := range h {
 		if insert := heuristic.Suggest(f, target); insert != nil {
 			return insert

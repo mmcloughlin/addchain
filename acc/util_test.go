@@ -13,12 +13,12 @@ import (
 // CheckRandom runs the check function against randomly generated chain programs.
 func CheckRandom(t *testing.T, check func(t *testing.T, p addchain.Program)) {
 	gs := []rand.Generator{
-		rand.RandomAddsGenerator{N: 10},
-		rand.NewRandomSolverGenerator(
+		rand.AddsGenerator{N: 10},
+		rand.NewSolverGenerator(
 			160,
 			dict.NewAlgorithm(
 				dict.SlidingWindow{K: 5},
-				contfrac.NewContinuedFractions(contfrac.DichotomicStrategy{}),
+				contfrac.NewAlgorithm(contfrac.DichotomicStrategy{}),
 			),
 		),
 	}

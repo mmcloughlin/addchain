@@ -8,18 +8,18 @@ import (
 	"github.com/mmcloughlin/addchain/alg"
 )
 
-// Optimized applies chain optimization to the result of a wrapped algorithm.
-type Optimized struct {
+// Algorithm applies chain optimization to the result of a wrapped algorithm.
+type Algorithm struct {
 	Algorithm alg.ChainAlgorithm
 }
 
-func (o Optimized) String() string {
-	return fmt.Sprintf("opt(%s)", o.Algorithm)
+func (a Algorithm) String() string {
+	return fmt.Sprintf("opt(%s)", a.Algorithm)
 }
 
 // FindChain delegates to the wrapped algorithm, then runs Optimize on the result.
-func (o Optimized) FindChain(n *big.Int) (addchain.Chain, error) {
-	c, err := o.Algorithm.FindChain(n)
+func (a Algorithm) FindChain(n *big.Int) (addchain.Chain, error) {
+	c, err := a.Algorithm.FindChain(n)
 	if err != nil {
 		return nil, err
 	}

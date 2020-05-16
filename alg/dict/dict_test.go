@@ -151,7 +151,7 @@ func TestHybrid(t *testing.T) {
 func TestAlgorithm(t *testing.T) {
 	a := NewAlgorithm(
 		SlidingWindow{K: 4},
-		contfrac.NewContinuedFractions(contfrac.DichotomicStrategy{}),
+		contfrac.NewAlgorithm(contfrac.DichotomicStrategy{}),
 	)
 	n := big.NewInt(587257)
 	c := algtest.AssertChainAlgorithmProduces(t, a, n)
@@ -165,7 +165,7 @@ func TestPrimitive(t *testing.T) {
 	// decomposer.
 	a := NewAlgorithm(
 		RunLength{T: 0},
-		contfrac.NewContinuedFractions(contfrac.TotalStrategy{}),
+		contfrac.NewAlgorithm(contfrac.TotalStrategy{}),
 	)
 
 	// Cases are accompanied by an example of how this chain might be constructed

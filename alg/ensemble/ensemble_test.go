@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/mmcloughlin/addchain/acc"
-	"github.com/mmcloughlin/addchain/exec"
+	"github.com/mmcloughlin/addchain/alg/exec"
 	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/test"
 	"github.com/mmcloughlin/addchain/prime"

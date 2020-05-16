@@ -10,7 +10,7 @@ import (
 	"github.com/mmcloughlin/addchain/acc"
 	"github.com/mmcloughlin/addchain/acc/printer"
 	"github.com/mmcloughlin/addchain/alg/ensemble"
-	"github.com/mmcloughlin/addchain/exec"
+	"github.com/mmcloughlin/addchain/alg/exec"
 	"github.com/mmcloughlin/addchain/internal/calc"
 	"github.com/mmcloughlin/addchain/internal/cli"
 )

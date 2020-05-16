@@ -17,8 +17,8 @@ import (
 
 func TestAlgorithms(t *testing.T) {
 	heuristics := []Heuristic{
-		UseFirstHeuristic{Halving{}, DeltaLargest{}},
-		UseFirstHeuristic{Halving{}, Approximation{}},
+		UseFirst(Halving{}, DeltaLargest{}),
+		UseFirst(Halving{}, Approximation{}),
 	}
 	for _, heuristic := range heuristics {
 		suite := algtest.SequenceAlgorithmSuite{

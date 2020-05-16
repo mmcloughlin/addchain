@@ -21,9 +21,9 @@ import (
 //	                         Cryptography, chapter 9. 2006.
 //	                         https://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
 
-// ContinuedFractionStrategy is a method of choosing the auxiliary integer k in
-// the continued fraction method outlined in [efficientcompaddchain].
-type ContinuedFractionStrategy interface {
+// Strategy is a method of choosing the auxiliary integer k in the continued
+// fraction method outlined in [efficientcompaddchain].
+type Strategy interface {
 	// K returns values of k to try given n.
 	K(n *big.Int) []*big.Int
 
@@ -35,8 +35,8 @@ type ContinuedFractionStrategy interface {
 	fmt.Stringer
 }
 
-// ContinuedFractionStrategies lists all available continued fraction strategies.
-var ContinuedFractionStrategies = []ContinuedFractionStrategy{
+// Strategies lists all available continued fraction strategies.
+var Strategies = []Strategy{
 	BinaryStrategy{},
 	CoBinaryStrategy{},
 	DichotomicStrategy{},
@@ -46,28 +46,28 @@ var ContinuedFractionStrategies = []ContinuedFractionStrategy{
 	FermatStrategy{},
 }
 
-// ContinuedFractions uses the continued fractions method for finding an
-// addition chain [efficientcompaddchain].
-type ContinuedFractions struct {
-	strategy ContinuedFractionStrategy
+// Algorithm uses the continued fractions method for finding an addition chain
+// [efficientcompaddchain].
+type Algorithm struct {
+	strategy Strategy
 }
 
-func NewContinuedFractions(s ContinuedFractionStrategy) ContinuedFractions {
-	return ContinuedFractions{
+func NewAlgorithm(s Strategy) Algorithm {
+	return Algorithm{
 		strategy: s,
 	}
 }
 
-func (a ContinuedFractions) String() string {
+func (a Algorithm) String() string {
 	return fmt.Sprintf("continued_fractions(%s)", a.strategy)
 }
 
-func (a ContinuedFractions) FindSequence(targets []*big.Int) (addchain.Chain, error) {
+func (a Algorithm) FindSequence(targets []*big.Int) (addchain.Chain, error) {
 	bigints.Sort(targets)
 	return a.chain(targets), nil
 }
 
-func (a ContinuedFractions) minchain(n *big.Int) addchain.Chain {
+func (a Algorithm) minchain(n *big.Int) addchain.Chain {
 	if bigint.IsPow2(n) {
 		return bigint.Pow2UpTo(n)
 	}
@@ -89,7 +89,7 @@ func (a ContinuedFractions) minchain(n *big.Int) addchain.Chain {
 
 // chain produces a continued fraction chain for the given values. The slice ns
 // must be in ascending order.
-func (a ContinuedFractions) chain(ns []*big.Int) addchain.Chain {
+func (a Algorithm) chain(ns []*big.Int) addchain.Chain {
 	k := len(ns)
 	if k == 1 || ns[k-2].Cmp(bigint.One()) <= 0 {
 		return a.minchain(ns[k-1])

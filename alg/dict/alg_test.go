@@ -13,15 +13,15 @@ func TestAlgorithms(t *testing.T) {
 		// Dictionary-based algorithms.
 		NewAlgorithm(
 			SlidingWindow{K: 4},
-			contfrac.NewContinuedFractions(contfrac.DichotomicStrategy{}),
+			contfrac.NewAlgorithm(contfrac.DichotomicStrategy{}),
 		),
 		NewAlgorithm(
 			FixedWindow{K: 7},
-			contfrac.NewContinuedFractions(contfrac.BinaryStrategy{}),
+			contfrac.NewAlgorithm(contfrac.BinaryStrategy{}),
 		),
 
 		// Runs algorithm.
-		NewRunsAlgorithm(contfrac.NewContinuedFractions(contfrac.DichotomicStrategy{})),
+		NewRunsAlgorithm(contfrac.NewAlgorithm(contfrac.DichotomicStrategy{})),
 	}
 	for _, a := range as {
 		t.Run(a.String(), algtest.ChainAlgorithmSuite(a))
