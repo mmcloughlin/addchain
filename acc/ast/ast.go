@@ -1,3 +1,4 @@
+// Package ast declares abstract syntax tree types for acc programs.
 package ast
 
 type Chain struct {

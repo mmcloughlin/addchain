@@ -1,3 +1,4 @@
+// Package parse implements a parser for acc programs.
 package parse
 
 import (

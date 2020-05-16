@@ -1,3 +1,4 @@
+// Package addchain provides addition chain types and operations on them.
 package addchain
 
 import (

@@ -1,3 +1,4 @@
+// Package pass implements analysis and processing passes on acc programs.
 package pass
 
 import (

@@ -1,3 +1,5 @@
+// Package heuristic implements heuristic-based addition sequence algorithms
+// with the Bos-Coster Makesequence structure.
 package heuristic
 
 import (

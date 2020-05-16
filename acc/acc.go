@@ -1,3 +1,5 @@
+// Package acc implements the "addition chain calculator" language: a
+// domain-specific language (DSL) for addition chain computation.
 package acc
 
 import (

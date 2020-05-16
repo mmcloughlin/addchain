@@ -1,3 +1,4 @@
+// Package print provides helpers for structured output printing.
 package print
 
 import (

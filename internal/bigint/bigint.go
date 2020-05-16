@@ -1,3 +1,4 @@
+// Package bigint provides common functions for manipulating multi-precision integers.
 package bigint
 
 import (

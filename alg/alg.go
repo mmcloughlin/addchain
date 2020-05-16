@@ -1,3 +1,4 @@
+// Package alg provides base types for addition chain and addition sequence search algorithms.
 package alg
 
 import (
@@ -5,7 +6,6 @@ import (
 	"math/big"
 
 	"github.com/mmcloughlin/addchain"
-	"github.com/mmcloughlin/addchain/internal/bigint"
 )
 
 // ChainAlgorithm is a method of generating an addition chain for a target integer.
@@ -14,28 +14,28 @@ type ChainAlgorithm interface {
 	FindChain(target *big.Int) (addchain.Chain, error)
 }
 
-// BinaryRightToLeft builds a chain algoirithm for the right-to-left binary method.
-type BinaryRightToLeft struct{}
+// SequenceAlgorithm is a method of generating an addition sequence for a set of
+// target values.
+type SequenceAlgorithm interface {
+	// FindSequence generates an addition chain containing every element of targets.
+	FindSequence(targets []*big.Int) (addchain.Chain, error)
 
-func (BinaryRightToLeft) String() string { return "binary_right_to_left" }
+	// String method returns a name for the algorithm.
+	fmt.Stringer
+}
 
-func (BinaryRightToLeft) FindChain(n *big.Int) (addchain.Chain, error) {
-	c := addchain.Chain{}
-	b := new(big.Int).Set(n)
-	d := bigint.One()
-	var x *big.Int
-	for bigint.IsNonZero(b) {
-		c.AppendClone(d)
-		if b.Bit(0) == 1 {
-			if x == nil {
-				x = bigint.Clone(d)
-			} else {
-				x.Add(x, d)
-				c.AppendClone(x)
-			}
-		}
-		b.Rsh(b, 1)
-		d.Lsh(d, 1)
-	}
-	return c, nil
+// AsChainAlgorithm adapts a sequence algorithm to a chain algorithm. The
+// resulting algorithm calls the sequence algorithm with a singleton list
+// containing the target.
+func AsChainAlgorithm(s SequenceAlgorithm) ChainAlgorithm {
+	return asChainAlgorithm{s}
+}
+
+type asChainAlgorithm struct {
+	SequenceAlgorithm
+}
+
+// FindChain calls FindSequence with a singleton list containing the target.
+func (a asChainAlgorithm) FindChain(target *big.Int) (addchain.Chain, error) {
+	return a.FindSequence([]*big.Int{target})
 }

@@ -1,3 +1,4 @@
+// Package printer implements printing of acc AST nodes.
 package printer
 
 import (

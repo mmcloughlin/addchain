@@ -1,3 +1,4 @@
+// Package dict implements dictionary and run-length addition chain algorithms.
 package dict
 
 import (

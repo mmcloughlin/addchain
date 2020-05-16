@@ -1,3 +1,4 @@
+// Package bigvector implements operations on vectors of multi-precision integers.
 package bigvector
 
 import (

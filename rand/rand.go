@@ -1,3 +1,4 @@
+// Package rand provides random addition chain generators.
 package rand
 
 import (
