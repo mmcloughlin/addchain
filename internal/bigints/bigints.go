@@ -24,26 +24,9 @@ func (a ascending) Len() int           { return len(a) }
 func (a ascending) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ascending) Less(i, j int) bool { return a[i].Cmp(a[j]) < 0 }
 
-// IsSorted reports whether xs is sorted in ascending order.
-func IsSorted(xs []*big.Int) bool {
-	return sort.IsSorted(ascending(xs))
-}
-
 // Sort in ascending order.
 func Sort(xs []*big.Int) {
 	sort.Sort(ascending(xs))
-}
-
-// SortDescending in descending order.
-func SortDescending(xs []*big.Int) {
-	sort.Sort(sort.Reverse(ascending(xs)))
-}
-
-// Reverse the slice in place.
-func Reverse(xs []*big.Int) {
-	for l, r := 0, len(xs)-1; l < r; l, r = l+1, r-1 {
-		xs[l], xs[r] = xs[r], xs[l]
-	}
 }
 
 // Index returns the index of the first occurrence of n in xs, or -1 if it does not appear.
@@ -80,17 +63,6 @@ func Unique(xs []*big.Int) []*big.Int {
 		}
 	}
 	return u
-}
-
-// Max returns the maximum element of xs.
-func Max(xs []*big.Int) *big.Int {
-	max := xs[0]
-	for _, x := range xs[1:] {
-		if x.Cmp(max) > 0 {
-			max = x
-		}
-	}
-	return max
 }
 
 // InsertSortedUnique inserts an integer into a slice of sorted distinct

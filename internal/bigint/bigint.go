@@ -131,18 +131,6 @@ func MinMax(x, y *big.Int) (min, max *big.Int) {
 	return y, x
 }
 
-// Min returns the smaller of x and y.
-func Min(x, y *big.Int) *big.Int {
-	min, _ := MinMax(x, y)
-	return min
-}
-
-// Max returns the larger of x and y.
-func Max(x, y *big.Int) *big.Int {
-	_, max := MinMax(x, y)
-	return max
-}
-
 // Extract bits [l,h) and shift them to the low bits.
 func Extract(x *big.Int, l, h uint) *big.Int {
 	e := Mask(l, h)
@@ -154,17 +142,6 @@ func Extract(x *big.Int, l, h uint) *big.Int {
 func RandBits(r *rand.Rand, n uint) *big.Int {
 	max := Pow2(n)
 	return new(big.Int).Rand(r, max)
-}
-
-// TrailingZeros returns the number of trailing zero bits in x. Returns 0 if x is 0.
-func TrailingZeros(x *big.Int) int {
-	if x.BitLen() == 0 {
-		return 0
-	}
-	n := 0
-	for ; x.Bit(n) == 0; n++ {
-	}
-	return n
 }
 
 // Uint64s represents x in 64-bit limbs.

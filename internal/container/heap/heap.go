@@ -34,16 +34,6 @@ func (h *MinInts) Pop() int {
 	return heap.Pop(h.h).(int)
 }
 
-// Min returns the min value without removing it.
-func (h *MinInts) Min() int {
-	return h.h.x[0]
-}
-
-// Nums returns all the elements in the heap in no particular order.
-func (h *MinInts) Nums() []int {
-	return append([]int{}, h.h.x...)
-}
-
 type intheap struct {
 	x []int
 }

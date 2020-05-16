@@ -4,7 +4,6 @@ package polynomial
 import (
 	"fmt"
 	"math/big"
-	"sort"
 	"strings"
 
 	"github.com/mmcloughlin/addchain/internal/bigint"
@@ -82,9 +81,4 @@ func (p Polynomial) Evaluate(x *big.Int) *big.Int {
 		y.Add(y, t.Evaluate(x))
 	}
 	return y
-}
-
-// SortByExponent sorts terms in ascending order of the exponent N.
-func (p Polynomial) SortByExponent() {
-	sort.Slice(p, func(i, j int) bool { return p[i].N < p[j].N })
 }
