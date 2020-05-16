@@ -1,6 +1,7 @@
 on:
   schedule:
     - cron: "42 10 * * 3"
+  pull_request:
 
 name: stress
 jobs:
@@ -18,10 +19,4 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
       - name: Stress Test
-        run: go test -stress -timeout=0 -coverprofile=coverage.out -covermode=set
-      - name: Upload Coverage
-        uses: codecov/codecov-action@v1.0.5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.out
-          flags: stress
+        run: ./script/stress -c stress.out
