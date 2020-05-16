@@ -6,7 +6,7 @@ import (
 	"math/big"
 
 	"github.com/mmcloughlin/addchain/internal/bigint"
-	"github.com/mmcloughlin/addchain/polynomial"
+	"github.com/mmcloughlin/addchain/internal/polynomial"
 )
 
 // References:

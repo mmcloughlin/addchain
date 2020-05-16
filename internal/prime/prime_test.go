@@ -3,7 +3,7 @@ package prime
 import (
 	"testing"
 
-	"github.com/mmcloughlin/addchain/polynomial"
+	"github.com/mmcloughlin/addchain/internal/polynomial"
 )
 
 func TestSolinas(t *testing.T) {

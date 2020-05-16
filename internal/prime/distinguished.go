@@ -1,6 +1,6 @@
 package prime
 
-import "github.com/mmcloughlin/addchain/polynomial"
+import "github.com/mmcloughlin/addchain/internal/polynomial"
 
 // References:
 //

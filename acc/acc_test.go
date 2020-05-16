@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mmcloughlin/addchain/prime"
+	"github.com/mmcloughlin/addchain/internal/prime"
 )
 
 func TestEvaluate(t *testing.T) {

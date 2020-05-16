@@ -8,8 +8,8 @@ import (
 
 	"github.com/mmcloughlin/addchain/alg"
 	"github.com/mmcloughlin/addchain/internal/bigint"
+	"github.com/mmcloughlin/addchain/internal/prime"
 	"github.com/mmcloughlin/addchain/internal/test"
-	"github.com/mmcloughlin/addchain/prime"
 )
 
 func ChainAlgorithm(t *testing.T, a alg.ChainAlgorithm) {

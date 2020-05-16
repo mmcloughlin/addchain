@@ -10,8 +10,8 @@ import (
 	"github.com/mmcloughlin/addchain/acc"
 	"github.com/mmcloughlin/addchain/alg/exec"
 	"github.com/mmcloughlin/addchain/internal/bigint"
+	"github.com/mmcloughlin/addchain/internal/prime"
 	"github.com/mmcloughlin/addchain/internal/test"
-	"github.com/mmcloughlin/addchain/prime"
 )
 
 // verbose flag for customizing log output from algorithm executor.
