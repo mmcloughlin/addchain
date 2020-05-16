@@ -22,21 +22,30 @@ import (
 //	                    ordinary elliptic curves. Cryptology ePrint Archive, Report 2008/490. 2008.
 //	                    https://eprint.iacr.org/2008/490
 
+// SequenceAlgorithmSuite builds a generic suite of tests for an addition
+// sequence algorithm.
 type SequenceAlgorithmSuite struct {
-	Algorithm          alg.SequenceAlgorithm
+	// Algorithm under test.
+	Algorithm alg.SequenceAlgorithm
+
+	// AcceptsLargeInputs indicates whether the algorithm can tolerate large
+	// inputs. As a rule of thumb, set this to true if the algorithm is
+	// logarithmic in the largest input.
 	AcceptsLargeInputs bool
 }
 
+// Tests builds the test suite function. Suitable to run as a subtest with
+// testing.T.Run.
 func (s SequenceAlgorithmSuite) Tests() func(t *testing.T) {
 	return func(t *testing.T) {
-		t.Run("known_sequences", CheckKnownSequences(s.Algorithm))
+		t.Run("known_sequences", checkKnownSequences(s.Algorithm))
 		if s.AcceptsLargeInputs {
 			t.Run("as_chain_algorithm", ChainAlgorithmSuite(alg.AsChainAlgorithm(s.Algorithm)))
 		}
 	}
 }
 
-func CheckKnownSequences(a alg.SequenceAlgorithm) func(t *testing.T) {
+func checkKnownSequences(a alg.SequenceAlgorithm) func(t *testing.T) {
 	cases := []struct {
 		Targets  []*big.Int
 		Solution addchain.Chain

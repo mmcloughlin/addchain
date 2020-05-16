@@ -12,21 +12,23 @@ import (
 	"github.com/mmcloughlin/addchain/internal/test"
 )
 
+// ChainAlgorithm applies a generic test suite to the algorithm a.
 func ChainAlgorithm(t *testing.T, a alg.ChainAlgorithm) {
 	suite := ChainAlgorithmSuite(a)
 	suite(t)
 }
 
+// ChainAlgorithmSuite builds a generic test suite function for the algorithm a.
 func ChainAlgorithmSuite(a alg.ChainAlgorithm) func(t *testing.T) {
 	return func(t *testing.T) {
-		t.Run("powers_of_two", CheckPowersOfTwo(a, 100))
-		t.Run("binary_runs", CheckBinaryRuns(a, 32))
-		t.Run("random_int64", CheckRandomInt64s(a))
-		t.Run("primes", CheckPrimes(a))
+		t.Run("powers_of_two", checkPowersOfTwo(a, 100))
+		t.Run("binary_runs", checkBinaryRuns(a, 32))
+		t.Run("random_int64", checkRandomInt64s(a))
+		t.Run("primes", checkPrimes(a))
 	}
 }
 
-func CheckPowersOfTwo(a alg.ChainAlgorithm, e uint) func(t *testing.T) {
+func checkPowersOfTwo(a alg.ChainAlgorithm, e uint) func(t *testing.T) {
 	return func(t *testing.T) {
 		n := big.NewInt(1)
 		for i := uint(0); i <= e; i++ {
@@ -36,7 +38,7 @@ func CheckPowersOfTwo(a alg.ChainAlgorithm, e uint) func(t *testing.T) {
 	}
 }
 
-func CheckBinaryRuns(a alg.ChainAlgorithm, n uint) func(t *testing.T) {
+func checkBinaryRuns(a alg.ChainAlgorithm, n uint) func(t *testing.T) {
 	return func(t *testing.T) {
 		for i := uint(1); i <= n; i++ {
 			r := bigint.Pow2(i)
@@ -46,7 +48,7 @@ func CheckBinaryRuns(a alg.ChainAlgorithm, n uint) func(t *testing.T) {
 	}
 }
 
-func CheckRandomInt64s(a alg.ChainAlgorithm) func(t *testing.T) {
+func checkRandomInt64s(a alg.ChainAlgorithm) func(t *testing.T) {
 	return test.Trials(func(t *testing.T) bool {
 		r := rand.Int63n(math.MaxInt64)
 		n := big.NewInt(r)
@@ -55,7 +57,7 @@ func CheckRandomInt64s(a alg.ChainAlgorithm) func(t *testing.T) {
 	})
 }
 
-func CheckPrimes(a alg.ChainAlgorithm) func(t *testing.T) {
+func checkPrimes(a alg.ChainAlgorithm) func(t *testing.T) {
 	// Prepare primes in a random order.
 	ps := []*big.Int{}
 	for _, p := range prime.Distinguished {

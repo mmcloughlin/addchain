@@ -53,6 +53,8 @@ type Algorithm struct {
 	strategy Strategy
 }
 
+// NewAlgorithm builds a continued fractions addition sequence algorithm using
+// the provided strategy for selecting the auziallary integer k.
 func NewAlgorithm(s Strategy) Algorithm {
 	return Algorithm{
 		strategy: s,
@@ -63,6 +65,8 @@ func (a Algorithm) String() string {
 	return fmt.Sprintf("continued_fractions(%s)", a.strategy)
 }
 
+// FindSequence applies the continued fractions method to build a chain
+// containing targets.
 func (a Algorithm) FindSequence(targets []*big.Int) (addchain.Chain, error) {
 	bigints.Sort(targets)
 	return a.chain(targets), nil
@@ -116,6 +120,8 @@ type BinaryStrategy struct{}
 
 func (BinaryStrategy) String() string { return "binary" }
 
+// Singleton returns true, since the binary strategy returns a single proposal
+// for k.
 func (BinaryStrategy) Singleton() bool { return true }
 
 // K returns floor(n/2).
@@ -127,11 +133,13 @@ func (BinaryStrategy) K(n *big.Int) []*big.Int {
 // CoBinaryStrategy implements the co-binary strategy, also referred to as the
 // "modified-binary" strategy. See [efficientcompaddchain] page 26 or
 // [gencontfrac] page 6. Since this is a singleton strategy it gives rise to a
-// logarithmic sequence algoirithm that may not be optimal.
+// logarithmic sequence algorithm that may not be optimal.
 type CoBinaryStrategy struct{}
 
 func (CoBinaryStrategy) String() string { return "co_binary" }
 
+// Singleton returns true, since the co-binary strategy returns a single
+// proposal for k.
 func (CoBinaryStrategy) Singleton() bool { return true }
 
 // K returns floor(n/2) when n is even, or floor((n+1)/2) when n is odd.

@@ -20,6 +20,7 @@ type RightToLeft struct{}
 
 func (RightToLeft) String() string { return "binary_right_to_left" }
 
+// FindChain applies the right-to-left binary method to n.
 func (RightToLeft) FindChain(n *big.Int) (addchain.Chain, error) {
 	c := addchain.Chain{}
 	b := new(big.Int).Set(n)
