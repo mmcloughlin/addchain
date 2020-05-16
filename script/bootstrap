@@ -18,7 +18,7 @@ gobin github.com/mna/pigeon@v1.0.1-0.20200224192238-18953b277063
 gobin github.com/mmcloughlin/mathfmt@v0.0.0-20200207041814-4064651798f4
 
 # bib for bibliography references.
-gobin github.com/mmcloughlin/bib@v0.0.0-20200404191955-f70eedea5933
+gobin github.com/mmcloughlin/bib@v0.0.0-20200516091033-022d1b7c8ba4
 
 # covertool for merging coverage reports
 gobin github.com/dlespiau/covertool@v0.0.0-20180314162135-b0c4c6d0583a
