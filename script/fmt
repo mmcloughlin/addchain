@@ -18,3 +18,6 @@ mathfmt -w "${files[@]}"
 
 # Bibliography references.
 bib process -bib doc/references.bib -w "${files[@]}"
+
+# Format the bibliography itself.
+bib fmt -bib doc/references.bib -w
