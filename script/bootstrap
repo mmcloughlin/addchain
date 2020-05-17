@@ -22,3 +22,6 @@ gobin github.com/mmcloughlin/bib@v0.0.0-20200516091033-022d1b7c8ba4
 
 # covertool for merging coverage reports
 gobin github.com/dlespiau/covertool@v0.0.0-20180314162135-b0c4c6d0583a
+
+# assets embedding
+gobin modernc.org/assets@v1.0.0

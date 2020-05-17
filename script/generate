@@ -6,5 +6,5 @@ set -exuo pipefail
 go generate -x ./...
 
 # Documentation.
-go run doc/gen.go -tmpl doc/readme.tmpl -output README.md
-go run doc/gen.go -tmpl doc/results.tmpl -output doc/results.md
+go run ./internal/tools/docgen -type readme -output README.md
+go run ./internal/tools/docgen -type results -output doc/results.md

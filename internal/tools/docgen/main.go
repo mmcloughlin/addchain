@@ -1,9 +1,9 @@
-// +build ignore
-
 package main
 
 import (
+	"errors"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -11,6 +11,8 @@ import (
 
 	"github.com/mmcloughlin/addchain/internal/results"
 )
+
+//go:generate assets -d templates/ -o ztemplates.go -map templates
 
 func main() {
 	log.SetPrefix("docgen: ")
@@ -21,11 +23,12 @@ func main() {
 }
 
 var (
-	tmpl   = flag.String("tmpl", "", "template")
+	typ    = flag.String("type", "", "documentation type")
+	tmpl   = flag.String("tmpl", "", "explicit template file (overrides -type)")
 	output = flag.String("output", "", "path to output file (default stdout)")
 )
 
-func mainerr() error {
+func mainerr() (err error) {
 	flag.Parse()
 
 	// Initialize template.
@@ -36,12 +39,12 @@ func mainerr() error {
 	})
 
 	// Load template.
-	b, err := ioutil.ReadFile(*tmpl)
+	s, err := load()
 	if err != nil {
 		return err
 	}
 
-	if _, err := t.Parse(string(b)); err != nil {
+	if _, err := t.Parse(s); err != nil {
 		return err
 	}
 
@@ -57,7 +60,11 @@ func mainerr() error {
 		if err != nil {
 			return err
 		}
-		defer f.Close()
+		defer func() {
+			if errc := f.Close(); errc != nil && err == nil {
+				err = errc
+			}
+		}()
 
 		w = f
 	}
@@ -69,6 +76,31 @@ func mainerr() error {
 	return nil
 }
 
+// load template.
+func load() (string, error) {
+	// Prefer explicit filename, if provided.
+	if *tmpl != "" {
+		b, err := ioutil.ReadFile(*tmpl)
+		if err != nil {
+			return "", err
+		}
+		return string(b), nil
+	}
+
+	// Otherwise expect a named type.
+	if *typ == "" {
+		return "", errors.New("missing documentation type")
+	}
+	key := fmt.Sprintf("/%s.tmpl", *typ)
+	s, ok := templates[key]
+	if !ok {
+		return "", fmt.Errorf("unknown documentation type %q", *typ)
+	}
+
+	return s, nil
+}
+
+// include template function.
 func include(filename string) (string, error) {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
