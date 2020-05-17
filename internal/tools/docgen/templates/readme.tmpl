@@ -5,14 +5,17 @@
 <p align="center">Cryptographic Addition Chain Generation in Go</p>
 
 `addchain` generates short addition chains for exponents of cryptographic
-interest, with [results](#results) close to or exceeding the best
-hand-optimized chains.
+interest.
 
-* Suite of algorithms from **academic research**: continued fractions methods
+* [Results](#results) close to or exceeding the best hand-optimized chains
+* Suite of algorithms from academic research: continued fractions methods
   of Bergeron-Berstel-Brlek-Duboc, dictionary-based approaches and Bos-Coster
-  heuristics.
-* **Novel techniques** exploiting structure of cryptographic exponents: custom
+  heuristics
+* Custom techniques exploiting structure of cryptographic exponents:
   run-length method with excellent results on Solinas primes
+* Generic optimization techniques eliminate redundant addition chain operations
+* Command-line tool or library: use as a building block in cryptographic code
+  generators
 
 ## Results
 
