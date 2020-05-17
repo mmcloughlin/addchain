@@ -1,3 +1,5 @@
+// Package results stores results of this library on popular cryptographic
+// exponents for testing and documentation purposes.
 package results
 
 import (
