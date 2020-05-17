@@ -23,14 +23,14 @@ func TestResults(t *testing.T) {
 		t.Run(c.Name, func(t *testing.T) {
 			// Tests with a best known result are prioritized. Only run all tests in
 			// stress test mode.
-			if c.BestPublished == 0 {
+			if c.BestKnown == 0 {
 				test.RequireStress(t)
 			} else {
 				test.RequireLong(t)
 			}
 
-			n := new(big.Int).Sub(c.N, big.NewInt(c.Delta))
-			t.Logf("n-%d=%x", c.Delta, n)
+			n := new(big.Int).Sub(c.N.Int(), big.NewInt(c.D))
+			t.Logf("n-%d=%x", c.D, n)
 
 			// Execute.
 			ex := exec.NewParallel()
@@ -57,14 +57,14 @@ func TestResults(t *testing.T) {
 			t.Logf(" best: %s", b.Algorithm)
 			t.Logf("total: %d", len(b.Program))
 
-			if c.BestPublished > 0 {
-				t.Logf("known: %d", c.BestPublished)
-				t.Logf("delta: %+d", len(b.Program)-c.BestPublished)
+			if c.BestKnown > 0 {
+				t.Logf("known: %d", c.BestKnown)
+				t.Logf("delta: %+d", len(b.Program)-c.BestKnown)
 			}
 
 			// Ensure the recorded best length is correct.
-			if c.Best != len(b.Program) {
-				t.Errorf("incorrect best value %d; expect %d", c.Best, len(b.Program))
+			if c.Length != len(b.Program) {
+				t.Errorf("incorrect best value %d; expect %d", c.Length, len(b.Program))
 			}
 
 			// Compare to golden file.
