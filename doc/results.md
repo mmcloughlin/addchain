@@ -132,8 +132,6 @@ return     (_11 + i266) << 2
 | Property | Value |
 | --- | ----- |
 | _N_ | `fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413f` |
-| _d_ | `0` |
-| _N_-_d_ | `fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413f` |
 | Length | 293 |
 | Best Known | 290 |
 | Delta | +3 |
@@ -179,8 +177,6 @@ return      (1 + i283) << 8 + _111111
 | Property | Value |
 | --- | ----- |
 | _N_ | `ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc63254f` |
-| _d_ | `0` |
-| _N_-_d_ | `ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc63254f` |
 | Length | 294 |
 | Best Known | 292 |
 | Delta | +2 |
@@ -231,8 +227,6 @@ return      (_10010101 + i286) << 6 + _1111
 | Property | Value |
 | --- | ----- |
 | _N_ | `ffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52971` |
-| _d_ | `0` |
-| _N_-_d_ | `ffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52971` |
 | Length | 434 |
 | Best Known | 433 |
 | Delta | +1 |
@@ -281,8 +275,6 @@ return     (2*i427 + 1) << 4 + 1
 | Property | Value |
 | --- | ----- |
 | _N_ | `1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3eb` |
-| _d_ | `0` |
-| _N_-_d_ | `1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3eb` |
 | Length | 283 |
 | Best Known | 284 |
 | Delta | -1 |

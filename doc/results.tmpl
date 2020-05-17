@@ -6,8 +6,10 @@
 | Property | Value |
 | --- | ----- |
 | _N_ | `{{ .N.String }}` |
+{{- if ne .D 0}}
 | _d_ | `{{ .D }}` |
 | _N_-_d_ | `{{ printf "%x" .Target }}` |
+{{- end }}
 | Length | {{ .Length }} |
 {{- if gt .BestKnown 0 }}
 | Best Known | {{ .BestKnown }} |
