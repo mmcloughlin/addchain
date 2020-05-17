@@ -113,6 +113,6 @@ func include(filename string) (string, error) {
 
 // anchor returns the anchor for a heading in Github.
 func anchor(heading string) string {
-	r := strings.NewReplacer(" ", "-", "(", "", ")", "")
+	r := strings.NewReplacer(" ", "-", "(", "", ")", "", "/", "")
 	return r.Replace(strings.ToLower((heading)))
 }

@@ -1,6 +1,10 @@
 # Results
 
 {{ range .Results -}}
+* [{{ .Name }}](#{{ anchor .Name }})
+{{ end }}
+
+{{ range .Results -}}
 ## {{ .Name }}
 
 | Property | Value |
