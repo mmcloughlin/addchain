@@ -1,4 +1,10 @@
-# Results
+<p align="center">
+  <img src="logo.svg" width="40%" border="0" alt="addchain" />
+</p>
+
+<p align="center">Cryptographic Addition Chain Generation in Go</p>
+
+## Results
 
 | Name | _N_ | _d_ | Length | Best | Delta |
 | ---- | --- | --- | -----: | ---: | ----: |
