@@ -7,7 +7,7 @@
 ## Results
 
 | Name | _N_ | _d_ | Length | Best | Delta |
-| ---- | --- | --- | ------ | ---- | ----- |
+| ---- | --- | --- | -----: | ---: | ----: |
 {{ range .Results -}}
 {{- if gt .BestKnown 0 -}}
 | `{{ .Name }}` | {{ if lt (len .N.String) 30 }}`{{ .N }}`{{ else }}_too long_{{ end }} | {{ .D }} | {{ .Length }} | {{ .BestKnown }} | {{ printf "%+d" .Delta }} |

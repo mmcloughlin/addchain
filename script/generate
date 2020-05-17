@@ -2,4 +2,8 @@
 
 set -exuo pipefail
 
+# go generate
 go generate -x ./...
+
+# Documentation.
+go run doc/gen.go -tmpl doc/readme.tmpl -output README.md
