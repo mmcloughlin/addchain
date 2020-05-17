@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"text/template"
 
 	"github.com/mmcloughlin/addchain/internal/results"
@@ -36,6 +37,7 @@ func mainerr() (err error) {
 
 	t.Funcs(template.FuncMap{
 		"include": include,
+		"anchor":  anchor,
 	})
 
 	// Load template.
@@ -107,4 +109,10 @@ func include(filename string) (string, error) {
 		return "", err
 	}
 	return string(b), nil
+}
+
+// anchor returns the anchor for a heading in Github.
+func anchor(heading string) string {
+	r := strings.NewReplacer(" ", "-", "(", "", ")", "")
+	return r.Replace(strings.ToLower((heading)))
 }

@@ -5,28 +5,29 @@
 <p align="center">Cryptographic Addition Chain Generation in Go</p>
 
 `addchain` generates short addition chains for exponents of cryptographic
-interest.
+interest with results rivaling the best hand-optimized chains. Intended to
+form a building block in elliptic curve or other cryptographic code
+generators.
 
-* [Results](#results) close to or exceeding the best hand-optimized chains
-* Suite of algorithms from academic research: continued fractions methods
-  of Bergeron-Berstel-Brlek-Duboc, dictionary-based approaches and Bos-Coster
-  heuristics
-* Custom techniques exploiting structure of cryptographic exponents:
-  run-length method with excellent results on Solinas primes
-* Generic optimization techniques eliminate redundant addition chain operations
+* Suite of algorithms from academic research: continued fractions methods,
+  dictionary-based approaches and Bos-Coster heuristics
+* Custom run-length techniques exploit structure of cryptographic exponents
+  with excellent results on Solinas primes
+* Generic optimization methods eliminate redundant operations
+* Simple domain-specific language for addition chain computations
 * Command-line tool or library: use as a building block in cryptographic code
   generators
 
 ## Results
 
-| Name | _N_ | _d_ | Length | Best | Delta |
-| ---- | --- | --- | -----: | ---: | ----: |
-| Curve25519 Field Inversion | `2^255-19` | 2 | 266 | 265 | +1 |
-| NIST P-256 Field Inversion | `2^256-2^224+2^192+2^96-1` | 3 | 266 | 266 | +0 |
-| NIST P-384 Field Inversion | `2^384-2^128-2^96+2^32-1` | 3 | 397 | 396 | +1 |
-| secp256k1 (Bitcoin) Field Inversion | _too long_ | 3 | 269 | 269 | +0 |
-| Curve25519 Scalar Inversion | _too long_ | 2 | 283 | 284 | -1 |
-| NIST P-256 Scalar Inversion | _too long_ | 2 | 294 | 292 | +2 |
-| NIST P-384 Scalar Inversion | _too long_ | 2 | 434 | 433 | +1 |
-| secp256k1 (Bitcoin) Scalar Inversion | _too long_ | 2 | 293 | 290 | +3 |
+| Name | Length | Best | Delta |
+| ---- | -----: | ---: | ----: |
+| [Curve25519 Field Inversion](doc/results.md#curve25519-field-inversion) | 266 | 265 | +1 |
+| [NIST P-256 Field Inversion](doc/results.md#nist-p-256-field-inversion) | 266 | 266 | +0 |
+| [NIST P-384 Field Inversion](doc/results.md#nist-p-384-field-inversion) | 397 | 396 | +1 |
+| [secp256k1 (Bitcoin) Field Inversion](doc/results.md#secp256k1-bitcoin-field-inversion) | 269 | 269 | +0 |
+| [Curve25519 Scalar Inversion](doc/results.md#curve25519-scalar-inversion) | 283 | 284 | -1 |
+| [NIST P-256 Scalar Inversion](doc/results.md#nist-p-256-scalar-inversion) | 294 | 292 | +2 |
+| [NIST P-384 Scalar Inversion](doc/results.md#nist-p-384-scalar-inversion) | 434 | 433 | +1 |
+| [secp256k1 (Bitcoin) Scalar Inversion](doc/results.md#secp256k1-bitcoin-scalar-inversion) | 293 | 290 | +3 |
 
