@@ -28,6 +28,7 @@ func (a AddsGenerator) String() string {
 	return fmt.Sprintf("random_adds(%d)", a.N)
 }
 
+// GenerateChain generates a random chain based on N random adds.
 func (a AddsGenerator) GenerateChain() (addchain.Chain, error) {
 	c := addchain.New()
 	for len(c) < a.N {
@@ -46,6 +47,7 @@ type SolverGenerator struct {
 	rand      *rand.Rand
 }
 
+// NewSolverGenerator constructs a solver generator based on n-bit targets solved with a.
 func NewSolverGenerator(n uint, a alg.ChainAlgorithm) SolverGenerator {
 	return SolverGenerator{
 		N:         n,
@@ -58,6 +60,8 @@ func (s SolverGenerator) String() string {
 	return fmt.Sprintf("random_solver(%d,%s)", s.N, s.Algorithm)
 }
 
+// GenerateChain generates a random n-bit value and builds a chain for it using
+// the configured chain algorithm.
 func (s SolverGenerator) GenerateChain() (addchain.Chain, error) {
 	target := bigint.RandBits(s.rand, s.N)
 	return s.Algorithm.FindChain(target)

@@ -71,6 +71,7 @@ func (p Solinas) Bits() int {
 	return int(p.F.Degree() * p.K)
 }
 
+// Int returns p as an integer.
 func (p Solinas) Int() *big.Int {
 	return p.F.Evaluate(bigint.Pow2(p.K))
 }
