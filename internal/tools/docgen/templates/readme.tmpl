@@ -5,12 +5,12 @@
 <p align="center">Cryptographic Addition Chain Generation in Go</p>
 
 `addchain` generates short addition chains for exponents of cryptographic
-interest with results rivaling the best hand-optimized chains. Intended to
-form a building block in elliptic curve or other cryptographic code
-generators.
+interest with [results](#results) rivaling the best hand-optimized chains.
+Intended to form a building block in elliptic curve or other cryptographic
+code generators.
 
-* Suite of algorithms from academic research: continued fractions methods,
-  dictionary-based approaches and Bos-Coster heuristics
+* Suite of algorithms from academic research: continued fractions,
+  dictionary-based and Bos-Coster heuristics
 * Custom run-length techniques exploit structure of cryptographic exponents
   with excellent results on Solinas primes
 * Generic optimization methods eliminate redundant operations
@@ -27,3 +27,13 @@ generators.
 | [{{ .Name }}](doc/results.md#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ printf "%+d" .Delta }} |
 {{ end -}}
 {{ end }}
+
+## Usage
+
+### Command-line Tool
+
+Install with:
+
+```
+go get -u github.com/mmcloughlin/addchain/cmd/addchain
+```
