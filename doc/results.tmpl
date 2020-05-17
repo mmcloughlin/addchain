@@ -14,4 +14,9 @@
 | Delta | {{ printf "%+d" .Delta }} |
 {{ end }}
 
+Addition chain produced by `addchain`:
+
+```go
+{{ include (printf "internal/results/testdata/%s.golden" .Slug) }}```
+
 {{ end }}

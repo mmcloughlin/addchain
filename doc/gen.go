@@ -28,14 +28,20 @@ var (
 func mainerr() error {
 	flag.Parse()
 
+	// Initialize template.
+	t := template.New("doc")
+
+	t.Funcs(template.FuncMap{
+		"include": include,
+	})
+
 	// Load template.
 	b, err := ioutil.ReadFile(*tmpl)
 	if err != nil {
 		return err
 	}
 
-	t, err := template.New("doc").Parse(string(b))
-	if err != nil {
+	if _, err := t.Parse(string(b)); err != nil {
 		return err
 	}
 
@@ -61,4 +67,12 @@ func mainerr() error {
 	}
 
 	return nil
+}
+
+func include(filename string) (string, error) {
+	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
