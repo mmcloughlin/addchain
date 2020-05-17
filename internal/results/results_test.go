@@ -3,7 +3,6 @@ package results
 import (
 	"flag"
 	"log"
-	"math/big"
 	"os"
 	"testing"
 
@@ -20,7 +19,7 @@ func TestResults(t *testing.T) {
 	as := ensemble.Ensemble()
 	for _, c := range Results {
 		c := c // scopelint
-		t.Run(c.Name, func(t *testing.T) {
+		t.Run(c.Slug, func(t *testing.T) {
 			// Tests with a best known result are prioritized. Only run all tests in
 			// stress test mode.
 			if c.BestKnown == 0 {
@@ -29,7 +28,7 @@ func TestResults(t *testing.T) {
 				test.RequireLong(t)
 			}
 
-			n := new(big.Int).Sub(c.N.Int(), big.NewInt(c.D))
+			n := c.Target()
 			t.Logf("n-%d=%x", c.D, n)
 
 			// Execute.
@@ -68,7 +67,7 @@ func TestResults(t *testing.T) {
 			}
 
 			// Compare to golden file.
-			golden, err := acc.LoadFile(test.GoldenName(c.Name))
+			golden, err := acc.LoadFile(test.GoldenName(c.Slug))
 			if err != nil {
 				t.Logf("failed to load golden file: %s", err)
 			}
@@ -93,7 +92,7 @@ func TestResults(t *testing.T) {
 					t.Fatal(err)
 				}
 
-				if err := acc.Save(test.GoldenName(c.Name), r); err != nil {
+				if err := acc.Save(test.GoldenName(c.Slug), r); err != nil {
 					t.Fatal(err)
 				}
 			}

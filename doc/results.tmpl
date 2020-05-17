@@ -1,0 +1,17 @@
+# Results
+
+{{ range .Results -}}
+## {{ .Name }}
+
+| Property | Value |
+| --- | ----- |
+| _N_ | `{{ .N.String }}` |
+| _d_ | `{{ .D }}` |
+| _N_-_d_ | `{{ printf "%x" .Target }}` |
+| Length | {{ .Length }} |
+{{- if gt .BestKnown 0 }}
+| Best Known | {{ .BestKnown }} |
+| Delta | {{ printf "%+d" .Delta }} |
+{{ end }}
+
+{{ end }}

@@ -109,4 +109,4 @@ func (p Other) Bits() int { return p.P.BitLen() }
 // Int returns p as an integer.
 func (p Other) Int() *big.Int { return p.P }
 
-func (p Other) String() string { return p.P.String() }
+func (p Other) String() string { return fmt.Sprintf("%x", p.P) }
