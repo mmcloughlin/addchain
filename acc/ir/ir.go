@@ -8,6 +8,7 @@ import (
 	"github.com/mmcloughlin/addchain"
 )
 
+// Program is a sequence of acc instructions.
 type Program struct {
 	Instructions []*Instruction
 
@@ -19,6 +20,7 @@ type Program struct {
 	Temporaries []string
 }
 
+// AddInstruction appends an instruction to the program.
 func (p *Program) AddInstruction(i *Instruction) {
 	p.Instructions = append(p.Instructions, i)
 }
@@ -37,11 +39,14 @@ func (p Program) String() string {
 	return b.String()
 }
 
+// Operand represents an element of an addition chain, with an optional
+// identifier.
 type Operand struct {
 	Identifier string
 	Index      int
 }
 
+// NewOperand builds a named operand for index i.
 func NewOperand(name string, i int) *Operand {
 	return &Operand{
 		Identifier: name,
@@ -49,10 +54,13 @@ func NewOperand(name string, i int) *Operand {
 	}
 }
 
+// Index builds an unnamed operand for index i.
 func Index(i int) *Operand {
 	return NewOperand("", i)
 }
 
+// One is the first element in the addition chain, which by definition always
+// has the value 1.
 var One = Index(0)
 
 func (o Operand) String() string {
@@ -62,6 +70,7 @@ func (o Operand) String() string {
 	return fmt.Sprintf("[%d]", o.Index)
 }
 
+// Instruction assigns the result of an operation to an operand.
 type Instruction struct {
 	Output *Operand
 	Op     Op
@@ -76,15 +85,18 @@ func (i Instruction) String() string {
 	return fmt.Sprintf("%s \u2190 %s", i.Output, i.Op)
 }
 
+// Op is an operation.
 type Op interface {
 	Inputs() []*Operand
 	fmt.Stringer
 }
 
+// Add is an addition operation.
 type Add struct {
 	X, Y *Operand
 }
 
+// Inputs returns the addends.
 func (a Add) Inputs() []*Operand {
 	return []*Operand{a.X, a.Y}
 }
@@ -93,10 +105,12 @@ func (a Add) String() string {
 	return fmt.Sprintf("%s + %s", a.X, a.Y)
 }
 
+// Double is a double operation.
 type Double struct {
 	X *Operand
 }
 
+// Inputs returns the operand.
 func (d Double) Inputs() []*Operand {
 	return []*Operand{d.X}
 }
@@ -105,11 +119,13 @@ func (d Double) String() string {
 	return fmt.Sprintf("2 * %s", d.X)
 }
 
+// Shift represents a shift-left operation, equivalent to repeat doubling.
 type Shift struct {
 	X *Operand
 	S uint
 }
 
+// Inputs returns the operand to be shifted.
 func (s Shift) Inputs() []*Operand {
 	return []*Operand{s.X}
 }

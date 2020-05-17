@@ -13,7 +13,5 @@ linters:
 issues:
   exclude-use-default: false
   exclude:
-    # Ignore missing documentation comments.
-    - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
     # gosec: G304: Potential file inclusion via variable.
     - G304

@@ -9,6 +9,7 @@ import (
 	"github.com/mmcloughlin/addchain/alg"
 )
 
+// AssertChainAlgorithmGenerates asserts that the algorithm generates the expected chain for n.
 func AssertChainAlgorithmGenerates(t *testing.T, a alg.ChainAlgorithm, n *big.Int, expect addchain.Chain) {
 	c, err := a.FindChain(n)
 	if err != nil {
@@ -22,6 +23,7 @@ func AssertChainAlgorithmGenerates(t *testing.T, a alg.ChainAlgorithm, n *big.In
 	}
 }
 
+// AssertChainAlgorithmProduces verifies that a returns a valid chain for n.
 func AssertChainAlgorithmProduces(t *testing.T, a alg.ChainAlgorithm, n *big.Int) addchain.Chain {
 	c, err := a.FindChain(n)
 	if err != nil {
@@ -35,6 +37,7 @@ func AssertChainAlgorithmProduces(t *testing.T, a alg.ChainAlgorithm, n *big.Int
 	return c
 }
 
+// AssertSequenceAlgorithmProduces verifies that a returns a valid chain containing targets.
 func AssertSequenceAlgorithmProduces(t *testing.T, a alg.SequenceAlgorithm, targets []*big.Int) addchain.Chain {
 	c, err := a.FindSequence(targets)
 	if err != nil {

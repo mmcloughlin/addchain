@@ -30,6 +30,8 @@ func (o Op) Uses(i int) bool {
 // Program is a sequence of operations.
 type Program []Op
 
+// Shift appends a sequence of operations that bitwise shift index i left by s,
+// equivalent to s double operations. Returns the index of the result.
 func (p *Program) Shift(i int, s uint) (int, error) {
 	for ; s > 0; s-- {
 		next, err := p.Double(i)
@@ -41,10 +43,14 @@ func (p *Program) Shift(i int, s uint) (int, error) {
 	return i, nil
 }
 
+// Double appends an operation that doubles index i. Returns the index of the
+// result.
 func (p *Program) Double(i int) (int, error) {
 	return p.Add(i, i)
 }
 
+// Add appends an operation that adds indices i and j. Returns the index of the
+// result.
 func (p *Program) Add(i, j int) (int, error) {
 	if err := p.boundscheck(i); err != nil {
 		return 0, err
@@ -69,16 +75,19 @@ func (p Program) boundscheck(i int) error {
 	return nil
 }
 
+// Doubles returns the number of doubles in the program.
 func (p Program) Doubles() int {
 	doubles, _ := p.Count()
 	return doubles
 }
 
+// Adds returns the number of adds in the program.
 func (p Program) Adds() int {
 	_, adds := p.Count()
 	return adds
 }
 
+// Count returns the number of doubles and adds in the program.
 func (p Program) Count() (doubles, adds int) {
 	for _, op := range p {
 		if op.IsDouble() {
