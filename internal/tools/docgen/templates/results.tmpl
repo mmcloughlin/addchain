@@ -13,6 +13,7 @@
 | _d_ | `{{ .D }}` |
 | _N_-_d_ | `{{ printf "%x" .Target }}` |
 | Length | {{ .Length }} |
+| Algorithm | `{{ .AlgorithmName }}` |
 {{- if gt .BestKnown 0 }}
 | Best Known | {{ .BestKnown }} |
 | Delta | {{ printf "%+d" .Delta }} |

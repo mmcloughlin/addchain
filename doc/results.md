@@ -30,6 +30,7 @@
 | _d_ | `2` |
 | _N_-_d_ | `7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeb` |
 | Length | 266 |
+| Algorithm | `opt(runs(continued_fractions(dichotomic)))` |
 | Best Known | 265 |
 | Delta | +1 |
 
@@ -61,6 +62,7 @@ return      (x250 << 2 + 1) << 3 + _11
 | _d_ | `3` |
 | _N_-_d_ | `ffffffff00000001000000000000000000000000fffffffffffffffffffffffc` |
 | Length | 266 |
+| Algorithm | `opt(runs(continued_fractions(dichotomic)))` |
 | Best Known | 266 |
 | Delta | +0 |
 
@@ -90,6 +92,7 @@ return    ((x32 + i232) << 30 + x30) << 2
 | _d_ | `3` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffff0000000000000000fffffffc` |
 | Length | 397 |
+| Algorithm | `opt(runs(heuristic(use_first(halving,approximation))))` |
 | Best Known | 396 |
 | Delta | +1 |
 
@@ -123,6 +126,7 @@ return    ((x255 << 33 + x32) << 94 + x30) << 2
 | _d_ | `3` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2c` |
 | Length | 269 |
+| Algorithm | `opt(runs(heuristic(use_first(halving,delta_largest))))` |
 | Best Known | 269 |
 | Delta | +0 |
 
@@ -157,6 +161,7 @@ return     (_11 + i266) << 2
 | _d_ | `2` |
 | _N_-_d_ | `1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3eb` |
 | Length | 283 |
+| Algorithm | `opt(dictionary(hybrid(4,0),continued_fractions(binary)))` |
 | Best Known | 284 |
 | Delta | -1 |
 
@@ -203,6 +208,7 @@ return      ((_11110101 + i264) << 8 + _11010011) << 8 + _11101011
 | _d_ | `2` |
 | _N_-_d_ | `ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc63254f` |
 | Length | 294 |
+| Algorithm | `opt(dictionary(hybrid(8,16),heuristic(use_first(halving,delta_largest))))` |
 | Best Known | 292 |
 | Delta | +2 |
 
@@ -255,6 +261,7 @@ return      (_10010101 + i286) << 6 + _1111
 | _d_ | `2` |
 | _N_-_d_ | `ffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52971` |
 | Length | 434 |
+| Algorithm | `opt(dictionary(hybrid(4,0),continued_fractions(dichotomic)))` |
 | Best Known | 433 |
 | Delta | +1 |
 
@@ -305,6 +312,7 @@ return     (2*i427 + 1) << 4 + 1
 | _d_ | `2` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413f` |
 | Length | 293 |
+| Algorithm | `opt(dictionary(hybrid(4,0),continued_fractions(dichotomic)))` |
 | Best Known | 290 |
 | Delta | +3 |
 
@@ -352,6 +360,7 @@ return      (1 + i283) << 8 + _111111
 | _d_ | `2` |
 | _N_-_d_ | `1ffffffffffffffffffffffffffffffffffffffffffffffffffffffb` |
 | Length | 231 |
+| Algorithm | `opt(runs(continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -380,6 +389,7 @@ return    x218 << 3 + _11
 | _d_ | `2` |
 | _N_-_d_ | `3fffffffffffffffffffffffffffffffffffffffffffffffffffff89` |
 | Length | 233 |
+| Algorithm | `opt(runs(continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -409,6 +419,7 @@ return     (x215 << 4 + 1) << 3 + 1
 | _d_ | `2` |
 | _N_-_d_ | `7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5` |
 | Length | 263 |
+| Algorithm | `opt(dictionary(hybrid(3,64),continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -439,6 +450,7 @@ return     (x247 << 2 + 1) << 2 + 1
 | _d_ | `2` |
 | _N_-_d_ | `3fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff95` |
 | Length | 395 |
+| Algorithm | `opt(dictionary(hybrid(5,0),continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -470,6 +482,7 @@ return      x375 << 7 + _10101
 | _d_ | `2` |
 | _N_-_d_ | `7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff43` |
 | Length | 396 |
+| Algorithm | `opt(runs(continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -500,6 +513,7 @@ return      (x375 << 2 + 1) << 6 + _11
 | _d_ | `2` |
 | _N_-_d_ | `3fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffed` |
 | Length | 426 |
+| Algorithm | `opt(runs(continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -529,6 +543,7 @@ return    (x409 << 3 + _11) << 2 + 1
 | _d_ | `2` |
 | _N_-_d_ | `7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff43` |
 | Length | 525 |
+| Algorithm | `opt(runs(continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -561,6 +576,7 @@ return      (x503 << 2 + 1) << 6 + _11
 | _d_ | `2` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffefffffffffffffffd` |
 | Length | 203 |
+| Algorithm | `opt(dictionary(hybrid(2,0),continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -589,6 +605,7 @@ return    (x127 << 63 + x62) << 2 + 1
 | _d_ | `2` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffeffffffffffffffffffffffff` |
 | Length | 234 |
+| Algorithm | `opt(runs(heuristic(use_first(halving,approximation))))` |
 
 Addition chain produced by `addchain`:
 
@@ -617,6 +634,7 @@ return    x127 << 97 + x96
 | _d_ | `2` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffffffffffffffffffffffffffffffffffffffffffffffffffffd` |
 | Length | 460 |
+| Algorithm | `opt(runs(heuristic(use_first(halving,approximation))))` |
 
 Addition chain produced by `addchain`:
 
@@ -647,6 +665,7 @@ return    (x223 << 223 + x222) << 2 + 1
 | _d_ | `2` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffffffffffeffffee35` |
 | Length | 205 |
+| Algorithm | `opt(dictionary(hybrid(3,0),continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -677,6 +696,7 @@ return     (_11 + i199) << 4 + _101
 | _d_ | `2` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffffffffffffffffffeffffe56b` |
 | Length | 238 |
+| Algorithm | `opt(dictionary(hybrid(5,0),continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 

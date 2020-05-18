@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"sort"
 	"testing"
 
 	"github.com/mmcloughlin/addchain/acc"
@@ -38,32 +39,51 @@ func TestResults(t *testing.T) {
 			}
 			rs := ex.Execute(n, as)
 
-			// Process results.
-			best := 0
-			for i, r := range rs {
+			// Check for errors.
+			for _, r := range rs {
 				if r.Err != nil {
-					t.Logf("error with %s", r.Algorithm)
-					t.Error(r.Err)
-					continue
-				}
-				if len(r.Program) <= len(rs[best].Program) {
-					best = i
+					t.Fatalf("error with %s: %v", r.Algorithm, r.Err)
 				}
 			}
 
-			// Report the best.
-			b := rs[best]
-			t.Logf(" best: %s", b.Algorithm)
-			t.Logf("total: %d", len(b.Program))
+			// Find the best.
+			best := []exec.Result{rs[0]}
+			for _, r := range rs[1:] {
+				if len(r.Program) == len(best[0].Program) {
+					best = append(best, r)
+				} else if len(r.Program) < len(best[0].Program) {
+					best = []exec.Result{r}
+				}
+			}
+
+			sort.Slice(best, func(i, j int) bool {
+				ai := best[i].Program.Adds()
+				aj := best[j].Program.Adds()
+				ni := best[i].Algorithm.String()
+				nj := best[j].Algorithm.String()
+				return ai < aj || (ai == aj && ni < nj)
+			})
+
+			// Report.
+			for _, b := range best {
+				doubles, adds := b.Program.Count()
+				t.Logf("  alg: %s", b.Algorithm)
+				t.Logf("total: %d\tadds: %d\tdoubles: %d", adds+doubles, adds, doubles)
+			}
+			b := best[0]
+			length := len(b.Program)
 
 			if c.BestKnown > 0 {
 				t.Logf("known: %d", c.BestKnown)
-				t.Logf("delta: %+d", len(b.Program)-c.BestKnown)
+				t.Logf("delta: %+d", length-c.BestKnown)
 			}
 
-			// Ensure the recorded best length is correct.
-			if c.Length != len(b.Program) {
-				t.Errorf("incorrect best value %d; expect %d", c.Length, len(b.Program))
+			// Ensure the recorded best length and algorithm name are correct.
+			if c.Length != length {
+				t.Errorf("incorrect best value %d; expect %d", c.Length, length)
+			}
+			if c.AlgorithmName != b.Algorithm.String() {
+				t.Errorf("incorrect algorithm name %q; expect %q", c.AlgorithmName, b.Algorithm)
 			}
 
 			// Compare to golden file.
@@ -77,10 +97,10 @@ func TestResults(t *testing.T) {
 			case golden == nil:
 				t.Errorf("missing golden file")
 				save = true
-			case len(golden.Program) < len(b.Program):
-				t.Errorf("regression from golden: %d to %d", len(golden.Program), len(b.Program))
+			case len(golden.Program) < length:
+				t.Errorf("regression from golden: %d to %d", len(golden.Program), length)
 			case len(golden.Program) > len(b.Program):
-				t.Logf("improvement: %d to %d", len(golden.Program), len(b.Program))
+				t.Logf("improvement: %d to %d", len(golden.Program), length)
 				save = true
 			}
 
