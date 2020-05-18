@@ -175,5 +175,5 @@ func sym(pkg, name string) string {
 
 // pkgurl returns url to go.dev documentation on the given sub-package.
 func pkgurl(name string) string {
-	return path.Join("https://pkg.go.dev", "github.com/mmcloughlin/addchain", name)
+	return "https://pkg.go.dev/" + path.Join("github.com/mmcloughlin/addchain", name)
 }

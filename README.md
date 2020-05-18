@@ -78,10 +78,10 @@ Install:
 go get -u github.com/mmcloughlin/addchain
 ```
 
-Algorithms all conform to the [`alg.ChainAlgorithm`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg#ChainAlgorithm) or
-[`alg.SequenceAlgorithm`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg#SequenceAlgorithm) interfaces and can be used directly. However the
-most user-friendly method uses the [`alg/ensemble`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg/ensemble) package to
-instantiate a sensible default set of algorithms and the [`alg/exec`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg/exec)
+Algorithms all conform to the [`alg.ChainAlgorithm`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg#ChainAlgorithm) or
+[`alg.SequenceAlgorithm`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg#SequenceAlgorithm) interfaces and can be used directly. However the
+most user-friendly method uses the [`alg/ensemble`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/ensemble) package to
+instantiate a sensible default set of algorithms and the [`alg/exec`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/exec)
 helper to execute them in parallel. The following code uses this method to
 find an addition chain for curve25519 field inversion:
 
