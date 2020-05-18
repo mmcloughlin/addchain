@@ -118,6 +118,12 @@ func Example() {
 }
 ```
 
+## Thanks
+
+Thank you to [Tom Dean](https://web.stanford.edu/~trdean/), [Riad
+Wahby](https://wahby.org/) and [Brian Smith](https://briansmith.org/) for
+advice and encouragement.
+
 ## Contributing
 
 Contributions to `addchain` are welcome:
