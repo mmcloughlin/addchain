@@ -168,7 +168,7 @@ func pkg(name string) string {
 	return fmt.Sprintf("[`%s`](%s)", name, pkgurl(name))
 }
 
-// sym returns markdown for a symbol with a
+// sym returns markdown for a symbol with a link to documentation.
 func sym(pkg, name string) string {
 	return fmt.Sprintf("[`%s.%s`](%s#%s)", path.Base(pkg), name, pkgurl(pkg), name)
 }
