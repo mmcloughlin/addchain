@@ -12,7 +12,6 @@ import (
 	"regexp"
 	"strings"
 	"text/template"
-	"unicode"
 
 	"github.com/mmcloughlin/addchain/internal/results"
 )
@@ -136,7 +135,7 @@ func snippet(filename, start, end string) (string, error) {
 	}
 
 	// Collect matched lines.
-	var lines []string
+	var buf bytes.Buffer
 	output := false
 	s := bufio.NewScanner(strings.NewReader(data))
 	for s.Scan() {
@@ -145,17 +144,11 @@ func snippet(filename, start, end string) (string, error) {
 			output = true
 		}
 		if output {
-			lines = append(lines, line)
+			fmt.Fprintln(&buf, line)
 		}
 		if endx.MatchString(line) {
 			output = false
 		}
-	}
-
-	// Strip common prefix.
-	var buf bytes.Buffer
-	for _, line := range stripCommonWhitespacePrefix(lines) {
-		fmt.Fprintln(&buf, line)
 	}
 
 	return buf.String(), nil
@@ -165,48 +158,4 @@ func snippet(filename, start, end string) (string, error) {
 func anchor(heading string) string {
 	r := strings.NewReplacer(" ", "-", "(", "", ")", "", "/", "")
 	return r.Replace(strings.ToLower((heading)))
-}
-
-// stripCommonWhitespacePrefix returns a list of strings with any common
-// whitespace prefix removed. Empty strings are preserved but ignored for the
-// purposes of common prefix identification.
-func stripCommonWhitespacePrefix(strs []string) []string {
-	// Find common prefix, ignoring empty strings.
-	nonempty := []string{}
-	for _, str := range strs {
-		if str != "" {
-			nonempty = append(nonempty, str)
-		}
-	}
-	n := commonWhitespacePrefixLen(nonempty)
-
-	// Strip common prefix.
-	stripped := []string{}
-	for _, str := range strs {
-		if str != "" {
-			stripped = append(stripped, str[n:])
-		} else {
-			stripped = append(stripped, "")
-		}
-	}
-
-	return stripped
-}
-
-// commonWhitespacePrefixLen returns the length of the common whitespace prefix
-// in strs.
-func commonWhitespacePrefixLen(strs []string) int {
-	l := 0
-	for ; ; l++ {
-		for _, str := range strs {
-			if !(l < len(str) && isspace(str[l]) && str[l] == strs[0][l]) {
-				return l
-			}
-		}
-	}
-}
-
-// isspace reports whether ch is a whitespace character.
-func isspace(ch byte) bool {
-	return unicode.IsSpace(rune(ch))
 }
