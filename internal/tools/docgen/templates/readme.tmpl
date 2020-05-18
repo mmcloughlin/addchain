@@ -18,16 +18,6 @@ code generators.
 * Command-line interface or library: use as a building block in cryptographic code
   generators
 
-## Results
-
-| Name | Length | Best | Delta |
-| ---- | -----: | ---: | ----: |
-{{ range .Results -}}
-{{- if gt .BestKnown 0 -}}
-| [{{ .Name }}](doc/results.md#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ printf "%+d" .Delta }} |
-{{ end -}}
-{{ end }}
-
 ## Usage
 
 ### Command-line Interface
@@ -68,3 +58,17 @@ field inversion:
 ```go
 {{ snippet "alg/exec/example_test.go" "func Example" "^}" -}}
 ```
+
+## Results
+
+| Name | Length | Best | Delta |
+| ---- | -----: | ---: | ----: |
+{{ range .Results -}}
+{{- if gt .BestKnown 0 -}}
+| [{{ .Name }}](doc/results.md#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ printf "%+d" .Delta }} |
+{{ end -}}
+{{ end }}
+
+## License
+
+`addchain` is available under the [BSD 3-Clause License](LICENSE).
