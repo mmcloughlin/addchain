@@ -87,28 +87,28 @@ following code uses this method to find an addition chain for curve25519
 field inversion:
 
 ```go
-	// Target number: 2²⁵⁵ - 21.
-	n := new(big.Int)
-	n.SetString("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeb", 16)
+// Target number: 2²⁵⁵ - 21.
+n := new(big.Int)
+n.SetString("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeb", 16)
 
-	// Default ensemble of algorithms.
-	algorithms := ensemble.Ensemble()
+// Default ensemble of algorithms.
+algorithms := ensemble.Ensemble()
 
-	// Use parallel executor.
-	ex := exec.NewParallel()
-	results := ex.Execute(n, algorithms)
+// Use parallel executor.
+ex := exec.NewParallel()
+results := ex.Execute(n, algorithms)
 
-	// Output best result.
-	best := 0
-	for i, r := range results {
-		if r.Err != nil {
-			log.Fatal(r.Err)
-		}
-		if len(results[i].Program) < len(results[best].Program) {
-			best = i
-		}
+// Output best result.
+best := 0
+for i, r := range results {
+	if r.Err != nil {
+		log.Fatal(r.Err)
 	}
-	r := results[best]
-	fmt.Printf("best: %d\n", len(r.Program))
-	fmt.Printf("algorithm: %s\n", r.Algorithm)
+	if len(results[i].Program) < len(results[best].Program) {
+		best = i
+	}
+}
+r := results[best]
+fmt.Printf("best: %d\n", len(r.Program))
+fmt.Printf("algorithm: %s\n", r.Algorithm)
 ```
