@@ -13,7 +13,7 @@ done
 # Run example program.
 if [ "${all}" = "true" ]; then
     go install ./cmd/addchain
-    bash ./internal/examples/cli/cmd.sh |& tee ./doc/examples/cli/output
+    bash ./internal/examples/cli/cmd.sh |& tee ./internal/examples/cli/output
 fi
 
 # go generate
