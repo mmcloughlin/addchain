@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"regexp"
 	"strings"
 	"text/template"
@@ -42,6 +43,8 @@ func mainerr() (err error) {
 		"include": include,
 		"snippet": snippet,
 		"anchor":  anchor,
+		"pkg":     pkg,
+		"sym":     sym,
 	})
 
 	// Load template.
@@ -158,4 +161,19 @@ func snippet(filename, start, end string) (string, error) {
 func anchor(heading string) string {
 	r := strings.NewReplacer(" ", "-", "(", "", ")", "", "/", "")
 	return r.Replace(strings.ToLower((heading)))
+}
+
+// pkg returns markdown for a package with a link to documentation.
+func pkg(name string) string {
+	return fmt.Sprintf("[`%s`](%s)", name, pkgurl(name))
+}
+
+// sym returns markdown for a symbol with a
+func sym(pkg, name string) string {
+	return fmt.Sprintf("[`%s.%s`](%s#%s)", path.Base(pkg), name, pkgurl(pkg), name)
+}
+
+// pkgurl returns url to go.dev documentation on the given sub-package.
+func pkgurl(name string) string {
+	return path.Join("https://pkg.go.dev", "github.com/mmcloughlin/addchain", name)
 }
