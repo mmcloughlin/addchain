@@ -19,6 +19,9 @@ fi
 # go generate
 go generate -x ./...
 
+# Bibliography.
+bib generate -bib doc/references.bib -type markdown -output doc/bibliography.md
+
 # Documentation.
 go run ./internal/tools/docgen -type readme -output README.md
 go run ./internal/tools/docgen -type results -output doc/results.md
