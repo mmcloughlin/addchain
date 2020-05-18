@@ -10,8 +10,9 @@ while getopts "a" opt; do
     esac
 done
 
-# Run example programs.
+# Run example program.
 if [ "${all}" = "true" ]; then
+    go install ./cmd/addchain
     bash ./internal/examples/cli/cmd.sh |& tee ./doc/examples/cli/output
 fi
 

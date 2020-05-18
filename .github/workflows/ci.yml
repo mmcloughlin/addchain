@@ -46,7 +46,7 @@ jobs:
       - name: Lint
         run: ./script/lint
       - name: Generate
-        run: ./script/generate
+        run: ./script/generate -a
       - name: Git Status
         run: |
           git diff
