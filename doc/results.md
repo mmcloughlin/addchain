@@ -1,5 +1,27 @@
 # Results
 
+* [Curve25519 Field Inversion](#curve25519-field-inversion)
+* [NIST P-256 Field Inversion](#nist-p-256-field-inversion)
+* [NIST P-384 Field Inversion](#nist-p-384-field-inversion)
+* [secp256k1 (Bitcoin) Field Inversion](#secp256k1-bitcoin-field-inversion)
+* [Curve25519 Scalar Inversion](#curve25519-scalar-inversion)
+* [NIST P-256 Scalar Inversion](#nist-p-256-scalar-inversion)
+* [NIST P-384 Scalar Inversion](#nist-p-384-scalar-inversion)
+* [secp256k1 (Bitcoin) Scalar Inversion](#secp256k1-bitcoin-scalar-inversion)
+* [M-221 Field Inversion](#m-221-field-inversion)
+* [E-222 Field Inversion](#e-222-field-inversion)
+* [Curve1174 Field Inversion](#curve1174-field-inversion)
+* [E-382 Field Inversion](#e-382-field-inversion)
+* [M-383/Curve383187 Field Inversion](#m-383curve383187-field-inversion)
+* [Curve41417 Field Inversion](#curve41417-field-inversion)
+* [M-511 Field Inversion](#m-511-field-inversion)
+* [NIST P-192 Field Inversion](#nist-p-192-field-inversion)
+* [NIST P-224 Field Inversion](#nist-p-224-field-inversion)
+* [Goldilocks Field Inversion](#goldilocks-field-inversion)
+* [secp192k1 Field Inversion](#secp192k1-field-inversion)
+* [secp224k1 Field Inversion](#secp224k1-field-inversion)
+
+
 ## Curve25519 Field Inversion
 
 | Property | Value |

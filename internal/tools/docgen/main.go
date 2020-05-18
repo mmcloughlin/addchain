@@ -1,12 +1,16 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
+	"strings"
 	"text/template"
 
 	"github.com/mmcloughlin/addchain/internal/results"
@@ -36,6 +40,8 @@ func mainerr() (err error) {
 
 	t.Funcs(template.FuncMap{
 		"include": include,
+		"snippet": snippet,
+		"anchor":  anchor,
 	})
 
 	// Load template.
@@ -107,4 +113,49 @@ func include(filename string) (string, error) {
 		return "", err
 	}
 	return string(b), nil
+}
+
+// snippet of a file between start and end regular expressions.
+func snippet(filename, start, end string) (string, error) {
+	// Parse regular expressions.
+	startx, err := regexp.Compile(start)
+	if err != nil {
+		return "", err
+	}
+
+	endx, err := regexp.Compile(end)
+	if err != nil {
+		return "", err
+	}
+
+	// Read the full file.
+	data, err := include(filename)
+	if err != nil {
+		return "", err
+	}
+
+	// Collect matched lines.
+	var buf bytes.Buffer
+	output := false
+	s := bufio.NewScanner(strings.NewReader(data))
+	for s.Scan() {
+		line := s.Text()
+		if startx.MatchString(line) {
+			output = true
+		}
+		if output {
+			fmt.Fprintln(&buf, line)
+		}
+		if endx.MatchString(line) {
+			output = false
+		}
+	}
+
+	return buf.String(), nil
+}
+
+// anchor returns the anchor for a heading in Github.
+func anchor(heading string) string {
+	r := strings.NewReplacer(" ", "-", "(", "", ")", "", "/", "")
+	return r.Replace(strings.ToLower((heading)))
 }

@@ -4,12 +4,70 @@
 
 <p align="center">Cryptographic Addition Chain Generation in Go</p>
 
+`addchain` generates short addition chains for exponents of cryptographic
+interest with [results](#results) rivaling the best hand-optimized chains.
+Intended as a building block in elliptic curve or other cryptographic code
+generators.
+
+* Suite of algorithms from academic research: continued fractions,
+  dictionary-based and Bos-Coster heuristics
+* Custom run-length techniques exploit structure of cryptographic exponents
+  with excellent results on Solinas primes
+* Generic optimization methods eliminate redundant operations
+* Simple domain-specific language for addition chain computations
+* Command-line interface or library
+
 ## Results
 
-| Name | _N_ | _d_ | Length | Best | Delta |
-| ---- | --- | --- | -----: | ---: | ----: |
+| Name | Length | Best | Delta |
+| ---- | -----: | ---: | ----: |
 {{ range .Results -}}
 {{- if gt .BestKnown 0 -}}
-| {{ .Name }} | {{ if lt (len .N.String) 30 }}`{{ .N }}`{{ else }}_too long_{{ end }} | {{ .D }} | {{ .Length }} | {{ .BestKnown }} | {{ printf "%+d" .Delta }} |
+| [{{ .Name }}](doc/results.md#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ printf "%+d" .Delta }} |
 {{ end -}}
 {{ end }}
+
+## Usage
+
+### Command-line Interface
+
+Install:
+
+```
+go get -u github.com/mmcloughlin/addchain/cmd/addchain
+```
+
+Search for a curve25519 field inversion addition chain with:
+
+```sh
+{{ include "internal/examples/cli/cmd.sh" -}}
+```
+
+Output:
+
+```
+{{ include "internal/examples/cli/output" -}}
+```
+
+### Library
+
+Install:
+
+```
+go get -u github.com/mmcloughlin/addchain
+```
+
+Algorithms all conform to the `alg.ChainAlgorithm` or `alg.SequenceAlgorithm`
+interfaces and can be used directly. However the most user-friendly method
+uses the `alg/ensemble` package to instantiate a sensible default set of
+algorithms and the `alg/exec` helper to execute them in parallel. The
+following code uses this method to find an addition chain for curve25519
+field inversion:
+
+```go
+{{ snippet "alg/exec/example_test.go" "func Example" "^}" -}}
+```
+
+## License
+
+`addchain` is available under the [BSD 3-Clause License](LICENSE).
