@@ -10,7 +10,7 @@ import (
 )
 
 func Example() {
-	// Target number: 2^255 - 21
+	// Target number: 2²⁵⁵ - 21.
 	n := new(big.Int)
 	n.SetString("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeb", 16)
 

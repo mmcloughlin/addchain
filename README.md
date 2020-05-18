@@ -87,19 +87,7 @@ following code uses this method to find an addition chain for curve25519
 field inversion:
 
 ```go
-package exec_test
-
-import (
-	"fmt"
-	"log"
-	"math/big"
-
-	"github.com/mmcloughlin/addchain/alg/ensemble"
-	"github.com/mmcloughlin/addchain/alg/exec"
-)
-
-func Example() {
-	// Target number: 2^255 - 21
+	// Target number: 2²⁵⁵ - 21.
 	n := new(big.Int)
 	n.SetString("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeb", 16)
 
@@ -123,9 +111,4 @@ func Example() {
 	r := results[best]
 	fmt.Printf("best: %d\n", len(r.Program))
 	fmt.Printf("algorithm: %s\n", r.Algorithm)
-
-	// Output:
-	// best: 266
-	// algorithm: opt(runs(continued_fractions(dichotomic)))
-}
 ```
