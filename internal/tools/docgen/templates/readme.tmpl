@@ -15,7 +15,7 @@ code generators.
   with excellent results on Solinas primes
 * Generic optimization methods eliminate redundant operations
 * Simple domain-specific language for addition chain computations
-* Command-line tool or library: use as a building block in cryptographic code
+* Command-line interface or library: use as a building block in cryptographic code
   generators
 
 ## Results
@@ -30,10 +30,22 @@ code generators.
 
 ## Usage
 
-### Command-line Tool
+### Command-line Interface
 
 Install with:
 
 ```
 go get -u github.com/mmcloughlin/addchain/cmd/addchain
+```
+
+Search for a curve25519 field inversion addition chain with:
+
+```sh
+{{ include "doc/examples/cli/cmd.sh" -}}
+```
+
+Output:
+
+```
+{{ include "doc/examples/cli/output" -}}
 ```

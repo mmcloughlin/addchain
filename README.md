@@ -15,7 +15,7 @@ code generators.
   with excellent results on Solinas primes
 * Generic optimization methods eliminate redundant operations
 * Simple domain-specific language for addition chain computations
-* Command-line tool or library: use as a building block in cryptographic code
+* Command-line interface or library: use as a building block in cryptographic code
   generators
 
 ## Results
@@ -34,10 +34,39 @@ code generators.
 
 ## Usage
 
-### Command-line Tool
+### Command-line Interface
 
 Install with:
 
 ```
 go get -u github.com/mmcloughlin/addchain/cmd/addchain
+```
+
+Search for a curve25519 field inversion addition chain with:
+
+```sh
+addchain search '2^255 - 19 - 2'
+```
+
+Output:
+
+```
+addchain: expr: "2^255 - 19 - 2"
+addchain: hex: 7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeb
+addchain: dec: 57896044618658097711785492504343953926634992332820282019728792003956564819947
+addchain: best: opt(runs(continued_fractions(dichotomic)))
+_10       = 2*1
+_11       = 1 + _10
+_1100     = _11 << 2
+_1111     = _11 + _1100
+_11110000 = _1111 << 4
+_11111111 = _1111 + _11110000
+x10       = _11111111 << 2 + _11
+x20       = x10 << 10 + x10
+x30       = x20 << 10 + x10
+x60       = x30 << 30 + x30
+x120      = x60 << 60 + x60
+x240      = x120 << 120 + x120
+x250      = x240 << 10 + x10
+return      (x250 << 2 + 1) << 3 + _11
 ```
