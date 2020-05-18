@@ -20,12 +20,13 @@ type search struct {
 	cli.Command
 
 	concurrency int
+	verbose     bool
 }
 
 func (*search) Name() string     { return "search" }
 func (*search) Synopsis() string { return "search for an addition chain." }
 func (*search) Usage() string {
-	return `Usage: search [-p <N>] <expr>
+	return `Usage: search [-v] [-p <N>] <expr>
 
 Search for an addition chain for <expr>.
 
@@ -34,6 +35,7 @@ Search for an addition chain for <expr>.
 
 func (cmd *search) SetFlags(f *flag.FlagSet) {
 	f.IntVar(&cmd.concurrency, "p", runtime.NumCPU(), "number of algorithms to run in parallel")
+	f.BoolVar(&cmd.verbose, "v", false, "verbose output")
 }
 
 func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
@@ -55,7 +57,9 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 
 	// Execute an ensemble of algorithms.
 	ex := exec.NewParallel()
-	ex.SetLogger(cmd.Log)
+	if cmd.verbose {
+		ex.SetLogger(cmd.Log)
+	}
 	ex.SetConcurrency(cmd.concurrency)
 
 	as := ensemble.Ensemble()
@@ -64,12 +68,12 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	// Report results.
 	best := 0
 	for i, r := range rs {
-		cmd.Log.Printf("algorithm: %s", r.Algorithm)
+		cmd.Debugf("algorithm: %s", r.Algorithm)
 		if r.Err != nil {
 			return cmd.Error(err)
 		}
 		doubles, adds := r.Program.Count()
-		cmd.Log.Printf("total: %d\tdoubles: \t%d adds: %d", doubles+adds, doubles, adds)
+		cmd.Debugf("total: %d\tdoubles: \t%d adds: %d", doubles+adds, doubles, adds)
 		if len(r.Program) < len(rs[best].Program) {
 			best = i
 		}
@@ -78,7 +82,7 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	// Details for the best chain.
 	b := rs[best]
 	for n, op := range b.Program {
-		cmd.Log.Printf("[%3d] %3d+%3d\t%x", n+1, op.I, op.J, b.Chain[n+1])
+		cmd.Debugf("[%3d] %3d+%3d\t%x", n+1, op.I, op.J, b.Chain[n+1])
 	}
 	cmd.Log.Printf("best: %s", b.Algorithm)
 
@@ -98,4 +102,11 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	}
 
 	return subcommands.ExitSuccess
+}
+
+// Debugf prints a message in verbose mode only.
+func (cmd *search) Debugf(format string, args ...interface{}) {
+	if cmd.verbose {
+		cmd.Log.Printf(format, args...)
+	}
 }
