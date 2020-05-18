@@ -118,6 +118,17 @@ func Example() {
 }
 ```
 
+## Contributing
+
+Contributions to `addchain` are welcome:
+
+* [Submit bug reports](https://github.com/mmcloughlin/addchain/issues/new) to
+  the issues page.
+* Suggest [test cases](https://github.com/mmcloughlin/addchain/blob/e6c070065205efcaa02627ab1b23e8ce6aeea1db/internal/results/results.go#L62)
+  or update best-known hand-optimized results.
+* Pull requests accepted. Please discuss in the [issues section](https://github.com/mmcloughlin/addchain/issues)
+  before starting significant work.
+
 ## License
 
 `addchain` is available under the [BSD 3-Clause License](LICENSE).
