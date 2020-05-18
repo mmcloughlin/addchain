@@ -19,6 +19,10 @@ generators.
 
 ## Results
 
+Results for common cryptographic exponents and delta compared to [best known
+hand-optimized addition
+chains](https://briansmith.org/ecc-inversion-addition-chains-01).
+
 | Name | Length | Best | Delta |
 | ---- | -----: | ---: | ----: |
 | [Curve25519 Field Inversion](doc/results.md#curve25519-field-inversion) | 266 | 265 | +1 |
@@ -30,6 +34,9 @@ generators.
 | [NIST P-384 Scalar Inversion](doc/results.md#nist-p-384-scalar-inversion) | 434 | 433 | +1 |
 | [secp256k1 (Bitcoin) Scalar Inversion](doc/results.md#secp256k1-bitcoin-scalar-inversion) | 293 | 290 | +3 |
 
+
+See [full results listing](doc/results.md) for more detail and additional
+exponents.
 
 ## Usage
 

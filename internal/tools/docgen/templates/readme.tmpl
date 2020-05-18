@@ -19,6 +19,10 @@ generators.
 
 ## Results
 
+Results for common cryptographic exponents and delta compared to [best known
+hand-optimized addition
+chains](https://briansmith.org/ecc-inversion-addition-chains-01).
+
 | Name | Length | Best | Delta |
 | ---- | -----: | ---: | ----: |
 {{ range .Results -}}
@@ -26,6 +30,9 @@ generators.
 | [{{ .Name }}](doc/results.md#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ printf "%+d" .Delta }} |
 {{ end -}}
 {{ end }}
+
+See [full results listing](doc/results.md) for more detail and additional
+exponents.
 
 ## Usage
 
