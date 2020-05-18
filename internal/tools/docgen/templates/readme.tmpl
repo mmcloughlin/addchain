@@ -6,8 +6,8 @@
 
 `addchain` generates short addition chains for exponents of cryptographic
 interest with [results](#results) rivaling the best hand-optimized chains.
-Intended to form a building block in elliptic curve or other cryptographic
-code generators.
+Intended as a building block in elliptic curve or other cryptographic code
+generators.
 
 * Suite of algorithms from academic research: continued fractions,
   dictionary-based and Bos-Coster heuristics
@@ -15,8 +15,17 @@ code generators.
   with excellent results on Solinas primes
 * Generic optimization methods eliminate redundant operations
 * Simple domain-specific language for addition chain computations
-* Command-line interface or library: use as a building block in cryptographic code
-  generators
+* Command-line interface or library
+
+## Results
+
+| Name | Length | Best | Delta |
+| ---- | -----: | ---: | ----: |
+{{ range .Results -}}
+{{- if gt .BestKnown 0 -}}
+| [{{ .Name }}](doc/results.md#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ printf "%+d" .Delta }} |
+{{ end -}}
+{{ end }}
 
 ## Usage
 
@@ -58,16 +67,6 @@ field inversion:
 ```go
 {{ snippet "alg/exec/example_test.go" "func Example" "^}" -}}
 ```
-
-## Results
-
-| Name | Length | Best | Delta |
-| ---- | -----: | ---: | ----: |
-{{ range .Results -}}
-{{- if gt .BestKnown 0 -}}
-| [{{ .Name }}](doc/results.md#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ printf "%+d" .Delta }} |
-{{ end -}}
-{{ end }}
 
 ## License
 
