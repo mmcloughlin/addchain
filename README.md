@@ -36,7 +36,7 @@ code generators.
 
 ### Command-line Interface
 
-Install with:
+Install:
 
 ```
 go get -u github.com/mmcloughlin/addchain/cmd/addchain
@@ -69,4 +69,63 @@ x120      = x60 << 60 + x60
 x240      = x120 << 120 + x120
 x250      = x240 << 10 + x10
 return      (x250 << 2 + 1) << 3 + _11
+```
+
+### Library
+
+Install:
+
+```
+go get -u github.com/mmcloughlin/addchain
+```
+
+Algorithms all conform to the `alg.ChainAlgorithm` or `alg.SequenceAlgorithm`
+interfaces and can be used directly. However the most user-friendly method
+uses the `alg/ensemble` package to instantiate a sensible default set of
+algorithms and the `alg/exec` helper to execute them in parallel. The
+following code uses this method to find an addition chain for curve25519
+field inversion:
+
+```go
+package exec_test
+
+import (
+	"fmt"
+	"log"
+	"math/big"
+
+	"github.com/mmcloughlin/addchain/alg/ensemble"
+	"github.com/mmcloughlin/addchain/alg/exec"
+)
+
+func Example() {
+	// Target number: 2^255 - 21
+	n := new(big.Int)
+	n.SetString("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeb", 16)
+
+	// Default ensemble of algorithms.
+	algorithms := ensemble.Ensemble()
+
+	// Use parallel executor.
+	ex := exec.NewParallel()
+	results := ex.Execute(n, algorithms)
+
+	// Output best result.
+	best := 0
+	for i, r := range results {
+		if r.Err != nil {
+			log.Fatal(r.Err)
+		}
+		if len(results[i].Program) < len(results[best].Program) {
+			best = i
+		}
+	}
+	r := results[best]
+	fmt.Printf("best: %d\n", len(r.Program))
+	fmt.Printf("algorithm: %s\n", r.Algorithm)
+
+	// Output:
+	// best: 266
+	// algorithm: opt(runs(continued_fractions(dichotomic)))
+}
 ```
