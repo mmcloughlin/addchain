@@ -27,7 +27,7 @@ chains](https://briansmith.org/ecc-inversion-addition-chains-01).
 | ---- | -----: | ---: | ----: |
 {{ range .Results -}}
 {{- if gt .BestKnown 0 -}}
-| [{{ .Name }}](doc/results.md#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ printf "%+d" .Delta }} |
+| [{{ .Name }}](doc/results.md#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ if le .Delta 0 }}**{{ printf "%+d" .Delta }}**{{ else }}{{ printf "%+d" .Delta }}{{ end }} |
 {{ end -}}
 {{ end }}
 
