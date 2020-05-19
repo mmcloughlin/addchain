@@ -170,9 +170,9 @@ The [original Bos-Coster paper](https://link.springer.com/content/pdf/10.1007/0-
 heuristics: Approximation, Divison, Halving and Lucas. Package
 [`alg/heuristic`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/heuristic) implements a variation on these heuristics:
 
-* **Approximation**: looks for two elements a, b in the current sequence with sum close to the largest element.
-* **Halving**: applies when the target is at least twice as big as the next largest, and if so it will propose adding a sequence of doublings.
-* **Delta Largest**: proposes adding the delta between the largest two entries in the current sequence.
+* **Approximation:** looks for two elements a, b in the current sequence with sum close to the largest element.
+* **Halving:** applies when the target is at least twice as big as the next largest, and if so it will propose adding a sequence of doublings.
+* **Delta Largest:** proposes adding the delta between the largest two entries in the current sequence.
 
 Divison and Lucas are not implemented due to disparities in the literature
 about their precise definition and poor results from early experiments.
@@ -202,14 +202,14 @@ n = ∑ 2^{e_i} d_i
 for exponents _e_ and elements _d_ from a dictionary _D_. Given such a decomposition we can construct an addition chain for _n_ by
 
 1. Find a short addition _sequence_ containing every element of the dictionary _D_. Continued fractions and Bos-Coster heuristics can be used here.
-2. Build _n_ from the dictionary terms using the sum decomposition.
+2. Build _n_ from the dictionary terms according to the sum decomposition.
 
-The efficiency of this approach depends on the decomposition method. The [`alg/dict`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict) package provides:
+The efficiency of this approach boils down to the decomposition method. The [`alg/dict`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict) package provides:
 
-* **Fixed Window**:
-* **Sliding Window**:
-* **Run Length**:
-* **Hybrid**:
+* **Fixed Window:** binary representation of _n_ is broken into fixed _k_-bit windows
+* **Sliding Window**: break _n_ into _k_-bit windows, skipping zeros where possible
+* **Run Length**: decompose _n_ into runs of 1s up to a maximal length
+* **Hybrid**: mix of sliding window and run length methods
 
 #### References
 
