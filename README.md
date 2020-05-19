@@ -170,13 +170,15 @@ The [original Bos-Coster paper](https://link.springer.com/content/pdf/10.1007/0-
 heuristics: Approximation, Divison, Halving and Lucas. Package
 [`alg/heuristic`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/heuristic) implements a variation on these heuristics:
 
-* _Approximation_ looks for two elements a, b in the current sequence with sum close to the largest element.
-* _Halving_ applies when the target is at least twice as big as the next largest, and if so it will propose adding a sequence of doublings.
-* _Delta Largest_ proposes adding the delta between the largest two entries in the current sequence.
+* **Approximation**: looks for two elements a, b in the current sequence with sum close to the largest element.
+* **Halving**: applies when the target is at least twice as big as the next largest, and if so it will propose adding a sequence of doublings.
+* **Delta Largest**: proposes adding the delta between the largest two entries in the current sequence.
 
 Divison and Lucas are not implemented due to disparities in the literature
-about their precise definition and poor results from early attempts. However
-this remains a [possible avenue for
+about their precise definition and poor results from early experiments.
+Furthermore, this library does not apply weights to the heuristics as
+suggested in the paper, rather it simply uses the first that applies. However
+both of these remain [possible avenues for
 improvement](https://github.com/mmcloughlin/addchain/issues/26).
 
 #### References
@@ -190,7 +192,32 @@ improvement](https://github.com/mmcloughlin/addchain/issues/26).
 
 ### Dictionary
 
-## Runs
+Dictionary methods decompose the binary representation of a target integer _n_ into a set of dictionary _terms_, such that _n_
+may be written as a sum
+
+```
+n = ∑ 2^{e_i} d_i
+```
+
+for exponents _e_ and elements _d_ from a dictionary _D_. Given such a decomposition we can construct an addition chain for _n_ by
+
+1. Find a short addition _sequence_ containing every element of the dictionary _D_. Continued fractions and Bos-Coster heuristics can be used here.
+2. Build _n_ from the dictionary terms using the sum decomposition.
+
+The efficiency of this approach depends on the decomposition method. The [`alg/dict`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict) package provides:
+
+* **Fixed Window**:
+* **Sliding Window**:
+* **Run Length**:
+* **Hybrid**:
+
+#### References
+
+* Martin Otto. Brauer addition-subtraction chains. PhD thesis, Universitat Paderborn. 2001. http://www.martin-otto.de/publications/docs/2001_MartinOtto_Diplom_BrauerAddition-SubtractionChains.pdf
+* Kunihiro, Noboru and Yamamoto, Hirosuke. New Methods for Generating Short Addition Chains. IEICE Transactions on Fundamentals of Electronics Communications and Computer Sciences. 2000. https://pdfs.semanticscholar.org/b398/d10faca35af9ce5a6026458b251fd0a5640c.pdf
+* Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve Cryptography, chapter 9. 2006. http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+
+### Runs
 
 ### Optimization
 
