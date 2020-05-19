@@ -18,6 +18,7 @@ import (
 )
 
 //go:generate assets -d templates/ -o ztemplates.go -map templates
+//go:generate bib generate -bib ../../../doc/references.bib -tmpl bibliography.tmpl -output zbibliography.go
 
 func main() {
 	log.SetPrefix("docgen: ")
@@ -40,11 +41,12 @@ func mainerr() (err error) {
 	t := template.New("doc")
 
 	t.Funcs(template.FuncMap{
-		"include": include,
-		"snippet": snippet,
-		"anchor":  anchor,
-		"pkg":     pkg,
-		"sym":     sym,
+		"include":   include,
+		"snippet":   snippet,
+		"anchor":    anchor,
+		"pkg":       pkg,
+		"sym":       sym,
+		"reference": reference,
 	})
 
 	// Load template.
@@ -176,4 +178,14 @@ func sym(pkg, name string) string {
 // pkgurl returns url to go.dev documentation on the given sub-package.
 func pkgurl(name string) string {
 	return "https://pkg.go.dev/" + path.Join("github.com/mmcloughlin/addchain", name)
+}
+
+// reference returns formatted bibliography entry for the given citation name.
+func reference(name string) (string, error) {
+	for _, entry := range bibliography {
+		if entry.CiteName == name {
+			return entry.Formatted, nil
+		}
+	}
+	return "", fmt.Errorf("unknown citation %q", name)
 }

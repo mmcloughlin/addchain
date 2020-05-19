@@ -139,8 +139,9 @@ algorithms below.
 
 The [`alg/contfrac`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/contfrac) package implements the continued fractions
 methods for addition sequence search introduced by
-Bergeron-Berstel-Brlek-Duboc in 1989. This approach utilizes a decomposition
-of an addition chain akin to continued fractions
+Bergeron-Berstel-Brlek-Duboc in 1989 and later extended. This approach
+utilizes a decomposition of an addition chain akin to continued fractions,
+namely
 
 ```
 (1,..., k,..., n) = (1,...,n mod k,..., k) ⊗ (1,..., n/k) ⊕ (n mod k).
@@ -152,6 +153,13 @@ sequence search, with results dependent on the _strategy_ for choosing the
 auxillary integer _k_. The [`alg/binary`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/binary) package provides a
 laundry list of strategies from the literature: binary, co-binary,
 dichotomic, dyadic, fermat, square-root and total.
+
+#### References
+
+* F Bergeron, J Berstel, S Brlek and C Duboc. Addition chains using continued fractions. Journal of Algorithms. 1989. http://www-igm.univ-mlv.fr/~berstel/Articles/1989AdditionChainDuboc.pdf
+* Bergeron, F., Berstel, J. and Brlek, S. Efficient computation of addition chains. Journal de theorie des nombres de Bordeaux. 1994. http://www.numdam.org/item/JTNB_1994__6_1_21_0
+* Amadou Tall and Ali Yassin Sanghare. Efficient computation of addition-subtraction chains using generalized continued Fractions. Cryptology ePrint Archive, Report 2013/466. 2013. https://eprint.iacr.org/2013/466
+* Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve Cryptography, chapter 9. 2006. http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
 
 ### Bos-Coster Heuristics
 
