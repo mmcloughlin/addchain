@@ -12,6 +12,9 @@ import (
 
 // References:
 //
+//	[contfrac]               F Bergeron, J Berstel, S Brlek and C Duboc. Addition chains using continued
+//	                         fractions. Journal of Algorithms. 1989.
+//	                         http://www-igm.univ-mlv.fr/~berstel/Articles/1989AdditionChainDuboc.pdf
 //	[efficientcompaddchain]  Bergeron, F., Berstel, J. and Brlek, S. Efficient computation of addition
 //	                         chains. Journal de theorie des nombres de Bordeaux. 1994.
 //	                         http://www.numdam.org/item/JTNB_1994__6_1_21_0
@@ -48,7 +51,7 @@ var Strategies = []Strategy{
 }
 
 // Algorithm uses the continued fractions method for finding an addition chain
-// [efficientcompaddchain].
+// [contfrac] [efficientcompaddchain].
 type Algorithm struct {
 	strategy Strategy
 }

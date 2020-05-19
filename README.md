@@ -125,6 +125,139 @@ func Example() {
 }
 ```
 
+## Algorithms
+
+### Binary
+
+The [`alg/binary`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/binary) package implements the addition chain equivalent
+of the basic [square-and-multiply exponentiation
+method](https://en.wikipedia.org/wiki/Exponentiation_by_squaring). It is
+included for completeness, but is almost always outperformed by more advanced
+algorithms below.
+
+### Continued Fractions
+
+The [`alg/contfrac`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/contfrac) package implements the continued fractions
+methods for addition sequence search introduced by
+Bergeron-Berstel-Brlek-Duboc in 1989 and later extended. This approach
+utilizes a decomposition of an addition chain akin to continued fractions,
+namely
+
+```
+(1,..., k,..., n) = (1,...,n mod k,..., k) ⊗ (1,..., n/k) ⊕ (n mod k).
+```
+
+for certain special operators ⊗ and ⊕. This
+decomposition lends itself to a recursive algorithm for efficient addition
+sequence search, with results dependent on the _strategy_ for choosing the
+auxillary integer _k_. The [`alg/contfrac`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/contfrac) package provides a
+laundry list of strategies from the literature: binary, co-binary,
+dichotomic, dyadic, fermat, square-root and total.
+
+#### References
+
+* F Bergeron, J Berstel, S Brlek and C Duboc. Addition chains using continued fractions. Journal of Algorithms. 1989. http://www-igm.univ-mlv.fr/~berstel/Articles/1989AdditionChainDuboc.pdf
+* Bergeron, F., Berstel, J. and Brlek, S. Efficient computation of addition chains. Journal de theorie des nombres de Bordeaux. 1994. http://www.numdam.org/item/JTNB_1994__6_1_21_0
+* Amadou Tall and Ali Yassin Sanghare. Efficient computation of addition-subtraction chains using generalized continued Fractions. Cryptology ePrint Archive, Report 2013/466. 2013. https://eprint.iacr.org/2013/466
+* Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve Cryptography, chapter 9. 2006. http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+
+### Bos-Coster Heuristics
+
+Bos and Coster described an iterative algorithm for efficient addition
+sequence generation in which at each step a heuristic proposes new numbers
+for the sequence in such a way that the _maximum_ number always decreases.
+The [original Bos-Coster paper](https://link.springer.com/content/pdf/10.1007/0-387-34805-0_37.pdf) defined four
+heuristics: Approximation, Divison, Halving and Lucas. Package
+[`alg/heuristic`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/heuristic) implements a variation on these heuristics:
+
+* **Approximation:** looks for two elements a, b in the current sequence with sum close to the largest element.
+* **Halving:** applies when the target is at least twice as big as the next largest, and if so it will propose adding a sequence of doublings.
+* **Delta Largest:** proposes adding the delta between the largest two entries in the current sequence.
+
+Divison and Lucas are not implemented due to disparities in the literature
+about their precise definition and poor results from early experiments.
+Furthermore, this library does not apply weights to the heuristics as
+suggested in the paper, rather it simply uses the first that applies. However
+both of these remain [possible avenues for
+improvement](https://github.com/mmcloughlin/addchain/issues/26).
+
+#### References
+
+* Bos, Jurjen and Coster, Matthijs. Addition Chain Heuristics. In Advances in Cryptology --- CRYPTO' 89 Proceedings, pages 400--407. 1990. https://link.springer.com/content/pdf/10.1007/0-387-34805-0_37.pdf
+* Riad S. Wahby. kwantam/addchain. Github Repository. Apache License, Version 2.0. 2018. https://github.com/kwantam/addchain
+* Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve Cryptography, chapter 9. 2006. http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+* Ayan Nandy. Modifications of Bos and Coster’s Heuristics in search of a shorter addition chain for faster exponentiation. Masters thesis, Indian Statistical Institute Kolkata. 2011. http://library.isical.ac.in:8080/jspui/bitstream/123456789/6441/1/DISS-285.pdf
+* F. L. Ţiplea, S. Iftene, C. Hriţcu, I. Goriac, R. Gordân and E. Erbiceanu. MpNT: A Multi-Precision Number Theory Package, Number Theoretical Algorithms (I). Technical Report TR03-02, Faculty of Computer Science, "Alexandru Ioan Cuza" University, Iasi. 2003. https://profs.info.uaic.ro/~tr/tr03-02.pdf
+* Stam, Martijn. Speeding up subgroup cryptosystems. PhD thesis, Technische Universiteit Eindhoven. 2003. https://cr.yp.to/bib/2003/stam-thesis.pdf
+
+### Dictionary
+
+Dictionary methods decompose the binary representation of a target integer _n_ into a set of dictionary _terms_, such that _n_
+may be written as a sum
+
+```
+n = ∑ 2^{e_i} d_i
+```
+
+for exponents _e_ and elements _d_ from a dictionary _D_. Given such a decomposition we can construct an addition chain for _n_ by
+
+1. Find a short addition _sequence_ containing every element of the dictionary _D_. Continued fractions and Bos-Coster heuristics can be used here.
+2. Build _n_ from the dictionary terms according to the sum decomposition.
+
+The efficiency of this approach boils down to the decomposition method. The [`alg/dict`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict) package provides:
+
+* **Fixed Window:** binary representation of _n_ is broken into fixed _k_-bit windows
+* **Sliding Window**: break _n_ into _k_-bit windows, skipping zeros where possible
+* **Run Length**: decompose _n_ into runs of 1s up to a maximal length
+* **Hybrid**: mix of sliding window and run length methods
+
+#### References
+
+* Martin Otto. Brauer addition-subtraction chains. PhD thesis, Universitat Paderborn. 2001. http://www.martin-otto.de/publications/docs/2001_MartinOtto_Diplom_BrauerAddition-SubtractionChains.pdf
+* Kunihiro, Noboru and Yamamoto, Hirosuke. New Methods for Generating Short Addition Chains. IEICE Transactions on Fundamentals of Electronics Communications and Computer Sciences. 2000. https://pdfs.semanticscholar.org/b398/d10faca35af9ce5a6026458b251fd0a5640c.pdf
+* Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve Cryptography, chapter 9. 2006. http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+
+### Runs
+
+The runs algorithm is a custom variant of the dictionary approach that decomposes
+a target into runs of ones. It leverages the observation that building a
+dictionary consisting of runs of 1s of lengths `l_1, l_2, ..., l_k` can itself be
+reduced to:
+
+1. Find an addition sequence containing the run lengths `l_i`. As with
+   dictionary approaches we can use Bos-Coster heuristics and continued
+   fractions here. However here we have the advantage that the `l_i` are
+   typically very _small_, meaning that a wider range of algorithms can
+   be brought to bear.
+2. Use the addition sequence for the run lengths `l_i` to build an addition
+   sequence for the runs themselves `r(l_i)` where `r(e) = 2^e-1`. See
+   [`dict.RunsChain`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict#RunsChain).
+
+This approach has proved highly effective against cryptographic exponents
+which frequently exhibit binary structure, such as those derived from
+[Solinas primes](https://en.wikipedia.org/wiki/Solinas_prime).
+
+> We have not yet found this method described in the literature, so it may be a new development.
+
+### Optimization
+
+Close inspection of addition chains produced by other algorithms revealed
+cases of redundant computation. This motivated a final optimization pass over
+addition chains to remove unecessary steps. The [`alg/opt`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/opt) package
+implements the following optimization:
+
+1. Determine _all possible_ ways each element can be computed from those prior.
+2. Count how many times each element is used where it is the _only possible_ way of computing that entry.
+3. Prune elements that are always used in computations that have an alternative.
+
+These micro-optimizations were vital in closing the gap between `addchain`'s
+automated approaches and hand-optimized chains. This technique is reminiscent
+of basic passes in optimizing compilers, raising the question of whether
+other [compiler optimizations could apply to addition
+chains](https://github.com/mmcloughlin/addchain/issues/24)?
+
+> We have not yet found this method described in the literature, so it may be a new development.
+
 ## Thanks
 
 Thank you to [Tom Dean](https://web.stanford.edu/~trdean/), [Riad
