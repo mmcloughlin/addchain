@@ -219,6 +219,27 @@ The efficiency of this approach boils down to the decomposition method. The [`al
 
 ### Runs
 
+The runs algorithm is a custom variant of the dictionary approach that decomposes
+a target into runs of ones. It leverages the observation that building a
+dictionary consisting of runs of 1s of lengths `l_1, l_2, ..., l_k` can itself be
+reduced to:
+
+1. Find an addition sequence containing the run lengths `l_i`. As with
+   dictionary approaches we can use Bos-Coster heuristics and continued
+   fractions here. However here we have the advantage that the `l_i` are
+   typically very _small_, meaning that a wider range of algorithms can
+   be brought to bear.
+2. Use the addition sequence for the run lengths `l_i` to build an addition
+   sequence for the runs themselves `r(l_i)` where `r(e) = 2^e-1`. See
+   [`dict.RunsChain`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict#RunsChain).
+
+This approach has proved highly effective against cryptographic exponents
+which frequently exhibit binary structure, such as those derived from
+[Solinas primes](https://en.wikipedia.org/wiki/Solinas_prime).
+
+We have not yet found this method described in the literature, so it may be
+a new development.
+
 ### Optimization
 
 ## Thanks
