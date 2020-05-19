@@ -138,12 +138,20 @@ algorithms below.
 ### Continued Fractions
 
 The [`alg/contfrac`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/contfrac) package implements the continued fractions
-methods introduced by Bergeron-Berstel-Brlek-Duboc in 1989. This approach
-utilizes a decomposition of an additon chain akin to continued fractions:
+methods for addition sequence search introduced by
+Bergeron-Berstel-Brlek-Duboc in 1989. This approach utilizes a decomposition
+of an addition chain akin to continued fractions
 
 ```
-(1,..., k,..., n) = (1,...,n mod k,..., k) ⊙ (1,..., n/k) ⊕ (n mod k).
+(1,..., k,..., n) = (1,...,n mod k,..., k) ⊗ (1,..., n/k) ⊕ (n mod k).
 ```
+
+for certain special operators ⊗ and ⊕. This
+decomposition lends itself to a recursive algorithm for efficient addition
+sequence search, with results dependent on the _strategy_ for choosing the
+auxillary integer _k_. The [`alg/binary`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/binary) package provides a
+laundry list of strategies from the literature: binary, co-binary,
+dichotomic, dyadic, fermat, square-root and total.
 
 ### Bos-Coster Heuristics
 
