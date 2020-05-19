@@ -22,7 +22,7 @@ import (
 type Prime interface {
 	Bits() int
 	Int() *big.Int
-	fmt.Stringer
+	String() string
 }
 
 // Crandall represents a prime of the form 2ⁿ - c. Named after Richard E. Crandall [crandallprime].

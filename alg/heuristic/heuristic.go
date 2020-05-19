@@ -36,8 +36,8 @@ import (
 
 // Heuristic suggests insertions given a current protosequence.
 type Heuristic interface {
-	fmt.Stringer
 	Suggest(f []*big.Int, target *big.Int) []*big.Int
+	String() string
 }
 
 // Algorithm searches for an addition sequence using a heuristic at each step.

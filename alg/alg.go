@@ -2,7 +2,6 @@
 package alg
 
 import (
-	"fmt"
 	"math/big"
 
 	"github.com/mmcloughlin/addchain"
@@ -10,8 +9,11 @@ import (
 
 // ChainAlgorithm is a method of generating an addition chain for a target integer.
 type ChainAlgorithm interface {
-	fmt.Stringer
+	// FindChain generates an addition chain ending at target.
 	FindChain(target *big.Int) (addchain.Chain, error)
+
+	// String returns a name for the algorithm.
+	String() string
 }
 
 // SequenceAlgorithm is a method of generating an addition sequence for a set of
@@ -20,8 +22,8 @@ type SequenceAlgorithm interface {
 	// FindSequence generates an addition chain containing every element of targets.
 	FindSequence(targets []*big.Int) (addchain.Chain, error)
 
-	// String method returns a name for the algorithm.
-	fmt.Stringer
+	// String returns a name for the algorithm.
+	String() string
 }
 
 // AsChainAlgorithm adapts a sequence algorithm to a chain algorithm. The

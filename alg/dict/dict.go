@@ -69,8 +69,8 @@ func (s Sum) Dictionary() []*big.Int {
 
 // Decomposer is a method of breaking an integer into a dictionary sum.
 type Decomposer interface {
-	fmt.Stringer
 	Decompose(x *big.Int) Sum
+	String() string
 }
 
 // FixedWindow breaks integers into k-bit windows.

@@ -88,7 +88,7 @@ func (i Instruction) String() string {
 // Op is an operation.
 type Op interface {
 	Inputs() []*Operand
-	fmt.Stringer
+	String() string
 }
 
 // Add is an addition operation.

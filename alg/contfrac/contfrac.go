@@ -36,7 +36,8 @@ type Strategy interface {
 	// be logarithmic, and therefore suitable for large inputs.
 	Singleton() bool
 
-	fmt.Stringer
+	// String returns a name for the strategy.
+	String() string
 }
 
 // Strategies lists all available continued fraction strategies.

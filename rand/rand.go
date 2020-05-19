@@ -16,7 +16,7 @@ import (
 // Generator can generate random chains.
 type Generator interface {
 	GenerateChain() (addchain.Chain, error)
-	fmt.Stringer
+	String() string
 }
 
 // AddsGenerator generates a random chain by making N random adds.
