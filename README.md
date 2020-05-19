@@ -237,10 +237,28 @@ This approach has proved highly effective against cryptographic exponents
 which frequently exhibit binary structure, such as those derived from
 [Solinas primes](https://en.wikipedia.org/wiki/Solinas_prime).
 
-We have not yet found this method described in the literature, so it may be
-a new development.
+We have not yet found this method described in the literature, so it may be a
+new development.
 
 ### Optimization
+
+Close inspection of addition chains produced by other algorithms revealed
+cases of redundant computation. This motivated a final optimization pass over
+addition chains to remove unecessary steps. The [`alg/opt`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/opt) package
+implements the following optimization:
+
+1. Determine _all possible_ ways each element can be computed from those prior.
+2. Count how many times each element is used where it is the _only possible_ way of computing that entry.
+3. Prune elements that are always used in computations that have an alternative.
+
+These micro-optimizations were vital in closing the gap between `addchain`'s
+automated approaches and hand-optimized chains. This technique is reminiscent
+of basic passes in optimizing compilers, raising the question of whether
+other [compiler optimizations could apply to addition
+chains](https://github.com/mmcloughlin/addchain/issues/24)?
+
+We have not yet found this method described in the literature, so it may be
+a new development.
 
 ## Thanks
 
