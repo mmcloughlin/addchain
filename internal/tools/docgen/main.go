@@ -41,12 +41,13 @@ func mainerr() (err error) {
 	t := template.New("doc")
 
 	t.Funcs(template.FuncMap{
-		"include":   include,
-		"snippet":   snippet,
-		"anchor":    anchor,
-		"pkg":       pkg,
-		"sym":       sym,
-		"reference": reference,
+		"include":  include,
+		"snippet":  snippet,
+		"anchor":   anchor,
+		"pkg":      pkg,
+		"sym":      sym,
+		"bibentry": bibentry,
+		"biburl":   biburl,
 	})
 
 	// Load template.
@@ -180,11 +181,21 @@ func pkgurl(name string) string {
 	return "https://pkg.go.dev/" + path.Join("github.com/mmcloughlin/addchain", name)
 }
 
-// reference returns formatted bibliography entry for the given citation name.
-func reference(name string) (string, error) {
+// bibentry returns formatted bibliography entry for the given citation name.
+func bibentry(name string) (string, error) {
 	for _, entry := range bibliography {
 		if entry.CiteName == name {
 			return entry.Formatted, nil
+		}
+	}
+	return "", fmt.Errorf("unknown citation %q", name)
+}
+
+// biburl returns URL for the bibliography entry with the given citation name.
+func biburl(name string) (string, error) {
+	for _, entry := range bibliography {
+		if entry.CiteName == name {
+			return entry.URL, nil
 		}
 	}
 	return "", fmt.Errorf("unknown citation %q", name)

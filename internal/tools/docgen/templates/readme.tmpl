@@ -100,20 +100,47 @@ namely
 for certain special operators {{ "\u2297" }} and {{ "\u2295" }}. This
 decomposition lends itself to a recursive algorithm for efficient addition
 sequence search, with results dependent on the _strategy_ for choosing the
-auxillary integer _k_. The {{ pkg "alg/binary" }} package provides a
+auxillary integer _k_. The {{ pkg "alg/contfrac" }} package provides a
 laundry list of strategies from the literature: binary, co-binary,
 dichotomic, dyadic, fermat, square-root and total.
 
 #### References
 
-* {{ reference "contfrac" }}
-* {{ reference "efficientcompaddchain" }}
-* {{ reference "gencontfrac" }}
-* {{ reference "hehcc:exp" }}
+* {{ bibentry "contfrac" }}
+* {{ bibentry "efficientcompaddchain" }}
+* {{ bibentry "gencontfrac" }}
+* {{ bibentry "hehcc:exp" }}
 
 ### Bos-Coster Heuristics
 
+Bos and Coster described an iterative algorithm for efficient addition
+sequence generation in which at each step a heuristic proposes new numbers
+for the sequence in such a way that the _maximum_ number always decreases.
+The [original Bos-Coster paper]({{ biburl "boscoster" }}) defined four
+heuristics: Approximation, Divison, Halving and Lucas. Package
+{{ pkg "alg/heuristic" }} implements a variation on these heuristics:
+
+* _Approximation_ looks for two elements a, b in the current sequence with sum close to the largest element.
+* _Halving_ applies when the target is at least twice as big as the next largest, and if so it will propose adding a sequence of doublings.
+* _Delta Largest_ proposes adding the delta between the largest two entries in the current sequence.
+
+Divison and Lucas are not implemented due to disparities in the literature
+about their precise definition and poor results from early attempts. However
+this remains a [possible avenue for
+improvement](https://github.com/mmcloughlin/addchain/issues/26).
+
+#### References
+
+* {{ bibentry "boscoster" }}
+* {{ bibentry "github:kwantam/addchain" }}
+* {{ bibentry "hehcc:exp" }}
+* {{ bibentry "modboscoster" }}
+* {{ bibentry "mpnt" }}
+* {{ bibentry "speedsubgroup" }}
+
 ### Dictionary
+
+## Runs
 
 ### Optimization
 
