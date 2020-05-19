@@ -75,6 +75,32 @@ find an addition chain for curve25519 field inversion:
 {{ snippet "alg/exec/example_test.go" "func Example" "^}" -}}
 ```
 
+## Algorithms
+
+### Binary
+
+The {{ pkg "alg/binary" }} package implements the addition chain equivalent
+of the basic [square-and-multiply exponentiation
+method](https://en.wikipedia.org/wiki/Exponentiation_by_squaring). It is
+included for completeness, but is almost always outperformed by more advanced
+algorithms below.
+
+### Continued Fractions
+
+The {{ pkg "alg/contfrac" }} package implements the continued fractions
+methods introduced by Bergeron-Berstel-Brlek-Duboc in 1989. This approach
+utilizes a decomposition of an additon chain akin to continued fractions:
+
+```
+(1,..., k,..., n) = (1,...,n mod k,..., k) {{ "\u2299" }} (1,..., n/k) {{ "\u2295" }} (n mod k).
+```
+
+### Bos-Coster Heuristics
+
+### Dictionary
+
+### Optimization
+
 ## Thanks
 
 Thank you to [Tom Dean](https://web.stanford.edu/~trdean/), [Riad

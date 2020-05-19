@@ -125,6 +125,32 @@ func Example() {
 }
 ```
 
+## Algorithms
+
+### Binary
+
+The [`alg/binary`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/binary) package implements the addition chain equivalent
+of the basic [square-and-multiply exponentiation
+method](https://en.wikipedia.org/wiki/Exponentiation_by_squaring). It is
+included for completeness, but is almost always outperformed by more advanced
+algorithms below.
+
+### Continued Fractions
+
+The [`alg/contfrac`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/contfrac) package implements the continued fractions
+methods introduced by Bergeron-Berstel-Brlek-Duboc in 1989. This approach
+utilizes a decomposition of an additon chain akin to continued fractions:
+
+```
+(1,..., k,..., n) = (1,...,n mod k,..., k) ⊙ (1,..., n/k) ⊕ (n mod k).
+```
+
+### Bos-Coster Heuristics
+
+### Dictionary
+
+### Optimization
+
 ## Thanks
 
 Thank you to [Tom Dean](https://web.stanford.edu/~trdean/), [Riad

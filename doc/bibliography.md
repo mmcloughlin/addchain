@@ -4,6 +4,7 @@
 * Diego F. Aranha, Paulo S. L. M. Barreto, Geovandro C. C. F. Pereira and Jefferson E. Ricardini. A note on high-security general-purpose elliptic curves. Cryptology ePrint Archive, Report 2013/647. 2013. https://eprint.iacr.org/2013/647
 * Bos, Jurjen and Coster, Matthijs. Addition Chain Heuristics. In Advances in Cryptology --- CRYPTO' 89 Proceedings, pages 400--407. 1990. https://link.springer.com/content/pdf/10.1007/0-387-34805-0_37.pdf
 * Martin Otto. Brauer addition-subtraction chains. PhD thesis, Universitat Paderborn. 2001. http://www.martin-otto.de/publications/docs/2001_MartinOtto_Diplom_BrauerAddition-SubtractionChains.pdf
+* F Bergeron, J Berstel, S Brlek and C Duboc. Addition chains using continued fractions. Journal of Algorithms. 1989. http://www-igm.univ-mlv.fr/~berstel/Articles/1989AdditionChainDuboc.pdf
 * Richard E. Crandall. Method and apparatus for public key exchange in a cryptographic system. US Patent 5,159,632. 1992. https://patents.google.com/patent/US5159632A
 * Bernstein, Daniel J. Curve25519: New Diffie-Hellman Speed Records. In Public Key Cryptography - PKC 2006, pages 207--228. 2006. https://cr.yp.to/ecdh/curve25519-20060209.pdf
 * Brian Smith. The Most Efficient Known Addition Chains for Field Element and Scalar Inversion for the Most Popular and Most Unpopular Elliptic Curves. 2017. https://briansmith.org/ecc-inversion-addition-chains-01 (accessed June 30, 2019)
