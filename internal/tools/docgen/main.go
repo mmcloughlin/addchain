@@ -32,6 +32,8 @@ var (
 	typ    = flag.String("type", "", "documentation type")
 	tmpl   = flag.String("tmpl", "", "explicit template file (overrides -type)")
 	output = flag.String("output", "", "path to output file (default stdout)")
+	tocmin = flag.Int("tocmin", 2, "table of contents minimum heading level")
+	tocmax = flag.Int("tocmax", 4, "table of contents maximum heading level")
 )
 
 func mainerr() (err error) {
@@ -48,6 +50,7 @@ func mainerr() (err error) {
 		"sym":      sym,
 		"bibentry": bibentry,
 		"biburl":   biburl,
+		"toc":      toc,
 	})
 
 	// Load template.
@@ -66,22 +69,25 @@ func mainerr() (err error) {
 	}
 
 	// Execute.
-	w := os.Stdout
-	if *output != "" {
-		f, err := os.Create(*output)
-		if err != nil {
-			return err
-		}
-		defer func() {
-			if errc := f.Close(); errc != nil && err == nil {
-				err = errc
-			}
-		}()
-
-		w = f
+	var buf bytes.Buffer
+	if err := t.Execute(&buf, data); err != nil {
+		return err
 	}
 
-	if err := t.Execute(w, data); err != nil {
+	// Insert table of contents.
+	body, err := generateTOC(buf.Bytes(), *tocmin, *tocmax)
+	if err != nil {
+		return err
+	}
+
+	// Output.
+	if *output != "" {
+		err = ioutil.WriteFile(*output, body, 0640)
+	} else {
+		_, err = os.Stdout.Write(body)
+	}
+
+	if err != nil {
 		return err
 	}
 
