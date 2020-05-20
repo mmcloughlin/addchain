@@ -200,6 +200,10 @@ func Example() {
 
 ## Algorithms
 
+This section summarizes the algorithms implemented by `addchain` along with
+references to primary literature. See the [bibliography](doc/bibliography.md)
+for the complete references list.
+
 ### Binary
 
 The [`alg/binary`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/binary) package implements the addition chain equivalent
