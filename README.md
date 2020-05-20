@@ -49,7 +49,7 @@ sequence. For example, an addition chain for 29 is
 
 Addition chains arise in the optimization of exponentiation algorithms with
 fixed exponents. For example, the addition chain above corresponds to the
-following sequence of multiplications to compute `x^29`
+following sequence of multiplications to compute _x_<sup>29</sup>
 
 <pre>
  x<sup>2</sup> = x<sup>1</sup> * x<sup>1</sup>
@@ -65,8 +65,8 @@ An exponentiation algorithm for a fixed exponent _n_ reduces to finding a
 _minimal length addition chain_ for _n_. This is especially relevent in
 cryptography where exponentiation by huge fixed exponents forms a
 performance-critical component of finite-field arithmetic. In particular,
-constant-time inversion modulo a prime _p_ is performed by computing `x^(p-2)
-(mod p)`, thanks to [Fermat's Little
+constant-time inversion modulo a prime _p_ is performed by computing
+<code>x<sup>p-2</sup> (mod p)</code>, thanks to [Fermat's Little
 Theorem](https://en.wikipedia.org/wiki/Fermat%27_little_theorem). Square root
 also reduces to exponentiation for some prime moduli. Finding short addition
 chains for these exponents is one important part of high-performance finite
