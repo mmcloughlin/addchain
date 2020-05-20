@@ -51,15 +51,15 @@ Addition chains arise in the optimization of exponentiation algorithms with
 fixed exponents. For example, the addition chain above corresponds to the
 following sequence of multiplications to compute `x^29`
 
-```
- x^2 =   x * x
- x^4 = x^2 * x^2
- x^8 = x^4 * x^4
- x^9 =   x * x^8
-x^17 = x^8 * x^9
-x^25 = x^8 * x^17
-x^29 = x^4 * x^25
-```
+<pre>
+ x<sup>2</sup> = x<sup>1</sup> * x<sup>1</sup>
+ x<sup>4</sup> = x<sup>2</sup> * x<sup>2</sup>
+ x<sup>8</sup> = x<sup>4</sup> * x<sup>4</sup>
+ x<sup>9</sup> = x<sup>1</sup> * x<sup>8</sup>
+x<sup>17</sup> = x<sup>8</sup> * x<sup>9</sup>
+x<sup>25</sup> = x<sup>8</sup> * x<sup>17</sup>
+x<sup>29</sup> = x<sup>4</sup> * x<sup>25</sup>
+</pre>
 
 An exponentiation algorithm for a fixed exponent _n_ reduces to finding a
 _minimal length addition chain_ for _n_. This is especially relevent in
