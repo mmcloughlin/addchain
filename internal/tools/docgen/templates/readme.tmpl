@@ -32,24 +32,24 @@ sequence. For example, an addition chain for 29 is
 
 Addition chains arise in the optimization of exponentiation algorithms with
 fixed exponents. For example, the addition chain above corresponds to the
-following sequence of multiplications to compute `x^29`
+following sequence of multiplications to compute <code>x<sup>29</sup></code>
 
-```
- x^2 =   x * x
- x^4 = x^2 * x^2
- x^8 = x^4 * x^4
- x^9 =   x * x^8
-x^17 = x^8 * x^9
-x^25 = x^8 * x^17
-x^29 = x^4 * x^25
-```
+<pre>
+ x<sup>2</sup> = x<sup>1</sup> * x<sup>1</sup>
+ x<sup>4</sup> = x<sup>2</sup> * x<sup>2</sup>
+ x<sup>8</sup> = x<sup>4</sup> * x<sup>4</sup>
+ x<sup>9</sup> = x<sup>1</sup> * x<sup>8</sup>
+x<sup>17</sup> = x<sup>8</sup> * x<sup>9</sup>
+x<sup>25</sup> = x<sup>8</sup> * x<sup>17</sup>
+x<sup>29</sup> = x<sup>4</sup> * x<sup>25</sup>
+</pre>
 
 An exponentiation algorithm for a fixed exponent _n_ reduces to finding a
 _minimal length addition chain_ for _n_. This is especially relevent in
 cryptography where exponentiation by huge fixed exponents forms a
 performance-critical component of finite-field arithmetic. In particular,
-constant-time inversion modulo a prime _p_ is performed by computing `x^(p-2)
-(mod p)`, thanks to [Fermat's Little
+constant-time inversion modulo a prime _p_ is performed by computing
+<code>x<sup>p-2</sup> (mod p)</code>, thanks to [Fermat's Little
 Theorem](https://en.wikipedia.org/wiki/Fermat%27_little_theorem). Square root
 also reduces to exponentiation for some prime moduli. Finding short addition
 chains for these exponents is one important part of high-performance finite
@@ -141,10 +141,10 @@ utilizes a decomposition of an addition chain akin to continued fractions,
 namely
 
 ```
-(1,..., k,..., n) = (1,...,n mod k,..., k) {{ "\u2297" }} (1,..., n/k) {{ "\u2295" }} (n mod k).
+(1,..., k,..., n) = (1,...,n mod k,..., k) {{ otimes }} (1,..., n/k) {{ oplus }} (n mod k).
 ```
 
-for certain special operators {{ "\u2297" }} and {{ "\u2295" }}. This
+for certain special operators {{ otimes }} and {{ oplus }}. This
 decomposition lends itself to a recursive algorithm for efficient addition
 sequence search, with results dependent on the _strategy_ for choosing the
 auxillary integer _k_. The {{ pkg "alg/contfrac" }} package provides a
@@ -192,9 +192,9 @@ improvement](https://github.com/mmcloughlin/addchain/issues/26).
 Dictionary methods decompose the binary representation of a target integer _n_ into a set of dictionary _terms_, such that _n_
 may be written as a sum
 
-```
-n = {{ "\u2211" }} 2^{e_i} d_i
-```
+<pre>
+n = {{ sum }} 2<sup>e<sub>i</sub></sup> d<sub>i</sub>
+</pre>
 
 for exponents _e_ and elements _d_ from a dictionary _D_. Given such a decomposition we can construct an addition chain for _n_ by
 
@@ -216,18 +216,20 @@ The efficiency of this approach boils down to the decomposition method. The {{ p
 
 ### Runs
 
-The runs algorithm is a custom variant of the dictionary approach that decomposes
-a target into runs of ones. It leverages the observation that building a
-dictionary consisting of runs of 1s of lengths `l_1, l_2, ..., l_k` can itself be
+The runs algorithm is a custom variant of the dictionary approach that
+decomposes a target into runs of ones. It leverages the observation that
+building a dictionary consisting of runs of 1s of lengths
+<code>l<sub>1</sub>, l<sub>2</sub>, ..., l<sub>k</sub></code> can itself be
 reduced to:
 
-1. Find an addition sequence containing the run lengths `l_i`. As with
-   dictionary approaches we can use Bos-Coster heuristics and continued
-   fractions here. However here we have the advantage that the `l_i` are
-   typically very _small_, meaning that a wider range of algorithms can
-   be brought to bear.
-2. Use the addition sequence for the run lengths `l_i` to build an addition
-   sequence for the runs themselves `r(l_i)` where `r(e) = 2^e-1`. See
+1. Find an addition sequence containing the run lengths
+   <code>l<sub>i</sub></code>. As with dictionary approaches we can use
+   Bos-Coster heuristics and continued fractions here. However here we have the
+   advantage that the <code>l<sub>i</sub></code> are typically very _small_,
+   meaning that a wider range of algorithms can be brought to bear.
+2. Use the addition sequence for the run lengths <code>l<sub>i</sub></code>
+   to build an addition sequence for the runs themselves
+   <code>r(l<sub>i</sub>)</code> where <code>r(e) = 2<sup>e</sup>-1</code>. See
    {{ sym "alg/dict" "RunsChain" }}.
 
 This approach has proved highly effective against cryptographic exponents

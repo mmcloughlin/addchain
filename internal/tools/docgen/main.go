@@ -51,6 +51,9 @@ func mainerr() (err error) {
 		"bibentry": bibentry,
 		"biburl":   biburl,
 		"toc":      toc,
+		"oplus":    symbol('\u2295'),
+		"otimes":   symbol('\u2297'),
+		"sum":      symbol('\u2211'),
 	})
 
 	// Load template.
@@ -205,4 +208,11 @@ func biburl(name string) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("unknown citation %q", name)
+}
+
+// symbol builds a template function that expands to the given unicode symbol.
+func symbol(r rune) func() string {
+	return func() string {
+		return string([]rune{r})
+	}
 }
