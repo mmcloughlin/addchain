@@ -141,10 +141,10 @@ utilizes a decomposition of an addition chain akin to continued fractions,
 namely
 
 ```
-(1,..., k,..., n) = (1,...,n mod k,..., k) {{ "\u2297" }} (1,..., n/k) {{ "\u2295" }} (n mod k).
+(1,..., k,..., n) = (1,...,n mod k,..., k) {{ otimes }} (1,..., n/k) {{ oplus }} (n mod k).
 ```
 
-for certain special operators {{ "\u2297" }} and {{ "\u2295" }}. This
+for certain special operators {{ otimes }} and {{ oplus }}. This
 decomposition lends itself to a recursive algorithm for efficient addition
 sequence search, with results dependent on the _strategy_ for choosing the
 auxillary integer _k_. The {{ pkg "alg/contfrac" }} package provides a
@@ -193,7 +193,7 @@ Dictionary methods decompose the binary representation of a target integer _n_ i
 may be written as a sum
 
 <pre>
-n = {{ "\u2211" }} 2<sup>e<sub>i</sub></sup> d<sub>i</sub>
+n = {{ sum }} 2<sup>e<sub>i</sub></sup> d<sub>i</sub>
 </pre>
 
 for exponents _e_ and elements _d_ from a dictionary _D_. Given such a decomposition we can construct an addition chain for _n_ by
@@ -229,7 +229,7 @@ reduced to:
    meaning that a wider range of algorithms can be brought to bear.
 2. Use the addition sequence for the run lengths <code>l<sub>i</sub></code>
    to build an addition sequence for the runs themselves
-   <code>r(l<sub>i</sub>)</code> where <code>r(e) = 2<sup>e-1</sup></code>. See
+   <code>r(l<sub>i</sub>)</code> where <code>r(e) = 2<sup>e</sup>-1</code>. See
    {{ sym "alg/dict" "RunsChain" }}.
 
 This approach has proved highly effective against cryptographic exponents

@@ -296,7 +296,7 @@ reduced to:
    meaning that a wider range of algorithms can be brought to bear.
 2. Use the addition sequence for the run lengths <code>l<sub>i</sub></code>
    to build an addition sequence for the runs themselves
-   <code>r(l<sub>i</sub>)</code> where <code>r(e) = 2<sup>e-1</sup></code>. See
+   <code>r(l<sub>i</sub>)</code> where <code>r(e) = 2<sup>e</sup>-1</code>. See
    [`dict.RunsChain`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict#RunsChain).
 
 This approach has proved highly effective against cryptographic exponents
