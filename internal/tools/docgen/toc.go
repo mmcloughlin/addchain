@@ -9,8 +9,11 @@ import (
 	"strings"
 )
 
+// tocMarker is a marker placed in the output to indicate where the table of
+// contents should be inserted.
 const tocMarker = `<!--- TABLE OF CONTENTS --->`
 
+// heading in a markdown file.
 type heading struct {
 	level int
 	text  string
@@ -18,6 +21,7 @@ type heading struct {
 
 var headingx = regexp.MustCompile(`^(#+)\s+(.+)$`)
 
+// headings extracts headings from the markdown stream.
 func headings(r io.Reader) ([]heading, error) {
 	var hs []heading
 	s := bufio.NewScanner(r)
@@ -36,6 +40,8 @@ func headings(r io.Reader) ([]heading, error) {
 	return hs, nil
 }
 
+// generateTOC inserts a table of contents into body. Table of contents includes
+// headings with the given range of levels.
 func generateTOC(body []byte, minlevel, maxlevel int) ([]byte, error) {
 	r := bytes.NewReader(body)
 
