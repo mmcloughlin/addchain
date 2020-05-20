@@ -303,7 +303,7 @@ This approach has proved highly effective against cryptographic exponents
 which frequently exhibit binary structure, such as those derived from
 [Solinas primes](https://en.wikipedia.org/wiki/Solinas_prime).
 
-> We have not yet found this method described in the literature, so it may be a new development.
+> I have not seen this method discussed in the literature. Please help me find references to prior art if you know any.
 
 ### Optimization
 
@@ -322,7 +322,7 @@ of basic passes in optimizing compilers, raising the question of whether
 other [compiler optimizations could apply to addition
 chains](https://github.com/mmcloughlin/addchain/issues/24)?
 
-> We have not yet found this method described in the literature, so it may be a new development.
+> I have not seen this method discussed in the literature. Please help me find references to prior art if you know any.
 
 ## Thanks
 
