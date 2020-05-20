@@ -83,12 +83,14 @@ unique nature of cryptographic exponents.
 
 ## Results
 
-Results for common cryptographic exponents and delta compared to [best known
-hand-optimized addition
-chains](https://briansmith.org/ecc-inversion-addition-chains-01).
+The following table shows the results of the `addchain` library on popular
+cryptographic exponents. For each one we also show the length of the [best
+known hand-optimized addition chain](https://briansmith.org/ecc-inversion-addition-chains-01), and the
+delta from the library result. Zero or negative delta means the `addchain`
+matches or exceeded results by hand.
 
-| Name | Length | Best | Delta |
-| ---- | -----: | ---: | ----: |
+| Name | This Library | Best Known | Delta |
+| ---- | -----------: | ---------: | ----: |
 | [Curve25519 Field Inversion](doc/results.md#curve25519-field-inversion) | 266 | 265 | +1 |
 | [NIST P-256 Field Inversion](doc/results.md#nist-p-256-field-inversion) | 266 | 266 | **+0** |
 | [NIST P-384 Field Inversion](doc/results.md#nist-p-384-field-inversion) | 397 | 396 | +1 |
@@ -99,8 +101,15 @@ chains](https://briansmith.org/ecc-inversion-addition-chains-01).
 | [secp256k1 (Bitcoin) Scalar Inversion](doc/results.md#secp256k1-bitcoin-scalar-inversion) | 293 | 290 | +3 |
 
 
-See [full results listing](doc/results.md) for more detail and additional
-exponents.
+See [full results listing](doc/results.md) for more detail and results for
+less common exponents.
+
+These results demonstrate that `addchain` is competitive with hand-optimized
+chains, always within a few operations of the best known and often matching
+or exceeding. Even when `addchain` is slightly sub-optimal, it can still be
+considered valuable since it fully automates a laborious manual process. As
+such, `addchain` can be trusted to produce high quality results in an
+automated code generation tool.
 
 ## Usage
 
