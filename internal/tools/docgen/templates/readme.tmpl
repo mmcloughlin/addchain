@@ -17,6 +17,51 @@ generators.
 * Simple domain-specific language for addition chain computations
 * Command-line interface or library
 
+## Background
+
+An [_addition chain_](https://en.wikipedia.org/wiki/Addition_chain) for a
+target integer _n_ is a sequence of numbers starting at 1 and ending at _n_
+such that every term is a sum of two numbers appearing earlier in the
+sequence. For example, an addition chain for 29 is
+
+```
+1, 2, 4, 8, 9, 17, 25, 29
+```
+
+Addition chains arise in the optimization of exponentiation algorithms with
+fixed exponents. For example, the addition chain above corresponds to the
+following sequence of multiplications to compute `x^29`
+
+```
+ x^2 =   x * x
+ x^4 = x^2 * x^2
+ x^8 = x^4 * x^4
+ x^9 =   x * x^8
+x^17 = x^8 * x^9
+x^25 = x^8 * x^17
+x^29 = x^4 * x^25
+```
+
+An exponentiation algorithm for a fixed exponent _n_ reduces to finding a
+_minimal length addition chain_ for _n_. This is especially relevent in
+cryptography where exponentiation by huge fixed exponents forms a
+performance-critical component of finite-field arithmetic. In particular,
+constant-time inversion modulo a prime _p_ is performed by computing `x^(p-2)
+(mod p)`, thanks to [Fermat's Little
+Theorem](https://en.wikipedia.org/wiki/Fermat%27_little_theorem). Square root
+also reduces to exponentiation for some prime moduli. Finding short addition
+chains for these exponents is one important part of high-performance finite
+field implementations required for elliptic curve cryptography or RSA.
+
+Minimal addition chain search is famously hard. No practical optimal
+algorithm is known, especially for cryptographic exponents of size 256-bits
+and up. Given its importance for the performance of cryptographic
+implementations, implementers devote significant effort to hand-tune addition
+chains. The `addchain` project aims to match or exceed the best
+hand-optimized addition chains using entirely automated approaches, building
+on extensive academic research and applying new tweaks that exploit the
+unique nature of cryptographic exponents.
+
 ## Results
 
 Results for common cryptographic exponents and delta compared to [best known
