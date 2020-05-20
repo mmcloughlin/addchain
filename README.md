@@ -17,6 +17,25 @@ generators.
 * Simple domain-specific language for addition chain computations
 * Command-line interface or library
 
+## Table of Contents
+
+* [Background](#background)
+* [Results](#results)
+* [Usage](#usage)
+  * [Command-line Interface](#command-line-interface)
+  * [Library](#library)
+* [Algorithms](#algorithms)
+  * [Binary](#binary)
+  * [Continued Fractions](#continued-fractions)
+  * [Bos-Coster Heuristics](#bos-coster-heuristics)
+  * [Dictionary](#dictionary)
+  * [Runs](#runs)
+  * [Optimization](#optimization)
+* [Thanks](#thanks)
+* [Contributing](#contributing)
+* [License](#license)
+
+
 ## Background
 
 An [_addition chain_](https://en.wikipedia.org/wiki/Addition_chain) for a

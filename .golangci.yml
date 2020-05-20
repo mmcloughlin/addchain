@@ -15,3 +15,5 @@ issues:
   exclude:
     # gosec: G304: Potential file inclusion via variable.
     - G304
+    # gosec: G306: Expect WriteFile permissions to be 0600 or less
+    - G306
