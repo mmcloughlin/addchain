@@ -49,7 +49,7 @@ sequence. For example, an addition chain for 29 is
 
 Addition chains arise in the optimization of exponentiation algorithms with
 fixed exponents. For example, the addition chain above corresponds to the
-following sequence of multiplications to compute _x_<sup>29</sup>
+following sequence of multiplications to compute <code>x<sup>29</sup></code>
 
 <pre>
  x<sup>2</sup> = x<sup>1</sup> * x<sup>1</sup>
@@ -259,9 +259,9 @@ improvement](https://github.com/mmcloughlin/addchain/issues/26).
 Dictionary methods decompose the binary representation of a target integer _n_ into a set of dictionary _terms_, such that _n_
 may be written as a sum
 
-```
-n = ∑ 2^{e_i} d_i
-```
+<pre>
+n = ∑ 2<sup>e<sub>i</sub></sup> d<sub>i</sub>
+</pre>
 
 for exponents _e_ and elements _d_ from a dictionary _D_. Given such a decomposition we can construct an addition chain for _n_ by
 
@@ -283,18 +283,20 @@ The efficiency of this approach boils down to the decomposition method. The [`al
 
 ### Runs
 
-The runs algorithm is a custom variant of the dictionary approach that decomposes
-a target into runs of ones. It leverages the observation that building a
-dictionary consisting of runs of 1s of lengths `l_1, l_2, ..., l_k` can itself be
+The runs algorithm is a custom variant of the dictionary approach that
+decomposes a target into runs of ones. It leverages the observation that
+building a dictionary consisting of runs of 1s of lengths
+<code>l<sub>1</sub>, l<sub>2</sub>, ..., l<sub>k</sub></code> can itself be
 reduced to:
 
-1. Find an addition sequence containing the run lengths `l_i`. As with
-   dictionary approaches we can use Bos-Coster heuristics and continued
-   fractions here. However here we have the advantage that the `l_i` are
-   typically very _small_, meaning that a wider range of algorithms can
-   be brought to bear.
-2. Use the addition sequence for the run lengths `l_i` to build an addition
-   sequence for the runs themselves `r(l_i)` where `r(e) = 2^e-1`. See
+1. Find an addition sequence containing the run lengths
+   <code>l<sub>i</sub></code>. As with dictionary approaches we can use
+   Bos-Coster heuristics and continued fractions here. However here we have the
+   advantage that the <code>l<sub>i</sub></code> are typically very _small_,
+   meaning that a wider range of algorithms can be brought to bear.
+2. Use the addition sequence for the run lengths <code>l<sub>i</sub></code>
+   to build an addition sequence for the runs themselves
+   <code>r(l<sub>i</sub>)</code> where <code>r(e) = 2<sup>e-1</sup></code>. See
    [`dict.RunsChain`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict#RunsChain).
 
 This approach has proved highly effective against cryptographic exponents
