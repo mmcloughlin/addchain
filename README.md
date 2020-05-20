@@ -76,7 +76,7 @@ Minimal addition chain search is famously hard. No practical optimal
 algorithm is known, especially for cryptographic exponents of size 256-bits
 and up. Given its importance for the performance of cryptographic
 implementations, implementers devote significant effort to hand-tune addition
-chains. The `addchain` project aims to match or exceed the best
+chains. The goal of the `addchain` project is to match or exceed the best
 hand-optimized addition chains using entirely automated approaches, building
 on extensive academic research and applying new tweaks that exploit the
 unique nature of cryptographic exponents.
@@ -86,8 +86,7 @@ unique nature of cryptographic exponents.
 The following table shows the results of the `addchain` library on popular
 cryptographic exponents. For each one we also show the length of the [best
 known hand-optimized addition chain](https://briansmith.org/ecc-inversion-addition-chains-01), and the
-delta from the library result. Zero or negative delta means the `addchain`
-matches or exceeded results by hand.
+delta from the library result.
 
 | Name | This Library | Best Known | Delta |
 | ---- | -----------: | ---------: | ----: |
@@ -105,11 +104,10 @@ See [full results listing](doc/results.md) for more detail and results for
 less common exponents.
 
 These results demonstrate that `addchain` is competitive with hand-optimized
-chains, always within a few operations of the best known and often matching
-or exceeding. Even when `addchain` is slightly sub-optimal, it can still be
-considered valuable since it fully automates a laborious manual process. As
-such, `addchain` can be trusted to produce high quality results in an
-automated code generation tool.
+chains, often with equivalent or better performance. Even when `addchain` is
+slightly sub-optimal, it can still be considered valuable since it fully
+automates a laborious manual process. As such, `addchain` can be trusted to
+produce high quality results in an automated code generation tool.
 
 ## Usage
 
@@ -341,7 +339,7 @@ chains](https://github.com/mmcloughlin/addchain/issues/24)?
 
 Thank you to [Tom Dean](https://web.stanford.edu/~trdean/), [Riad
 Wahby](https://wahby.org/), [Brian Smith](https://briansmith.org/) and
-[st4d](https://github.com/str4d) for advice and encouragement. Thanks also to
+[str4d](https://github.com/str4d) for advice and encouragement. Thanks also to
 [Damian Gryski](https://github.com/dgryski) and [Martin
 Glancy](https://twitter.com/mglancy) for review.
 
