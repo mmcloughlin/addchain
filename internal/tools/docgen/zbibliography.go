@@ -99,6 +99,12 @@ var bibliography = []struct{
     },
 
     {
+        CiteName:  "hashbls12-381",
+        URL: "https://eprint.iacr.org/2019/403",
+        Formatted: "Riad S. Wahby and Dan Boneh. Fast and simple constant-time hashing to the BLS12-381 elliptic curve. Cryptology ePrint Archive, Report 2019/403. 2019. https://eprint.iacr.org/2019/403",
+    },
+
+    {
         CiteName:  "hehcc:exp",
         URL: "http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf",
         Formatted: "Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve Cryptography, chapter 9. 2006. http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf",
