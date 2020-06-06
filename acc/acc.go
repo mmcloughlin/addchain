@@ -3,6 +3,7 @@
 package acc
 
 import (
+	"bytes"
 	"io"
 	"os"
 	"strings"
@@ -77,4 +78,14 @@ func Save(filename string, p *ir.Program) (err error) {
 	}
 	defer errutil.CheckClose(&err, f)
 	return Write(f, p)
+}
+
+// String is a convenience for obtaining a program as an addition chain script
+// in string form.
+func String(p *ir.Program) (string, error) {
+	var buf bytes.Buffer
+	if err := Write(&buf, p); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }
