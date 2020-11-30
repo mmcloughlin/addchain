@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: Configure Go Environment
         run: |
-          echo GOPATH::${{ runner.workspace }} >> $GITHUB_ENV
+          echo GOPATH=${{ runner.workspace }} >> $GITHUB_ENV
           echo ${{ runner.workspace }}/bin >> $GITHUB_PATH
       - name: Checkout code
         uses: actions/checkout@v1
