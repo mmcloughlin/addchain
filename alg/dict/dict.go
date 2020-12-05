@@ -103,10 +103,62 @@ type SlidingWindow struct {
 	K uint // Window size.
 }
 
-func (w SlidingWindow) String() string { return fmt.Sprintf("sliding_window(%d)", w.K) }
+// SlidingWindowRTL behaves like SlidingWindow, except that the integer is
+// processed from least to most significant bit (right-to-left) instead of most
+// to least significant bit (left-to-right).
+type SlidingWindowRTL struct {
+	K uint // Window size.
+}
 
-// Decompose represents x in base 2ᵏ.
-func (w SlidingWindow) Decompose(x *big.Int) Sum {
+// SlidingWindowShort behaves like SlidingWindow, except that it uses two
+// additional heuristics to shorten some windows. When Z > 0, at most Z zeroes
+// can appear in a window. Z = 0 is treated as Z = K. If a window is maximum
+// length, contains a zero, and is followed by a one, then the window is shrunk
+// to yield as many ones as possible to the subsequent window.
+type SlidingWindowShort struct {
+	K uint // Window size.
+	Z uint // Maximum zeroes per window.
+}
+
+// SlidingWindowShortRTL behaves like SlidingWindowShort, except that the
+// integer is processed from least to most significant bit (right-to-left)
+// instead of most to least significant bit (left-to-right).
+type SlidingWindowShortRTL struct {
+	K uint // Window size.
+	Z uint // Maximum zeroes per window.
+}
+
+func (w SlidingWindow) String() string {
+	return fmt.Sprintf("sliding_window(%d)", w.K)
+}
+
+// Decompose represents x in sliding windows up to k bits from left to right.
+func (w SlidingWindow) Decompose(x *big.Int) Sum { return slideWindowLTR(x, w.K, 0, false) }
+
+func (w SlidingWindowRTL) String() string {
+	return fmt.Sprintf("sliding_window_rtl(%d)", w.K)
+}
+
+// Decompose represents x in sliding windows up to k bits from right to left.
+func (w SlidingWindowRTL) Decompose(x *big.Int) Sum { return slideWindowRTL(x, w.K, 0, false) }
+
+func (w SlidingWindowShort) String() string {
+	return fmt.Sprintf("sliding_window_short(%d,%d)", w.K, w.Z)
+}
+
+// Decompose represents x in sliding windows up to k bits from left to right.
+// The windows contain at most z zeroes and are sometimes shortened.
+func (w SlidingWindowShort) Decompose(x *big.Int) Sum { return slideWindowLTR(x, w.K, w.Z, true) }
+
+func (w SlidingWindowShortRTL) String() string {
+	return fmt.Sprintf("sliding_window_short_rtl(%d,%d)", w.K, w.Z)
+}
+
+// Decompose represents x in sliding windows up to k bits from right to left.
+// The windows contain at most z zeroes and are sometimes shortened.
+func (w SlidingWindowShortRTL) Decompose(x *big.Int) Sum { return slideWindowRTL(x, w.K, w.Z, true) }
+
+func slideWindowLTR(x *big.Int, maxLen uint, maxZero uint, shorten bool) Sum {
 	sum := Sum{}
 	h := x.BitLen() - 1
 	for h >= 0 {
@@ -119,8 +171,30 @@ func (w SlidingWindow) Decompose(x *big.Int) Sum {
 			break
 		}
 
-		// Look down k positions.
-		l := max(h-int(w.K)+1, 0)
+		// Select a window up to maxLen with at most maxZero zeroes.
+		l := h
+		ll := max(h-int(maxLen)+1, 0)
+		z := uint(0)
+		for {
+			l--
+			if l < ll {
+				break
+			}
+			if x.Bit(l) == 0 {
+				z++
+				if maxZero > 0 && z > maxZero {
+					break
+				}
+			}
+		}
+		l++
+
+		// Yield window space if needed and requested.
+		if shorten && z > 0 && l > 0 && x.Bit(l-1) == 1 {
+			for x.Bit(l) == 1 {
+				l++
+			}
+		}
 
 		// Advance to the next 1.
 		for x.Bit(l) == 0 {
@@ -133,6 +207,61 @@ func (w SlidingWindow) Decompose(x *big.Int) Sum {
 		})
 
 		h = l - 1
+	}
+	sum.SortByExponent()
+	return sum
+}
+
+func slideWindowRTL(x *big.Int, maxLen uint, maxZero uint, shorten bool) Sum {
+	sum := Sum{}
+	l := 0
+	m := x.BitLen()
+	for l < m {
+		// Find the first 1.
+		for l < m && x.Bit(l) == 0 {
+			l++
+		}
+
+		if l >= m {
+			break
+		}
+
+		// Select a window up to maxLen with at most maxZero zeroes.
+		h := l
+		hh := min(l+int(maxLen), m)
+		z := uint(0)
+		for {
+			h++
+			if h >= hh {
+				break
+			}
+			if x.Bit(h) == 0 {
+				z++
+				if maxZero > 0 && z > maxZero {
+					break
+				}
+			}
+		}
+		h--
+
+		// Yield window space if needed and requested.
+		if shorten && z > 0 && h < m && x.Bit(h+1) == 1 {
+			for x.Bit(h) == 1 {
+				h--
+			}
+		}
+
+		// Advance to the next 1.
+		for x.Bit(h) == 0 {
+			h--
+		}
+
+		sum = append(sum, Term{
+			D: bigint.Extract(x, uint(l), uint(h+1)),
+			E: uint(l),
+		})
+
+		l = h + 1
 	}
 	sum.SortByExponent()
 	return sum
@@ -176,18 +305,41 @@ func (r RunLength) Decompose(x *big.Int) Sum {
 	return sum
 }
 
-// Hybrid is a mix of the sliding window and run length decomposition methods,
-// similar to the "Hybrid Method" of [genshortchains] Section 3.3.
+// Hybrid performs a run length decomposition followed by a nested Decomposer.
+// For removed runs, TMin ≤ run length, and furthermore, run length ≤ TMax if
+// TMax != 0. By default, Hybrid uses a SlidingWindow to finish the
+// decomposition, similar to the "Hybrid Method" of [genshortchains]
+// Section 3.3.
 type Hybrid struct {
-	K uint // Window size.
-	T uint // Maximal run length. Zero means no limit.
+	TMin uint // Minimum run length. Set to 2 when less than 2.
+	TMax uint // Maximal run length. Zero means no limit.
+
+	Decomposer Decomposer // Decomposer used after removing runs.
 }
 
-func (h Hybrid) String() string { return fmt.Sprintf("hybrid(%d,%d)", h.K, h.T) }
+func (h Hybrid) settings() (tMin uint, tMax uint, d Decomposer) {
+	tMin = h.TMin
+	if tMin < 2 {
+		tMin = 2
+	}
+	tMax = h.TMax
+	d = h.Decomposer
+	if d == nil {
+		d = SlidingWindow{K: tMin - 1}
+	}
+	return tMin, tMax, d
+}
 
-// Decompose breaks x into k-bit sliding windows or runs of 1s up to length T.
+func (h Hybrid) String() string {
+	tMin, tMax, d := h.settings()
+	return fmt.Sprintf("hybrid(%d,%d,%s)", tMin, tMax, d)
+}
+
+// Decompose breaks x into runs of 1s up to length T, then uses the given
+// Decomposer to handle the rest.
 func (h Hybrid) Decompose(x *big.Int) Sum {
 	sum := Sum{}
+	tMin, tMax, d := h.settings()
 
 	// Clone since we'll be modifying it.
 	y := bigint.Clone(x)
@@ -206,13 +358,13 @@ func (h Hybrid) Decompose(x *big.Int) Sum {
 
 		// Look for the end of the run.
 		s := i
-		for i >= 0 && y.Bit(i) == 1 && (h.T == 0 || uint(s-i) < h.T) {
+		for i >= 0 && y.Bit(i) == 1 && (tMax == 0 || uint(s-i) < tMax) {
 			i--
 		}
 
 		// We have a run from s to i+1. Skip it if its short.
 		n := uint(s - i)
-		if n <= h.K {
+		if n < tMin {
 			continue
 		}
 
@@ -225,9 +377,8 @@ func (h Hybrid) Decompose(x *big.Int) Sum {
 		y.Xor(y, bigint.Mask(uint(i+1), uint(s+1)))
 	}
 
-	// Process what remains with a sliding window.
-	w := SlidingWindow{K: h.K}
-	rem := w.Decompose(y)
+	// Process what remains with the given Decomposer.
+	rem := d.Decompose(y)
 
 	sum = append(sum, rem...)
 	sum.SortByExponent()
@@ -237,7 +388,7 @@ func (h Hybrid) Decompose(x *big.Int) Sum {
 
 // Algorithm implements a general dictionary-based chain construction algorithm,
 // as in [braueraddsubchains] Algorithm 1.26. This operates in three stages:
-// decompose the target into a sum of dictionray terms, use a sequence algorithm
+// decompose the target into a sum of dictionary terms, use a sequence algorithm
 // to generate the dictionary, then construct the target from the dictionary
 // terms.
 type Algorithm struct {
@@ -428,6 +579,14 @@ func primitive(sum Sum, c addchain.Chain) (Sum, addchain.Chain, error) {
 // max returns the maximum of a and b.
 func max(a, b int) int {
 	if a > b {
+		return a
+	}
+	return b
+}
+
+// min returns the minimum of a and b.
+func min(a, b int) int {
+	if a < b {
 		return a
 	}
 	return b
