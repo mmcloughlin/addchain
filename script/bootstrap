@@ -26,4 +26,4 @@ tools=(
     modernc.org/assets
 )
 
-go install -modfile=tools.mod "${tools[@]}"
+go install -modfile=script/tools.mod "${tools[@]}"
