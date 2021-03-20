@@ -4,8 +4,6 @@ linters:
     - cyclop
     - exhaustivestruct
     - forbidigo
-
-    # todo:
     - funlen
     - gochecknoglobals
     - gocognit
