@@ -1,34 +1,29 @@
 linters:
   enable-all: true
   disable:
-    - lll
-    - gochecknoglobals
-    - funlen
-    - testpackage
-    - gomnd
-    - goerr113
-    - wsl
-    - gocognit
-
-    # deprecated:
-    - maligned
-    - interfacer
-
-    # new errors:
-    - forbidigo
-    - gci
-    - gocritic
-    - gosec
-    - revive
     - cyclop
     - exhaustivestruct
+    - forbidigo
+    - funlen
+    - gci
+    - gochecknoglobals
+    - gocognit
+    - gocritic
+    - goerr113
+    - gomnd
     - ifshort
-    - wrapcheck
-    - wastedassign
-    - paralleltest
+    - interfacer
+    - lll
+    - maligned
     - nlreturn
+    - paralleltest
     - predeclared
+    - revive
+    - testpackage
     - thelper
+    - wastedassign
+    - wrapcheck
+    - wsl
 
 issues:
   exclude-use-default: false
@@ -37,3 +32,5 @@ issues:
     - G304
     # gosec: G306: Expect WriteFile permissions to be 0600 or less
     - G306
+    # gosec: G404: Use of weak random number generator
+    - G404
