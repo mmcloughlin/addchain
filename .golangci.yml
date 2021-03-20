@@ -2,10 +2,11 @@ linters:
   enable-all: true
   disable:
     - cyclop
+
+    # todo:
     - exhaustivestruct
     - forbidigo
     - funlen
-    - gci
     - gochecknoglobals
     - gocognit
     - gocritic
@@ -24,6 +25,10 @@ linters:
     - wastedassign
     - wrapcheck
     - wsl
+
+linters-settings:
+  gci:
+    local-prefixes: github.com/mmcloughlin/addchain
 
 issues:
   exclude-use-default: false
