@@ -49,7 +49,7 @@ func MustBinary(s string) *big.Int {
 
 // stripliteral removes underscore spacers from a numeric literal.
 func stripliteral(s string) string {
-	return strings.Replace(s, "_", "", -1)
+	return strings.ReplaceAll(s, "_", "")
 }
 
 // Equal returns whether x equals y.

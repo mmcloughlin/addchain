@@ -2,14 +2,13 @@ linters:
   enable-all: true
   disable:
     - cyclop
-
-    # todo:
     - exhaustivestruct
     - forbidigo
+
+    # todo:
     - funlen
     - gochecknoglobals
     - gocognit
-    - gocritic
     - goerr113
     - gomnd
     - ifshort
