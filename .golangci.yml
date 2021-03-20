@@ -10,6 +10,26 @@ linters:
     - wsl
     - gocognit
 
+    # deprecated:
+    - maligned
+    - interfacer
+
+    # new errors:
+    - forbidigo
+    - gci
+    - gocritic
+    - gosec
+    - revive
+    - cyclop
+    - exhaustivestruct
+    - ifshort
+    - wrapcheck
+    - wastedassign
+    - paralleltest
+    - nlreturn
+    - predeclared
+    - thelper
+
 issues:
   exclude-use-default: false
   exclude:
