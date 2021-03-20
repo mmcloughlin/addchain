@@ -5,10 +5,8 @@ linters:
     - exhaustivestruct
     - forbidigo
     - funlen
-    - gci
     - gochecknoglobals
     - gocognit
-    - gocritic
     - goerr113
     - gomnd
     - ifshort
@@ -24,6 +22,10 @@ linters:
     - wastedassign
     - wrapcheck
     - wsl
+
+linters-settings:
+  gci:
+    local-prefixes: github.com/mmcloughlin/addchain
 
 issues:
   exclude-use-default: false
