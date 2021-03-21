@@ -1,0 +1,26 @@
+before:
+  hooks:
+  - go mod tidy
+builds:
+  - main: ./cmd/addchain
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+archives:
+  - format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE*
+      - README*
+changelog:
+  skip: true
+release:
+  draft: true
+  prerelease: auto
