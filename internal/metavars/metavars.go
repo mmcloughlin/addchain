@@ -1,4 +1,5 @@
-// Package metavars allows manipulation of key-value properties in Go files.
+// Package metavars allows manipulation of "meta variables" stored as variable
+// declarations in Go files.
 package metavars
 
 import (
