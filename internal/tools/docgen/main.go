@@ -14,6 +14,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/mmcloughlin/addchain/internal/meta"
 	"github.com/mmcloughlin/addchain/internal/results"
 )
 
@@ -68,6 +69,7 @@ func mainerr() (err error) {
 
 	// Prepare template data.
 	data := map[string]interface{}{
+		"Meta":    meta.Meta,
 		"Results": results.Results,
 	}
 
