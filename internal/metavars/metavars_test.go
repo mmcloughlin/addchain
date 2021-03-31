@@ -8,8 +8,6 @@ import (
 
 func TestRoundtrip(t *testing.T) {
 	cases := []*File{
-		// TODO: mixed doc comments
-		// TODO: quoted strings
 		{
 			Package: "standard",
 			Properties: []Property{
@@ -34,8 +32,23 @@ func TestRoundtrip(t *testing.T) {
 				{Name: "B", Value: "two"},
 			},
 		},
+		{
+			Package: "mixeddoc",
+			Properties: []Property{
+				{Name: "A", Doc: "A is the first variable.", Value: "one"},
+				{Name: "B", Value: "two"},
+				{Name: "C", Doc: "C is the third variable.", Value: "three"},
+			},
+		},
+		{
+			Package: "quoting",
+			Properties: []Property{
+				{Name: "A", Value: `this "would" need 'to' be quoted correctly`},
+			},
+		},
 	}
 	for _, f := range cases {
+		f := f // scopelint
 		t.Run(f.Package, func(t *testing.T) {
 			buf := bytes.NewBuffer(nil)
 			if err := Write(buf, f); err != nil {
