@@ -4,8 +4,8 @@ import (
 	"testing"
 )
 
-func TestReleaseTime(t *testing.T) {
-	_, err := ReleaseTime()
+func TestMetaReleaseTime(t *testing.T) {
+	_, err := Meta.ReleaseTime()
 	if err != nil {
 		t.Fatal(err)
 	}

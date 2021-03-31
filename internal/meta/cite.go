@@ -10,6 +10,8 @@ import (
 	"github.com/mmcloughlin/addchain/internal/print"
 )
 
+// WriteCitation writes BibTeX citation for the most recent release to the given
+// writer.
 func (p *Properties) WriteCitation(w io.Writer) error {
 	// Determine release time.
 	date, err := p.ReleaseTime()
@@ -39,6 +41,7 @@ func (p *Properties) WriteCitation(w io.Writer) error {
 	return tw.Error()
 }
 
+// Citation returns a BibTeX citation for the most recent release.
 func (p *Properties) Citation() (string, error) {
 	buf := bytes.NewBuffer(nil)
 	if err := p.WriteCitation(buf); err != nil {
