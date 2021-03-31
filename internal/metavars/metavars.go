@@ -30,6 +30,42 @@ type File struct {
 	Properties []Property
 }
 
+// Get property with given name.
+func (f *File) Get(name string) (string, bool) {
+	if p := f.get(name); p != nil {
+		return p.Value, true
+	}
+	return "", false
+}
+
+// Add property to the file, which must not already exist.
+func (f *File) Add(p Property) error {
+	if q := f.get(p.Name); q != nil {
+		return fmt.Errorf("property %q already exists", p.Name)
+	}
+	f.Properties = append(f.Properties, p)
+	return nil
+}
+
+// Set property name to value. The property must exist.
+func (f *File) Set(name, value string) error {
+	if p := f.get(name); p != nil {
+		p.Value = value
+		return nil
+	}
+	return fmt.Errorf("unknown property %q", name)
+}
+
+func (f *File) get(name string) *Property {
+	for i := range f.Properties {
+		p := &f.Properties[i]
+		if p.Name == name {
+			return p
+		}
+	}
+	return nil
+}
+
 // Write file f to write w.
 func Write(w io.Writer, f *File) error {
 	// Write source code.

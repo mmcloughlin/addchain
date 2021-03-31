@@ -6,6 +6,48 @@ import (
 	"testing"
 )
 
+func TestFileAccessors(t *testing.T) {
+	f := &File{
+		Package: "test",
+	}
+
+	// Get non-existent property.
+	if _, ok := f.Get("name"); ok {
+		t.Fatal("returned ok for non-existent property")
+	}
+
+	// Add it.
+	p := Property{Name: "name", Value: "value"}
+	if err := f.Add(p); err != nil {
+		t.Fatal(err)
+	}
+
+	// Cannot Add the same property again.
+	if err := f.Add(p); err == nil {
+		t.Fatal("cannot add duplicate properties")
+	}
+
+	// Get should work now.
+	if v, ok := f.Get("name"); v != "value" || !ok {
+		t.Fatal("unexpected property value")
+	}
+
+	// Set it to something else.
+	if err := f.Set("name", "new"); err != nil {
+		t.Fatal(err)
+	}
+
+	// Get the new value.
+	if v, ok := f.Get("name"); v != "new" || !ok {
+		t.Fatal("did not see value update")
+	}
+
+	// Cannot set unknown property.
+	if err := f.Set("other", "value"); err == nil {
+		t.Fatal("cannot set unknown property")
+	}
+}
+
 func TestRoundtrip(t *testing.T) {
 	cases := []*File{
 		{
