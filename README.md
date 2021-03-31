@@ -35,6 +35,7 @@ generators.
   * [Dictionary](#dictionary)
   * [Runs](#runs)
   * [Optimization](#optimization)
+* [Citing](#citing)
 * [Thanks](#thanks)
 * [Contributing](#contributing)
 * [License](#license)
@@ -338,6 +339,31 @@ other [compiler optimizations could apply to addition
 chains](https://github.com/mmcloughlin/addchain/issues/24)?
 
 > I have not seen this method discussed in the literature. Please help me find references to prior art if you know any.
+
+## Citing
+
+If you use `addchain` in your research a citation would be appreciated.
+Citing a specific release is preferred, since they are archived on assigned a
+DOI. Please use the following BibTeX to cite the most recent [0.1.0
+release](https://github.com/mmcloughlin/addchain/releases/tag/v0.1.0).
+
+```bib
+@misc{addchain,
+    title        = {addchain: Cryptographic Addition Chain Generation in Go},
+    author       = {Michael B. McLoughlin},
+    year         = 2021,
+    month        = mar,
+    howpublished = {Github repository \url{https://github.com/mmcloughlin/addchain}},
+    version      = {0.1.0},
+    license      = {BSD 3-Clause License},
+    doi          = {10.5281/zenodo.4625264},
+    url          = {https://doi.org/10.5281/zenodo.4625264},
+}
+```
+
+If you need to cite a currently unreleased version please consider [filing an
+issue](https://github.com/mmcloughlin/addchain/issues/new)) to request a new
+release, or to discuss an appropriate format for the citation.
 
 ## Thanks
 

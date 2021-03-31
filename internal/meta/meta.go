@@ -13,20 +13,20 @@ type Properties struct {
 
 	// DOI for the most recent release.
 	DOI string
-
-	// Zenodo record ID for the most recent release.
-	ZenodoRecordID string
 }
 
 var Meta = &Properties{
 	ReleaseVersion: releaseversion,
 	ReleaseDate:    releasedate,
 	DOI:            doi,
-	ZenodoRecordID: zenodorecordid,
 }
 
 func (p *Properties) ReleaseTag() string {
 	return VersionTagPrefix + p.ReleaseVersion
+}
+
+func (p *Properties) GithubReleaseURL() string {
+	return "https://github.com/mmcloughlin/addchain/releases/tag/" + p.ReleaseTag()
 }
 
 // ReleaseTime returns the release date as a time object.

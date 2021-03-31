@@ -28,6 +28,7 @@ func (p *Properties) WriteCitation(w io.Writer) error {
 	str("author", "Michael B. McLoughlin")
 	field("year", strconv.Itoa(date.Year()))
 	field("month", strings.ToLower(date.Month().String()[:3]))
+	str("howpublished", "Github repository \\url{https://github.com/mmcloughlin/addchain}")
 	str("version", p.ReleaseVersion)
 	str("license", "BSD 3-Clause License")
 	str("doi", p.DOI)
@@ -38,7 +39,7 @@ func (p *Properties) WriteCitation(w io.Writer) error {
 	return tw.Error()
 }
 
-func (p *Properties) Citation(w io.Writer) (string, error) {
+func (p *Properties) Citation() (string, error) {
 	buf := bytes.NewBuffer(nil)
 	if err := p.WriteCitation(buf); err != nil {
 		return "", err
