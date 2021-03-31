@@ -35,6 +35,11 @@ var Meta = &Properties{
 	ConceptDOI:     conceptdoi,
 }
 
+// IsRelease reports whether the built version is a release.
+func (p *Properties) IsRelease() bool {
+	return p.BuildVersion == p.ReleaseVersion
+}
+
 // ReleaseTag returns the release tag corresponding to the most recent release.
 func (p *Properties) ReleaseTag() string {
 	return VersionTagPrefix + p.ReleaseVersion
