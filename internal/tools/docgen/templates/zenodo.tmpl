@@ -18,5 +18,12 @@
             "relation": "isSupplementTo",
             "scheme": "url"
         }
+    ],
+    "references": [
+        {{ range $i, $entry := .Bibliography -}}
+        {{- if $i }},
+        {{ end -}}
+        {{- printf "%q" $entry.Formatted -}}
+        {{- end }}
     ]
 }
