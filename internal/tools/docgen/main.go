@@ -69,8 +69,9 @@ func mainerr() (err error) {
 
 	// Prepare template data.
 	data := map[string]interface{}{
-		"Meta":    meta.Meta,
-		"Results": results.Results,
+		"Meta":         meta.Meta,
+		"Results":      results.Results,
+		"Bibliography": bibliography,
 	}
 
 	// Execute.
