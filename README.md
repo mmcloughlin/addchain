@@ -343,8 +343,9 @@ chains](https://github.com/mmcloughlin/addchain/issues/24)?
 ## Citing
 
 If you use `addchain` in your research a citation would be appreciated.
-Citing a specific release is preferred, since they are archived on assigned a
-DOI. Please use the following BibTeX to cite the most recent [0.1.0
+Citing a specific release is preferred, since they are [archived on
+Zenodo](https://doi.org/10.5281/zenodo.4625263) and assigned a DOI. Please use the
+following BibTeX to cite the most recent [0.1.0
 release](https://github.com/mmcloughlin/addchain/releases/tag/v0.1.0).
 
 ```bib
@@ -362,7 +363,7 @@ release](https://github.com/mmcloughlin/addchain/releases/tag/v0.1.0).
 ```
 
 If you need to cite a currently unreleased version please consider [filing an
-issue](https://github.com/mmcloughlin/addchain/issues/new)) to request a new
+issue](https://github.com/mmcloughlin/addchain/issues/new) to request a new
 release, or to discuss an appropriate format for the citation.
 
 ## Thanks

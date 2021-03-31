@@ -17,6 +17,9 @@ type Properties struct {
 
 	// DOI for the most recent release.
 	DOI string
+
+	// ConceptDOI is the DOI for all versions.
+	ConceptDOI string
 }
 
 // Meta defines specific properties for the current version of this software.
@@ -24,6 +27,7 @@ var Meta = &Properties{
 	ReleaseVersion: releaseversion,
 	ReleaseDate:    releasedate,
 	DOI:            doi,
+	ConceptDOI:     conceptdoi,
 }
 
 // ReleaseTag returns the release tag corresponding to the most recent release.
@@ -42,6 +46,11 @@ func (p *Properties) ReleaseTime() (time.Time, error) {
 }
 
 // DOIURL returns the DOI URL corresponding to the most recent release.
-func (p *Properties) DOIURL() string {
-	return "https://doi.org/" + p.DOI
+func (p *Properties) DOIURL() string { return doiurl(p.DOI) }
+
+// ConceptDOIURL returns the DOI URL corresponding to the most recent release.
+func (p *Properties) ConceptDOIURL() string { return doiurl(p.ConceptDOI) }
+
+func doiurl(doi string) string {
+	return "https://doi.org/" + doi
 }
