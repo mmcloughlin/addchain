@@ -9,6 +9,10 @@ const VersionTagPrefix = "v"
 
 // Properties about this software package.
 type Properties struct {
+	// BuildVersion is the version that was built. Typically populated at build
+	// time and will typically be empty for non-release builds.
+	BuildVersion string
+
 	// ReleaseVersion is the version of the most recent release.
 	ReleaseVersion string
 
@@ -24,6 +28,7 @@ type Properties struct {
 
 // Meta defines specific properties for the current version of this software.
 var Meta = &Properties{
+	BuildVersion:   buildversion,
 	ReleaseVersion: releaseversion,
 	ReleaseDate:    releasedate,
 	DOI:            doi,
