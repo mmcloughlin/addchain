@@ -2,6 +2,7 @@ package meta
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -9,6 +10,15 @@ import (
 
 	"github.com/mmcloughlin/addchain/internal/print"
 )
+
+// CheckCitable checks whether a citation can be generated for this built
+// version.
+func (p *Properties) CheckCitable() error {
+	if !p.IsRelease() {
+		return errors.New("cannot cite non-release version")
+	}
+	return nil
+}
 
 // WriteCitation writes BibTeX citation for the most recent release to the given
 // writer.

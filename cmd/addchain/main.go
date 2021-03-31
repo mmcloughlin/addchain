@@ -23,6 +23,8 @@ func main() {
 		subcommands.Register(&version{version: meta.Meta.BuildVersion, Command: base}, "")
 	}
 
+	subcommands.Register(&cite{properties: meta.Meta, Command: base}, "")
+
 	flag.Parse()
 	ctx := context.Background()
 	os.Exit(int(subcommands.Execute(ctx)))
