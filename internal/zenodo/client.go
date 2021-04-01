@@ -1,3 +1,4 @@
+// Package zenodo provides a client for the Zendodo API.
 package zenodo
 
 import (
@@ -11,41 +12,17 @@ import (
 	"net/http"
 	"net/textproto"
 	"regexp"
-
-	"github.com/mmcloughlin/addchain/internal/errutil"
 )
 
-// todo:
-// - api: get: find the latest version of a concept
-// - api: get: fetch latest draft
-// - api: get: licenses
-// - cleanup: prereserve_doi: true in create request
-//
-// done:
-// - post: create empty deposit
-// - put: update deposit
-// - post: upload a file
-// - api: post: publish
-// - api: post: new version of a concept
-// - api: get: list files
-// - api: delete: delete file
-//
-// summary:
-//  METHOD BODY ENDPOINT
-//  post   json deposit create
-//  put    json deposit update
-//  post   form file upload
-//  post   nil  publish
-//  post   nil  newversion
-//  get    nil  list files
-//  delete nil  delete file
-
+// Client for the Zenodo API.
 type Client struct {
 	client *http.Client
 	base   string
 	token  string
 }
 
+// NewClient builds a new Zenodo client. Uses the given HTTP client, base URL
+// and access token.
 func NewClient(c *http.Client, base, token string) *Client {
 	return &Client{
 		client: c,
@@ -54,6 +31,7 @@ func NewClient(c *http.Client, base, token string) *Client {
 	}
 }
 
+// DepositionCreate creates a new empty deposit.
 func (c *Client) DepositionCreate(ctx context.Context) (*Deposition, error) {
 	path := "api/deposit/depositions"
 	empty := &Deposition{}
@@ -64,6 +42,7 @@ func (c *Client) DepositionCreate(ctx context.Context) (*Deposition, error) {
 	return d, nil
 }
 
+// DepositionUpdate updates deposit metadata.
 func (c *Client) DepositionUpdate(ctx context.Context, id string, meta *DepositionMetadata) (*Deposition, error) {
 	path := fmt.Sprintf("api/deposit/depositions/%s", id)
 	input := &Deposition{Metadata: meta}
@@ -74,6 +53,8 @@ func (c *Client) DepositionUpdate(ctx context.Context, id string, meta *Depositi
 	return d, nil
 }
 
+// DepositionNewVersion creates a new version of an existing deposit. Returns
+// the ID of the new version.
 func (c *Client) DepositionNewVersion(ctx context.Context, id string) (string, error) {
 	// Create new version.
 	d, err := c.action(ctx, id, "newversion")
@@ -99,6 +80,7 @@ func (c *Client) DepositionNewVersion(ctx context.Context, id string) (string, e
 
 var newidrx = regexp.MustCompile(`/api/deposit/depositions/(\d+)$`)
 
+// DepositionPublish publishes a deposit.
 func (c *Client) DepositionPublish(ctx context.Context, id string) (*Deposition, error) {
 	return c.action(ctx, id, "publish")
 }
@@ -121,6 +103,7 @@ func (c *Client) action(ctx context.Context, id, name string) (*Deposition, erro
 	return d, nil
 }
 
+// DepositionFilesList lists all files attached to a deposit.
 func (c *Client) DepositionFilesList(ctx context.Context, id string) ([]*DepositionFile, error) {
 	path := fmt.Sprintf("api/deposit/depositions/%s/files", id)
 
@@ -139,6 +122,7 @@ func (c *Client) DepositionFilesList(ctx context.Context, id string) ([]*Deposit
 	return fs, nil
 }
 
+// DepositionFilesCreate uploads a new file to a deposit.
 func (c *Client) DepositionFilesCreate(ctx context.Context, id, filename, mimetype string, r io.Reader) (*DepositionFile, error) {
 	path := fmt.Sprintf("api/deposit/depositions/%s/files", id)
 
@@ -187,6 +171,7 @@ func (c *Client) DepositionFilesCreate(ctx context.Context, id, filename, mimety
 	return f, nil
 }
 
+// DepositionFilesDelete deletes a file from a deposit.
 func (c *Client) DepositionFilesDelete(ctx context.Context, did, fid string) error {
 	path := fmt.Sprintf("api/deposit/depositions/%s/files/%s", did, fid)
 
@@ -230,7 +215,11 @@ func (c *Client) request(req *http.Request, payload interface{}) (err error) {
 	if err != nil {
 		return err
 	}
-	defer errutil.CheckClose(&err, res.Body)
+	defer func() {
+		if errc := res.Body.Close(); errc != nil && err == nil {
+			err = errc
+		}
+	}()
 
 	// Parse response body.
 	if payload != nil {
