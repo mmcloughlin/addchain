@@ -37,6 +37,26 @@ func NewClient(c *http.Client, base, token string) *Client {
 	}
 }
 
+// DepositionRetrieve retrieves a deposit.
+func (c *Client) DepositionRetrieve(ctx context.Context, id string) (*Deposition, error) {
+	path := fmt.Sprintf("api/deposit/depositions/%s", id)
+
+	// Build request.
+	u := c.base + "/" + path
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Execute.
+	d := &Deposition{}
+	if err := c.request(req, d); err != nil {
+		return nil, err
+	}
+
+	return d, nil
+}
+
 // DepositionCreate creates a new empty deposit.
 func (c *Client) DepositionCreate(ctx context.Context) (*Deposition, error) {
 	path := "api/deposit/depositions"

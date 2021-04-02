@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"strconv"
 
 	"github.com/google/subcommands"
 
@@ -55,8 +56,18 @@ func (cmd *reservedoi) Execute(ctx context.Context, f *flag.FlagSet, _ ...interf
 
 	cmd.Log.Printf("new version id %s", newid)
 
+	// Fetch the new version.
+	d, err := c.DepositionRetrieve(ctx, newid)
+	if err != nil {
+		return cmd.Error(err)
+	}
+
 	// Write back to variables file.
-	if err := cmd.varsfile.Set("zenodoid", newid); err != nil {
+	if err := cmd.varsfile.Set("zenodoid", strconv.Itoa(d.ID)); err != nil {
+		return cmd.Error(err)
+	}
+
+	if err := cmd.varsfile.Set("doi", d.DOI); err != nil {
 		return cmd.Error(err)
 	}
 
