@@ -2,9 +2,11 @@ package main
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -67,8 +69,9 @@ func (v *VarsFile) Set(name, value string) error {
 
 // Zenodo configures a zenodo client.
 type Zenodo struct {
-	base  string
-	token string
+	base       string
+	token      string
+	httpclient HTTPClient
 }
 
 const zenodoTokenEnvVar = "ZENODO_TOKEN"
@@ -77,6 +80,7 @@ const zenodoTokenEnvVar = "ZENODO_TOKEN"
 func (z *Zenodo) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&z.base, "url", zenodo.BaseURL, "zenodo api base url")
 	f.StringVar(&z.token, "token", "", fmt.Sprintf("zenodo token (uses %q environment variable if empty)", zenodoTokenEnvVar))
+	z.httpclient.SetFlags(f)
 }
 
 // Token returns the configured zenodo token, either from the command-line or
@@ -94,13 +98,10 @@ func (z *Zenodo) Token() (string, error) {
 // Client builds the configured client.
 func (z *Zenodo) Client() (*zenodo.Client, error) {
 	// HTTP Client.
-	tr := &http.Transport{
-		Proxy:           http.ProxyFromEnvironment,
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	client, err := z.httpclient.Client()
+	if err != nil {
+		return nil, err
 	}
-
-	client := &http.Client{}
-	client.Transport = tr
 
 	// Token.
 	token, err := z.Token()
@@ -112,4 +113,63 @@ func (z *Zenodo) Client() (*zenodo.Client, error) {
 	c := zenodo.NewClient(client, z.base, token)
 
 	return c, nil
+}
+
+// HTTPClient configures a HTTP client.
+type HTTPClient struct {
+	cert string
+}
+
+// SetFlags registers command-line flags to configure the HTTP client.
+func (h *HTTPClient) SetFlags(f *flag.FlagSet) {
+	f.StringVar(&h.cert, "cert", "", "trust additional certificate authority certificate")
+}
+
+// Client builds a HTTP client according to configuration.
+func (h *HTTPClient) Client() (*http.Client, error) {
+	// CAs.
+	roots, err := h.RootCAs()
+	if err != nil {
+		return nil, err
+	}
+
+	// Transport.
+	tr := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		TLSClientConfig: &tls.Config{
+			MinVersion: tls.VersionTLS12,
+			RootCAs:    roots,
+		},
+	}
+
+	// Client.
+	return &http.Client{
+		Transport: tr,
+	}, nil
+}
+
+// RootCAs returns the configured certificate pool.
+func (h *HTTPClient) RootCAs() (*x509.CertPool, error) {
+	roots, err := x509.SystemCertPool()
+	if err != nil {
+		return nil, err
+	}
+
+	if h.cert == "" {
+		return roots, nil
+	}
+
+	data, err := ioutil.ReadFile(h.cert)
+	if err != nil {
+		return nil, err
+	}
+
+	cert, err := x509.ParseCertificate(data)
+	if err != nil {
+		return nil, err
+	}
+
+	roots.AddCert(cert)
+
+	return roots, nil
 }
