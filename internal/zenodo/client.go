@@ -259,7 +259,6 @@ func (c *Client) request(req *http.Request, payload interface{}) (err error) {
 
 func decodejson(r io.Reader, v interface{}) error {
 	d := json.NewDecoder(r)
-	d.DisallowUnknownFields()
 
 	if err := d.Decode(v); err != nil {
 		return err
