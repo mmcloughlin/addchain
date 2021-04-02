@@ -14,6 +14,12 @@ import (
 	"regexp"
 )
 
+// Default API base URLs.
+const (
+	BaseURL        = "https://zenodo.org"
+	SandboxBaseURL = "https://sandbox.zenodo.org"
+)
+
 // Client for the Zenodo API.
 type Client struct {
 	client *http.Client
@@ -29,6 +35,26 @@ func NewClient(c *http.Client, base, token string) *Client {
 		base:   base,
 		token:  token,
 	}
+}
+
+// DepositionRetrieve retrieves a deposit.
+func (c *Client) DepositionRetrieve(ctx context.Context, id string) (*Deposition, error) {
+	path := fmt.Sprintf("api/deposit/depositions/%s", id)
+
+	// Build request.
+	u := c.base + "/" + path
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Execute.
+	d := &Deposition{}
+	if err := c.request(req, d); err != nil {
+		return nil, err
+	}
+
+	return d, nil
 }
 
 // DepositionCreate creates a new empty deposit.
@@ -233,7 +259,6 @@ func (c *Client) request(req *http.Request, payload interface{}) (err error) {
 
 func decodejson(r io.Reader, v interface{}) error {
 	d := json.NewDecoder(r)
-	d.DisallowUnknownFields()
 
 	if err := d.Decode(v); err != nil {
 		return err
