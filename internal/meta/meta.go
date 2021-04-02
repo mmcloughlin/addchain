@@ -19,11 +19,14 @@ type Properties struct {
 	// ReleaseDate is the date of the most recent release. (RFC3339 date format.)
 	ReleaseDate string
 
+	// ConceptDOI is the DOI for all versions.
+	ConceptDOI string
+
 	// DOI for the most recent release.
 	DOI string
 
-	// ConceptDOI is the DOI for all versions.
-	ConceptDOI string
+	// ZenodoID is the Zenodo deposit ID for the most recent release.
+	ZenodoID string
 }
 
 // Meta defines specific properties for the current version of this software.
@@ -31,8 +34,9 @@ var Meta = &Properties{
 	BuildVersion:   buildversion,
 	ReleaseVersion: releaseversion,
 	ReleaseDate:    releasedate,
-	DOI:            doi,
 	ConceptDOI:     conceptdoi,
+	DOI:            doi,
+	ZenodoID:       zenodoid,
 }
 
 // IsRelease reports whether the built version is a release.
