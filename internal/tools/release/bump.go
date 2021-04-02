@@ -14,7 +14,7 @@ import (
 type bump struct {
 	cli.Command
 
-	varsfile    string
+	varsfile    VarsFile
 	releasedate string
 }
 
@@ -29,7 +29,7 @@ Bump version and update related files.
 }
 
 func (cmd *bump) SetFlags(f *flag.FlagSet) {
-	f.StringVar(&cmd.varsfile, "vars", DefaultMetaVarsPath(), "path to meta variables file")
+	cmd.varsfile.SetFlags(f)
 	f.StringVar(&cmd.releasedate, "date", time.Now().UTC().Format("2006-01-02"), "release date")
 }
 
@@ -45,12 +45,12 @@ func (cmd *bump) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) s
 	}
 
 	// Set the version meta variable.
-	if err := SetMetaVar(cmd.varsfile, "releaseversion", version); err != nil {
+	if err := cmd.varsfile.Set("releaseversion", version); err != nil {
 		return cmd.Error(err)
 	}
 
 	// Set the release date.
-	if err := SetMetaVar(cmd.varsfile, "releasedate", cmd.releasedate); err != nil {
+	if err := cmd.varsfile.Set("releasedate", cmd.releasedate); err != nil {
 		return cmd.Error(err)
 	}
 
