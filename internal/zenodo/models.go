@@ -32,16 +32,18 @@ type DepositionFile struct {
 
 // DepositionMetadata represents metadata for a deposit.
 type DepositionMetadata struct {
-	AccessRight     string         `json:"access_right,omitempty"`
-	Communities     []*Community   `json:"communities,omitempty"`
-	Creators        []*Creator     `json:"creators,omitempty"`
-	Description     string         `json:"description,omitempty"`
-	DOI             string         `json:"doi,omitempty"`
-	License         string         `json:"license,omitempty"`
-	PrereserveDOI   *PrereserveDOI `json:"prereserve_doi,omitempty"`
-	PublicationDate string         `json:"publication_date,omitempty"`
-	Title           string         `json:"title,omitempty"`
-	UploadType      string         `json:"upload_type,omitempty"`
+	AccessRight        string              `json:"access_right,omitempty"`
+	Communities        []*Community        `json:"communities,omitempty"`
+	Creators           []*Creator          `json:"creators,omitempty"`
+	Description        string              `json:"description,omitempty"`
+	DOI                string              `json:"doi,omitempty"`
+	License            string              `json:"license,omitempty"`
+	PrereserveDOI      *PrereserveDOI      `json:"prereserve_doi,omitempty"`
+	PublicationDate    string              `json:"publication_date,omitempty"`
+	Title              string              `json:"title,omitempty"`
+	UploadType         string              `json:"upload_type,omitempty"`
+	RelatedIdentifiers []RelatedIdentifier `json:"related_identifiers,omitempty"`
+	Version            string              `json:"version,omitempty"`
 }
 
 // Community associated with a deposit.
@@ -51,11 +53,19 @@ type Community struct {
 
 // Creator of a deposit.
 type Creator struct {
-	Name string `json:"name"`
+	Name        string `json:"name"`
+	Affiliation string `json:"affiliation"`
 }
 
 // PrereserveDOI represents a DOI pre-reserved for a deposit.
 type PrereserveDOI struct {
 	DOI      string `json:"doi"`
 	RecordID int    `json:"recid"`
+}
+
+// RelatedIdentifier
+type RelatedIdentifier struct {
+	Relation   string `json:"relation"`
+	Identifier string `json:"identifier"`
+	Scheme     string `json:"scheme"`
 }

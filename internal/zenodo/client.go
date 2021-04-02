@@ -14,6 +14,12 @@ import (
 	"regexp"
 )
 
+// Default API base URLs.
+const (
+	BaseURL        = "https://zenodo.org"
+	SandboxBaseURL = "https://sandbox.zenodo.org"
+)
+
 // Client for the Zenodo API.
 type Client struct {
 	client *http.Client

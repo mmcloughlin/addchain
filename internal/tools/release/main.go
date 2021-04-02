@@ -13,6 +13,7 @@ import (
 func main() {
 	base := cli.NewBaseCommand("release")
 	subcommands.Register(&bump{Command: base}, "")
+	subcommands.Register(&reservedoi{Command: base}, "")
 	subcommands.Register(subcommands.HelpCommand(), "")
 
 	flag.Parse()
