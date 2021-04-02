@@ -8,6 +8,17 @@ curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | 
 # Install goreleaser.
 curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sh -s -- -b "${GOPATH}/bin" v0.160.0
 
+# Install godownloader.
+#
+# This doesn't have an install script like the others and can't be installed
+# with `go install` like below because the go.mod has a replace directive. So
+# we install it the old-fashioned way by cloning and installing from the
+# repository.
+workdir="$(mktemp -d)"
+projectdir="${workdir}/godownloader"
+git clone --depth 1 --branch v0.1.0 https://github.com/goreleaser/godownloader.git "${projectdir}"
+(cd "${projectdir}" && go install .)
+
 # Install tools.
 tools=(
     # gofumports for stricter formatting.
