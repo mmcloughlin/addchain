@@ -14,10 +14,12 @@ import (
 	"github.com/mmcloughlin/addchain/internal/zenodo"
 )
 
+// VarsFile represents a meta variables file.
 type VarsFile struct {
 	path string
 }
 
+// SetFlags registers command-line flags to configure the meta variables file.
 func (v *VarsFile) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&v.path, "vars", v.DefaultPath(), "path to meta variables file")
 }
@@ -63,6 +65,7 @@ func (v *VarsFile) Set(name, value string) error {
 	return nil
 }
 
+// Zenodo configures a zenodo client.
 type Zenodo struct {
 	base  string
 	token string
@@ -70,11 +73,14 @@ type Zenodo struct {
 
 const zenodoTokenEnvVar = "ZENODO_TOKEN"
 
+// SetFlags registers command-line flags to configure the zenodo client.
 func (z *Zenodo) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&z.base, "url", zenodo.BaseURL, "zenodo api base url")
 	f.StringVar(&z.token, "token", "", fmt.Sprintf("zenodo token (uses %q environment variable if empty)", zenodoTokenEnvVar))
 }
 
+// Token returns the configured zenodo token, either from the command-line or
+// environment variable.
 func (z *Zenodo) Token() (string, error) {
 	if z.token != "" {
 		return z.token, nil
@@ -85,6 +91,7 @@ func (z *Zenodo) Token() (string, error) {
 	return "", errors.New("zenodo token not specified")
 }
 
+// Client builds the configured client.
 func (z *Zenodo) Client() (*zenodo.Client, error) {
 	// HTTP Client.
 	tr := &http.Transport{
