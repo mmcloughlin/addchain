@@ -17,6 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
       - name: Run Installer
-        run: ./install.sh -b ${{ runner.workspace }}/bin
+        run: cat install.sh | sh -s -- -b ${{ runner.workspace }}/bin
       - name: Run Binary
         run: ${{ runner.workspace }}/bin/addchain -h
