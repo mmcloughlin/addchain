@@ -3,8 +3,10 @@ on:
     branches:
       - master
   pull_request:
+    paths:
+      - install.sh
   schedule:
-    - cron: "33 11 * * 6"
+    - cron: "47 18 * * *"
 
 name: install
 jobs:
