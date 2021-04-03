@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    paths:
+      - install.sh
+  schedule:
+    - cron: "47 18 * * *"
+
+name: install
+jobs:
+  install:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Run Installer
+        run: cat install.sh | sh -s -- -b ${{ runner.workspace }}/bin
+      - name: Run Binary
+        run: ${{ runner.workspace }}/bin/addchain -h
