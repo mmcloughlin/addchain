@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -exuo pipefail
+
+# Parse options.
+version="$1"
+
+# Start new branch.
+branch="release-${version}"
+git checkout -b "${branch}"
+
+# Bump version.
+go run ./internal/tools/release bump "${version}"
+
+# Reserve DOI.
+go run ./internal/tools/release reservedoi
+
+# Rerun code generation.
+./script/generate
