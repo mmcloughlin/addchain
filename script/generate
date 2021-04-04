@@ -25,6 +25,7 @@ bib generate -bib doc/references.bib -type markdown -output doc/bibliography.md
 # Documentation.
 go run ./internal/tools/docgen -type readme -tocmax 3 -output README.md
 go run ./internal/tools/docgen -type results -output doc/results.md
+go run ./internal/tools/docgen -type citation -output CITATION.bib
 go run ./internal/tools/docgen -type zenodo -output .zenodo.json
 
 # Install script. (Post-processed to remove timestamp for repeatability.)
