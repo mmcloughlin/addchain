@@ -2,7 +2,6 @@ linters:
   enable-all: true
   disable:
     - cyclop
-    - dogsled
     - exhaustivestruct
     - forbidigo
     - funlen

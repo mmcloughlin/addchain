@@ -26,10 +26,13 @@ func (v *VarsFile) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&v.path, "vars", v.DefaultPath(), "path to meta variables file")
 }
 
-// DefaultPath returns the path to the default variables file in the
-// meta package.
+// DefaultPath returns the path to the default variables file in the meta
+// package. Returns the empty string if the path cannot be determined.
 func (v *VarsFile) DefaultPath() string {
-	_, self, _, _ := runtime.Caller(0)
+	_, self, _, ok := runtime.Caller(0)
+	if !ok {
+		return ""
+	}
 	path := filepath.Join(filepath.Dir(self), "../../meta/vars.go")
 	return filepath.Clean(path)
 }
