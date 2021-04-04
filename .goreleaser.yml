@@ -21,6 +21,7 @@ archives:
         format: zip
     files:
       - LICENSE*
+      - CITATION*
       - README*
 changelog:
   skip: true
