@@ -5,6 +5,10 @@ set -exuo pipefail
 # Parse options.
 version="$1"
 
+# Check repo is not dirty.
+git diff
+test -z "$(git status --porcelain)"
+
 # Start new branch.
 branch="release-${version}"
 git checkout -b "${branch}"
