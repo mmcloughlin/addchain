@@ -119,7 +119,14 @@ produce high quality results in an automated code generation tool.
 
 ### Command-line Interface
 
-Install:
+Install a pre-compiled [release
+binary](https://github.com/mmcloughlin/addchain/releases/latest):
+
+```
+curl -sSfL https://github.com/mmcloughlin/addchain/raw/master/install.sh | sh -s -- -b /usr/local/bin
+```
+
+Alternatively build from source:
 
 ```
 go get -u github.com/mmcloughlin/addchain/cmd/addchain
