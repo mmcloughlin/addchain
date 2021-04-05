@@ -14,8 +14,9 @@ import (
 type reservedoi struct {
 	cli.Command
 
-	zenodo   Zenodo
-	varsfile VarsFile
+	httpclient HTTPClient
+	zenodo     Zenodo
+	varsfile   VarsFile
 }
 
 func (*reservedoi) Name() string     { return "reservedoi" }
@@ -29,13 +30,19 @@ Reserve DOI on Zenodo for a new release.
 }
 
 func (cmd *reservedoi) SetFlags(f *flag.FlagSet) {
+	cmd.httpclient.SetFlags(f)
 	cmd.zenodo.SetFlags(f)
 	cmd.varsfile.SetFlags(f)
 }
 
 func (cmd *reservedoi) Execute(ctx context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	// Zenodo client.
-	c, err := cmd.zenodo.Client()
+	httpclient, err := cmd.httpclient.Client()
+	if err != nil {
+		return cmd.Error(err)
+	}
+
+	c, err := cmd.zenodo.Client(httpclient)
 	if err != nil {
 		return cmd.Error(err)
 	}

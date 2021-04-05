@@ -212,6 +212,23 @@ func (c *Client) DepositionFilesDelete(ctx context.Context, did, fid string) err
 	return c.request(req, nil)
 }
 
+// DepositionFilesDeleteAll deletes all files from a deposit. This requires
+// multiple API calls.
+func (c *Client) DepositionFilesDeleteAll(ctx context.Context, id string) error {
+	fs, err := c.DepositionFilesList(ctx, id)
+	if err != nil {
+		return fmt.Errorf("list files: %w", err)
+	}
+
+	for _, f := range fs {
+		if err := c.DepositionFilesDelete(ctx, id, f.ID); err != nil {
+			return fmt.Errorf("delete file: %w", err)
+		}
+	}
+
+	return nil
+}
+
 func (c *Client) requestjson(ctx context.Context, method, path string, data, payload interface{}) error {
 	// Encode request data.
 	body, err := json.Marshal(data)
