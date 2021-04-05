@@ -15,6 +15,7 @@ func main() {
 	subcommands.Register(&bump{Command: base}, "")
 	subcommands.Register(&reservedoi{Command: base}, "")
 	subcommands.Register(&check{Command: base}, "")
+	subcommands.Register(&upload{Command: base}, "")
 	subcommands.Register(subcommands.HelpCommand(), "")
 
 	flag.Parse()
