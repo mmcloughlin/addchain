@@ -14,8 +14,9 @@ import (
 type check struct {
 	cli.Command
 
-	zenodo   Zenodo
-	varsfile VarsFile
+	httpclient HTTPClient
+	zenodo     Zenodo
+	varsfile   VarsFile
 }
 
 func (*check) Name() string     { return "check" }
@@ -29,6 +30,7 @@ Perform some final checks to confirm release can be tagged.
 }
 
 func (cmd *check) SetFlags(f *flag.FlagSet) {
+	cmd.httpclient.SetFlags(f)
 	cmd.zenodo.SetFlags(f)
 	cmd.varsfile.SetFlags(f)
 }
@@ -55,7 +57,12 @@ func (cmd *check) Execute(ctx context.Context, f *flag.FlagSet, _ ...interface{}
 	}
 
 	// Check that a Zenodo deposit has been allocated.
-	client, err := cmd.zenodo.Client()
+	httpclient, err := cmd.httpclient.Client()
+	if err != nil {
+		return cmd.Error(err)
+	}
+
+	client, err := cmd.zenodo.Client(httpclient)
 	if err != nil {
 		return cmd.Error(err)
 	}

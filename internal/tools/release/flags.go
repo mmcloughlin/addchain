@@ -9,8 +9,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path/filepath"
-	"runtime"
 
 	"github.com/mmcloughlin/addchain/internal/metavars"
 	"github.com/mmcloughlin/addchain/internal/zenodo"
@@ -29,12 +27,7 @@ func (v *VarsFile) SetFlags(f *flag.FlagSet) {
 // DefaultPath returns the path to the default variables file in the meta
 // package. Returns the empty string if the path cannot be determined.
 func (v *VarsFile) DefaultPath() string {
-	_, self, _, ok := runtime.Caller(0)
-	if !ok {
-		return ""
-	}
-	path := filepath.Join(filepath.Dir(self), "../../meta/vars.go")
-	return filepath.Clean(path)
+	return RepoPath("internal/meta/vars.go")
 }
 
 // Get variable from the meta variables file.
@@ -72,9 +65,9 @@ func (v *VarsFile) Set(name, value string) error {
 
 // Zenodo configures a zenodo client.
 type Zenodo struct {
-	base       string
-	token      string
-	httpclient HTTPClient
+	base    string
+	sandbox bool
+	token   string
 }
 
 const zenodoTokenEnvVar = "ZENODO_TOKEN"
@@ -82,8 +75,8 @@ const zenodoTokenEnvVar = "ZENODO_TOKEN"
 // SetFlags registers command-line flags to configure the zenodo client.
 func (z *Zenodo) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&z.base, "url", zenodo.BaseURL, "zenodo api base url")
+	f.BoolVar(&z.sandbox, "sandbox", false, "use zenodo sandbox")
 	f.StringVar(&z.token, "token", "", fmt.Sprintf("zenodo token (uses %q environment variable if empty)", zenodoTokenEnvVar))
-	z.httpclient.SetFlags(f)
 }
 
 // Token returns the configured zenodo token, either from the command-line or
@@ -98,14 +91,16 @@ func (z *Zenodo) Token() (string, error) {
 	return "", errors.New("zenodo token not specified")
 }
 
-// Client builds the configured client.
-func (z *Zenodo) Client() (*zenodo.Client, error) {
-	// HTTP Client.
-	client, err := z.httpclient.Client()
-	if err != nil {
-		return nil, err
+// URL to connect to.
+func (z *Zenodo) URL() string {
+	if z.sandbox {
+		return zenodo.SandboxBaseURL
 	}
+	return z.base
+}
 
+// Client builds the configured client.
+func (z *Zenodo) Client(c *http.Client) (*zenodo.Client, error) {
 	// Token.
 	token, err := z.Token()
 	if err != nil {
@@ -113,9 +108,7 @@ func (z *Zenodo) Client() (*zenodo.Client, error) {
 	}
 
 	// Zenodo client.
-	c := zenodo.NewClient(client, z.base, token)
-
-	return c, nil
+	return zenodo.NewClient(c, z.URL(), token), nil
 }
 
 // HTTPClient configures a HTTP client.
