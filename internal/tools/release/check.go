@@ -70,7 +70,7 @@ func (cmd *check) Execute(ctx context.Context, f *flag.FlagSet, _ ...interface{}
 		return cmd.Error(err)
 	}
 
-	if d.State != "inprogress" {
+	if d.State != "unsubmitted" {
 		return cmd.Fail("zenodo deposit in %q state", d.State)
 	}
 
