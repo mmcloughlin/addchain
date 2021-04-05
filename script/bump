@@ -17,3 +17,7 @@ go run ./internal/tools/release reservedoi
 
 # Rerun code generation.
 ./script/generate
+
+# Create a commit.
+git add -u
+git commit -m "all: release ${version}"
