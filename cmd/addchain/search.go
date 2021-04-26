@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"flag"
+	"os"
+	"os/signal"
 	"runtime"
+	"runtime/pprof"
 
 	"github.com/google/subcommands"
 
@@ -21,12 +24,13 @@ type search struct {
 
 	concurrency int
 	verbose     bool
+	cpuprofile  string
 }
 
 func (*search) Name() string     { return "search" }
 func (*search) Synopsis() string { return "search for an addition chain." }
 func (*search) Usage() string {
-	return `Usage: search [-v] [-p <N>] <expr>
+	return `Usage: search [-v] [-p <N>] [-cpuprofile <file>] <expr>
 
 Search for an addition chain for <expr>.
 
@@ -36,9 +40,10 @@ Search for an addition chain for <expr>.
 func (cmd *search) SetFlags(f *flag.FlagSet) {
 	f.IntVar(&cmd.concurrency, "p", runtime.NumCPU(), "number of algorithms to run in parallel")
 	f.BoolVar(&cmd.verbose, "v", false, "verbose output")
+	f.StringVar(&cmd.cpuprofile, "cpuprofile", "", "write cpu profile to `file`")
 }
 
-func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) (status subcommands.ExitStatus) {
 	if f.NArg() < 1 {
 		return cmd.UsageError("missing expression")
 	}
@@ -54,6 +59,32 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 
 	cmd.Log.Printf("hex: %x", n)
 	cmd.Log.Printf("dec: %s", n)
+
+	// Start profiling.
+	if cmd.cpuprofile != "" {
+		f, err := os.Create(cmd.cpuprofile)
+		if err != nil {
+			return cmd.Fail("could not create cpu profile: %v", err)
+		}
+		defer cmd.CheckClose(&status, f)
+
+		if err := pprof.StartCPUProfile(f); err != nil {
+			return cmd.Fail("could not start cpu profile: %v", err)
+		}
+
+		go func() {
+			c := make(chan os.Signal, 1)
+			signal.Notify(c, os.Interrupt)
+			s := <-c
+
+			cmd.Log.Printf("caught %s: stopping cpu profile", s)
+			pprof.StopCPUProfile()
+
+			os.Exit(0)
+		}()
+
+		defer pprof.StopCPUProfile()
+	}
 
 	// Execute an ensemble of algorithms.
 	ex := exec.NewParallel()
