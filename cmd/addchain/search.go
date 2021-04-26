@@ -34,11 +34,11 @@ func (*search) Usage() string {
 
 Search for an addition chain for <expr>.
 
- `
+`
 }
 
 func (cmd *search) SetFlags(f *flag.FlagSet) {
-	f.IntVar(&cmd.concurrency, "p", runtime.NumCPU(), "number of algorithms to run in parallel")
+	f.IntVar(&cmd.concurrency, "p", runtime.NumCPU(), "run `N` algorithms in parallel")
 	f.BoolVar(&cmd.verbose, "v", false, "verbose output")
 	f.StringVar(&cmd.cpuprofile, "cpuprofile", "", "write cpu profile to `file`")
 }

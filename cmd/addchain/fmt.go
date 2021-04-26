@@ -26,7 +26,7 @@ func (*format) Usage() string {
 
 Format an addition chain script.
 
- `
+`
 }
 
 func (cmd *format) SetFlags(f *flag.FlagSet) {

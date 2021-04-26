@@ -25,7 +25,7 @@ func (*cite) Usage() string {
 
 Output citation for addchain.
 
- `
+`
 }
 
 func (cmd *cite) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) (status subcommands.ExitStatus) {

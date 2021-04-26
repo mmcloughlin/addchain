@@ -25,7 +25,7 @@ func (*eval) Usage() string {
 
 Evaluate an addition chain script.
 
- `
+`
 }
 
 func (cmd *eval) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) (status subcommands.ExitStatus) {
