@@ -15,6 +15,9 @@ import (
 //	[efficientcompaddchain]  Bergeron, F., Berstel, J. and Brlek, S. Efficient computation of addition
 //	                         chains. Journal de theorie des nombres de Bordeaux. 1994.
 //	                         http://www.numdam.org/item/JTNB_1994__6_1_21_0
+//	[knuth]                  Knuth, Donald E. Evaluation of Powers. The Art of Computer Programming, Volume 2
+//	                         (Third Edition): Seminumerical Algorithms, chapter 4.6.3. 1997.
+//	                         https://www-cs-faculty.stanford.edu/~knuth/taocp.html
 
 // Chain is an addition chain.
 type Chain []*big.Int
@@ -133,6 +136,21 @@ func (c Chain) Superset(targets []*big.Int) error {
 		}
 	}
 	return nil
+}
+
+// IsAscending reports whether the chain is ascending, that is if it's in sorted
+// order without repeats, as defined in [knuth] Section 4.6.3 formula (11).
+// Does not fully validate the chain, only that it is ascending.
+func (c Chain) IsAscending() bool {
+	if len(c) == 0 || !bigint.EqualInt64(c[0], 1) {
+		return false
+	}
+	for i := 1; i < len(c); i++ {
+		if c[i-1].Cmp(c[i]) >= 0 {
+			return false
+		}
+	}
+	return true
 }
 
 // Product computes the product of two addition chains. The is the "o times"
