@@ -17,6 +17,7 @@
 * Mike Hamburg. Ed448-Goldilocks, a new elliptic curve. Cryptology ePrint Archive, Report 2015/625. 2015. https://eprint.iacr.org/2015/625
 * Riad S. Wahby and Dan Boneh. Fast and simple constant-time hashing to the BLS12-381 elliptic curve. Cryptology ePrint Archive, Report 2019/403. 2019. https://eprint.iacr.org/2019/403
 * Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve Cryptography, chapter 9. 2006. http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
+* Knuth, Donald E. Evaluation of Powers. The Art of Computer Programming, Volume 2 (Third Edition): Seminumerical Algorithms, chapter 4.6.3. 1997. https://www-cs-faculty.stanford.edu/~knuth/taocp.html
 * Ayan Nandy. Modifications of Bos and Coster’s Heuristics in search of a shorter addition chain for faster exponentiation. Masters thesis, Indian Statistical Institute Kolkata. 2011. http://library.isical.ac.in:8080/jspui/bitstream/123456789/6441/1/DISS-285.pdf
 * F. L. Ţiplea, S. Iftene, C. Hriţcu, I. Goriac, R. Gordân and E. Erbiceanu. MpNT: A Multi-Precision Number Theory Package, Number Theoretical Algorithms (I). Technical Report TR03-02, Faculty of Computer Science, "Alexandru Ioan Cuza" University, Iasi. 2003. https://profs.info.uaic.ro/~tr/tr03-02.pdf
 * Daniel J. Bernstein and Tanja Lange. Security dangers of the NIST curves. 2013. https://cr.yp.to/talks/2013.09.16/slides-djb-20130916-a4.pdf
