@@ -111,6 +111,12 @@ var bibliography = []struct{
     },
 
     {
+        CiteName:  "knuth",
+        URL: "https://www-cs-faculty.stanford.edu/~knuth/taocp.html",
+        Formatted: "Knuth, Donald E. Evaluation of Powers. The Art of Computer Programming, Volume 2 (Third Edition): Seminumerical Algorithms, chapter 4.6.3. 1997. https://www-cs-faculty.stanford.edu/~knuth/taocp.html",
+    },
+
+    {
         CiteName:  "modboscoster",
         URL: "http://library.isical.ac.in:8080/jspui/bitstream/123456789/6441/1/DISS-285.pdf",
         Formatted: "Ayan Nandy. Modifications of Bos and Coster’s Heuristics in search of a shorter addition chain for faster exponentiation. Masters thesis, Indian Statistical Institute Kolkata. 2011. http://library.isical.ac.in:8080/jspui/bitstream/123456789/6441/1/DISS-285.pdf",
