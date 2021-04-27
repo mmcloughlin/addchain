@@ -56,6 +56,28 @@ func TestChainOps(t *testing.T) {
 	}
 }
 
+func TestChainIsAscending(t *testing.T) {
+	cases := []struct {
+		Name   string
+		Chain  Chain
+		Expect bool
+	}{
+		{Name: "empty", Chain: Int64s(), Expect: false},
+		{Name: "does_not_start_with_one", Chain: Int64s(42), Expect: false},
+		{Name: "ascending", Chain: Int64s(1, 2, 3, 5, 8), Expect: true},
+		{Name: "repeat", Chain: Int64s(1, 2, 3, 3, 8), Expect: false},
+		{Name: "not_sorted", Chain: Int64s(1, 2, 3, 4, 7, 5, 6), Expect: false},
+	}
+	for _, c := range cases {
+		c := c // scopelint
+		t.Run(c.Name, func(t *testing.T) {
+			if got := c.Chain.IsAscending(); got != c.Expect {
+				t.Fatalf("%v.IsAscending() = %v; expect %v", c.Chain, got, c.Expect)
+			}
+		})
+	}
+}
+
 func TestProduct(t *testing.T) {
 	a := Int64s(1, 2, 4, 6, 10)
 	b := Int64s(1, 2, 4, 8)
