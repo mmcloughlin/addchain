@@ -101,7 +101,7 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	for i, r := range rs {
 		cmd.Debugf("algorithm: %s", r.Algorithm)
 		if r.Err != nil {
-			return cmd.Error(err)
+			return cmd.Fail("algorithm error: %v", r.Err)
 		}
 		doubles, adds := r.Program.Count()
 		cmd.Debugf("total: %d\tdoubles: \t%d adds: %d", doubles+adds, doubles, adds)
