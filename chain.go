@@ -52,6 +52,25 @@ func (c Chain) End() *big.Int {
 func (c Chain) Ops(k int) []Op {
 	ops := []Op{}
 	s := new(big.Int)
+
+	// If the prefix is ascending this can be done in linear time.
+	if c[:k].IsAscending() {
+		for l, r := 0, k-1; l <= r; {
+			s.Add(c[l], c[r])
+			cmp := s.Cmp(c[k])
+			if cmp == 0 {
+				ops = append(ops, Op{l, r})
+			}
+			if cmp <= 0 {
+				l++
+			} else {
+				r--
+			}
+		}
+		return ops
+	}
+
+	// Fallback to quadratic.
 	for i := 0; i < k; i++ {
 		for j := i; j < k; j++ {
 			s.Add(c[i], c[j])
@@ -60,6 +79,7 @@ func (c Chain) Ops(k int) []Op {
 			}
 		}
 	}
+
 	return ops
 }
 
