@@ -1,3 +1,6 @@
+permissions:
+  contents: read
+
 on:
   push:
     branches:
@@ -21,6 +24,8 @@ jobs:
           go-version: ${{ matrix.go-version }}
       - name: Checkout code
         uses: actions/checkout@v1
+        with:
+          persist-credentials: false
       - name: Build
         run: go build ./...
       - name: Test
@@ -41,6 +46,8 @@ jobs:
           echo ${{ runner.workspace }}/bin >> $GITHUB_PATH
       - name: Checkout code
         uses: actions/checkout@v1
+        with:
+          persist-credentials: false
       - name: Bootstrap
         run: ./script/bootstrap
       - name: Lint
