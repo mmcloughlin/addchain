@@ -123,6 +123,7 @@ func (Approximation) String() string { return "approximation" }
 func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 	fset := bigints.NewSet(f...)
 	delta := new(big.Int)
+	insert := new(big.Int)
 	var mindelta *big.Int
 	var best *big.Int
 	for i, a := range f {
@@ -135,7 +136,7 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 			}
 
 			// Proposed insertion is a+delta.
-			insert := new(big.Int).Add(a, delta)
+			insert.Add(a, delta)
 
 			// If it's actually in the sequence already, use it.
 			if fset.Contains(insert) {
@@ -145,7 +146,7 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 			// Keep it if its the closest we've seen.
 			if best == nil || delta.Cmp(mindelta) < 0 {
 				mindelta = bigint.Clone(delta)
-				best = insert
+				best = bigint.Clone(insert)
 			}
 		}
 	}
