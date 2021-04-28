@@ -274,7 +274,7 @@ improvement](https://github.com/mmcloughlin/addchain/issues/26).
 * Bos, Jurjen and Coster, Matthijs. Addition Chain Heuristics. In Advances in Cryptology --- CRYPTO' 89 Proceedings, pages 400--407. 1990. https://link.springer.com/content/pdf/10.1007/0-387-34805-0_37.pdf
 * Riad S. Wahby. kwantam/addchain. Github Repository. Apache License, Version 2.0. 2018. https://github.com/kwantam/addchain
 * Christophe Doche. Exponentiation. Handbook of Elliptic and Hyperelliptic Curve Cryptography, chapter 9. 2006. http://koclab.cs.ucsb.edu/teaching/ecc/eccPapers/Doche-ch09.pdf
-* Ayan Nandy. Modifications of Bos and Coster’s Heuristics in search of a shorter addition chain for faster exponentiation. Masters thesis, Indian Statistical Institute Kolkata. 2011. http://library.isical.ac.in:8080/jspui/bitstream/123456789/6441/1/DISS-285.pdf
+* Ayan Nandy. Modifications of Bos and Coster’s Heuristics in search of a shorter addition chain for faster exponentiation. Masters thesis, Indian Statistical Institute Kolkata. 2011. http://library.isical.ac.in:8080/jspui/bitstream/10263/6441/1/DISS-285.pdf
 * F. L. Ţiplea, S. Iftene, C. Hriţcu, I. Goriac, R. Gordân and E. Erbiceanu. MpNT: A Multi-Precision Number Theory Package, Number Theoretical Algorithms (I). Technical Report TR03-02, Faculty of Computer Science, "Alexandru Ioan Cuza" University, Iasi. 2003. https://profs.info.uaic.ro/~tr/tr03-02.pdf
 * Stam, Martijn. Speeding up subgroup cryptosystems. PhD thesis, Technische Universiteit Eindhoven. 2003. https://cr.yp.to/bib/2003/stam-thesis.pdf
 

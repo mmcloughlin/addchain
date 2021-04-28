@@ -26,7 +26,7 @@ import (
 //	[modboscoster]             Ayan Nandy. Modifications of Bos and Coster’s Heuristics in search of a
 //	                           shorter addition chain for faster exponentiation. Masters thesis, Indian
 //	                           Statistical Institute Kolkata. 2011.
-//	                           http://library.isical.ac.in:8080/jspui/bitstream/123456789/6441/1/DISS-285.pdf
+//	                           http://library.isical.ac.in:8080/jspui/bitstream/10263/6441/1/DISS-285.pdf
 //	[mpnt]                     F. L. Ţiplea, S. Iftene, C. Hriţcu, I. Goriac, R. Gordân and E. Erbiceanu.
 //	                           MpNT: A Multi-Precision Number Theory Package, Number Theoretical Algorithms
 //	                           (I). Technical Report TR03-02, Faculty of Computer Science, "Alexandru Ioan
