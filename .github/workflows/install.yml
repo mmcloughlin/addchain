@@ -1,3 +1,5 @@
+name: install
+
 permissions:
   contents: read
 
@@ -11,7 +13,6 @@ on:
   schedule:
     - cron: "47 18 * * *"
 
-name: install
 jobs:
   install:
     strategy:
