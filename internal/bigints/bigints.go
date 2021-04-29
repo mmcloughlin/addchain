@@ -44,6 +44,11 @@ func Contains(n *big.Int, xs []*big.Int) bool {
 	return Index(n, xs) >= 0
 }
 
+func ContainsSorted(n *big.Int, xs []*big.Int) bool {
+	i := sort.Search(len(xs), func(i int) bool { return xs[i].Cmp(n) >= 0 })
+	return i < len(xs) && bigint.Equal(xs[i], n)
+}
+
 // Clone a list of integers.
 func Clone(xs []*big.Int) []*big.Int {
 	return append([]*big.Int{}, xs...)

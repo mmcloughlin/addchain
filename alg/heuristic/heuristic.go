@@ -149,7 +149,7 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 		insert := new(big.Int).Add(a, delta)
 
 		// If it's actually in the sequence already, use it.
-		if bigints.Contains(insert, f) {
+		if bigints.ContainsSorted(insert, f) {
 			return []*big.Int{insert}
 		}
 
