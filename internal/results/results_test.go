@@ -82,7 +82,7 @@ func TestResults(t *testing.T) {
 
 			// Ensure the recorded best length and algorithm name are correct.
 			if c.Length != length {
-				t.Errorf("incorrect best value %d; expect %d", c.Length, length)
+				t.Errorf("incorrect best value %d; expect %d", length, c.Length)
 			}
 			if c.AlgorithmName != b.Algorithm.String() {
 				t.Errorf("incorrect algorithm name %q; expect %q", c.AlgorithmName, b.Algorithm)
