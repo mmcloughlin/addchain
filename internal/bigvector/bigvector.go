@@ -3,26 +3,21 @@ package bigvector
 
 import (
 	"math/big"
-
-	"github.com/mmcloughlin/addchain/internal/bigint"
 )
 
 // Vector is a vector of big integers.
-type Vector []*big.Int
+type Vector []big.Int
 
 // New constructs an n-dimensional zero vector.
 func New(n int) Vector {
 	v := make(Vector, n)
-	for i := 0; i < n; i++ {
-		v[i] = bigint.Zero()
-	}
 	return v
 }
 
 // NewBasis constructs an n-dimensional basis vector with a 1 in position i.
 func NewBasis(n, i int) Vector {
 	v := New(n)
-	v[i] = bigint.One()
+	v[i].SetInt64(1)
 	return v
 }
 
@@ -32,7 +27,7 @@ func Add(u, v Vector) Vector {
 	n := len(u)
 	w := make(Vector, n)
 	for i := 0; i < n; i++ {
-		w[i] = new(big.Int).Add(u[i], v[i])
+		w[i].Add(&u[i], &v[i])
 	}
 	return w
 }
@@ -42,7 +37,7 @@ func Lsh(v Vector, s uint) Vector {
 	n := len(v)
 	w := make(Vector, n)
 	for i := 0; i < n; i++ {
-		w[i] = new(big.Int).Lsh(v[i], s)
+		w[i].Lsh(&v[i], s)
 	}
 	return w
 }
