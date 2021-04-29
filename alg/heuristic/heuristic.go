@@ -121,7 +121,6 @@ func (Approximation) String() string { return "approximation" }
 // f. That is, we look for f-(a+b) = epsilon where a ⩽ b and epsilon is a
 // "small" positive value.
 func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
-	fset := bigints.NewSet(f...)
 	delta := new(big.Int)
 	insert := new(big.Int)
 	var mindelta *big.Int
@@ -139,7 +138,7 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 			insert.Add(a, delta)
 
 			// If it's actually in the sequence already, use it.
-			if fset.Contains(insert) {
+			if bigints.ContainsSorted(insert, f) {
 				return []*big.Int{insert}
 			}
 
