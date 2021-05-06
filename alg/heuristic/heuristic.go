@@ -123,8 +123,9 @@ func (Approximation) String() string { return "approximation" }
 func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 	delta := new(big.Int)
 	insert := new(big.Int)
-	var mindelta *big.Int
-	var best *big.Int
+	mindelta := new(big.Int)
+	best := new(big.Int)
+	first := true
 	for i, a := range f {
 		for _, b := range f[i:] {
 			// Compute the delta f-(a+b).
@@ -143,9 +144,10 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 			}
 
 			// Keep it if its the closest we've seen.
-			if best == nil || delta.Cmp(mindelta) < 0 {
-				mindelta = bigint.Clone(delta)
-				best = bigint.Clone(insert)
+			if first || delta.Cmp(mindelta) < 0 {
+				mindelta.Set(delta)
+				best.Set(insert)
+				first = false
 			}
 		}
 	}
