@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
-	"runtime/pprof"
 
 	"github.com/google/subcommands"
 
@@ -16,6 +15,7 @@ import (
 	"github.com/mmcloughlin/addchain/alg/exec"
 	"github.com/mmcloughlin/addchain/internal/calc"
 	"github.com/mmcloughlin/addchain/internal/cli"
+	"github.com/mmcloughlin/profile"
 )
 
 // search subcommand.
@@ -24,7 +24,7 @@ type search struct {
 
 	concurrency int
 	verbose     bool
-	cpuprofile  string
+	profile     *profile.Profile
 }
 
 func (*search) Name() string     { return "search" }
@@ -40,7 +40,7 @@ Search for an addition chain for <expr>.
 func (cmd *search) SetFlags(f *flag.FlagSet) {
 	f.IntVar(&cmd.concurrency, "p", runtime.NumCPU(), "run `N` algorithms in parallel")
 	f.BoolVar(&cmd.verbose, "v", false, "verbose output")
-	f.StringVar(&cmd.cpuprofile, "cpuprofile", "", "write cpu profile to `file`")
+	cmd.profile.SetFlags(f)
 }
 
 func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) (status subcommands.ExitStatus) {
@@ -61,30 +61,18 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	cmd.Log.Printf("dec: %s", n)
 
 	// Start profiling.
-	if cmd.cpuprofile != "" {
-		f, err := os.Create(cmd.cpuprofile)
-		if err != nil {
-			return cmd.Fail("could not create cpu profile: %v", err)
-		}
-		defer cmd.CheckClose(&status, f)
+	defer cmd.profile.Start().Stop()
 
-		if err := pprof.StartCPUProfile(f); err != nil {
-			return cmd.Fail("could not start cpu profile: %v", err)
-		}
+	go func() {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		s := <-c
 
-		go func() {
-			c := make(chan os.Signal, 1)
-			signal.Notify(c, os.Interrupt)
-			s := <-c
+		cmd.Log.Printf("caught %s: stopping profiles", s)
+		cmd.profile.Stop()
 
-			cmd.Log.Printf("caught %s: stopping cpu profile", s)
-			pprof.StopCPUProfile()
-
-			os.Exit(0)
-		}()
-
-		defer pprof.StopCPUProfile()
-	}
+		os.Exit(0)
+	}()
 
 	// Execute an ensemble of algorithms.
 	ex := exec.NewParallel()

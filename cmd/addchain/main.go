@@ -10,12 +10,17 @@ import (
 
 	"github.com/mmcloughlin/addchain/internal/cli"
 	"github.com/mmcloughlin/addchain/internal/meta"
+	"github.com/mmcloughlin/profile"
 )
 
 func main() {
 	base := cli.NewBaseCommand("addchain")
-	subcommands.Register(subcommands.HelpCommand(), "")
-	subcommands.Register(&search{Command: base}, "")
+
+	subcommands.Register(&search{
+		Command: base,
+		profile: profile.New(profile.CPUProfile, profile.MemProfile),
+	}, "")
+
 	subcommands.Register(&eval{Command: base}, "")
 	subcommands.Register(&format{Command: base}, "")
 
@@ -24,6 +29,8 @@ func main() {
 	}
 
 	subcommands.Register(&cite{properties: meta.Meta, Command: base}, "")
+
+	subcommands.Register(subcommands.HelpCommand(), "")
 
 	flag.Parse()
 	ctx := context.Background()
