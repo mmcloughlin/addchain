@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"os"
-	"os/signal"
 	"runtime"
 
 	"github.com/google/subcommands"
@@ -24,7 +22,6 @@ type search struct {
 
 	concurrency int
 	verbose     bool
-	profile     *profile.Profile
 }
 
 func (*search) Name() string     { return "search" }
@@ -40,10 +37,16 @@ Search for an addition chain for <expr>.
 func (cmd *search) SetFlags(f *flag.FlagSet) {
 	f.IntVar(&cmd.concurrency, "p", runtime.NumCPU(), "run `N` algorithms in parallel")
 	f.BoolVar(&cmd.verbose, "v", false, "verbose output")
-	cmd.profile.SetFlags(f)
 }
 
 func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) (status subcommands.ExitStatus) {
+	// Enable profiling.
+	defer profile.Start(
+		profile.AllProfiles,
+		profile.ConfigEnvVar("ADDCHAIN_PROFILE"),
+	).Stop()
+
+	// Parse arguments.
 	if f.NArg() < 1 {
 		return cmd.UsageError("missing expression")
 	}
@@ -59,20 +62,6 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 
 	cmd.Log.Printf("hex: %x", n)
 	cmd.Log.Printf("dec: %s", n)
-
-	// Start profiling.
-	defer cmd.profile.Start().Stop()
-
-	go func() {
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, os.Interrupt)
-		s := <-c
-
-		cmd.Log.Printf("caught %s: stopping profiles", s)
-		cmd.profile.Stop()
-
-		os.Exit(0)
-	}()
 
 	// Execute an ensemble of algorithms.
 	ex := exec.NewParallel()
