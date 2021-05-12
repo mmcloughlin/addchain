@@ -14,7 +14,9 @@ func BenchmarkResults(b *testing.B) {
 		b.Run(c.Slug, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				for _, a := range as {
-					a.FindChain(n)
+					if _, err := a.FindChain(n); err != nil {
+						b.Fatal(err)
+					}
 				}
 			}
 		})
