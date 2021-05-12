@@ -4,6 +4,7 @@ package ensemble
 
 import (
 	"github.com/mmcloughlin/addchain/alg"
+	"github.com/mmcloughlin/addchain/alg/contfrac"
 	"github.com/mmcloughlin/addchain/alg/dict"
 	"github.com/mmcloughlin/addchain/alg/heuristic"
 	"github.com/mmcloughlin/addchain/alg/opt"
@@ -13,21 +14,21 @@ import (
 func Ensemble() []alg.ChainAlgorithm {
 	// Choose sequence algorithms.
 	seqalgs := []alg.SequenceAlgorithm{
-		// heuristic.NewAlgorithm(heuristic.UseFirst(
-		// 	heuristic.Halving{},
-		// 	heuristic.DeltaLargest{},
-		// )),
+		heuristic.NewAlgorithm(heuristic.UseFirst(
+			heuristic.Halving{},
+			heuristic.DeltaLargest{},
+		)),
 		heuristic.NewAlgorithm(heuristic.UseFirst(
 			heuristic.Halving{},
 			heuristic.Approximation{},
 		)),
 	}
 
-	// for _, strategy := range contfrac.Strategies {
-	// 	if strategy.Singleton() {
-	// 		seqalgs = append(seqalgs, contfrac.NewAlgorithm(strategy))
-	// 	}
-	// }
+	for _, strategy := range contfrac.Strategies {
+		if strategy.Singleton() {
+			seqalgs = append(seqalgs, contfrac.NewAlgorithm(strategy))
+		}
+	}
 
 	// Build decomposers.
 	decomposers := []dict.Decomposer{}
