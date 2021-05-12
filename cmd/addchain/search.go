@@ -9,6 +9,7 @@ import (
 	"runtime/pprof"
 
 	"github.com/google/subcommands"
+	"github.com/mmcloughlin/profile"
 
 	"github.com/mmcloughlin/addchain/acc"
 	"github.com/mmcloughlin/addchain/acc/printer"
@@ -44,6 +45,13 @@ func (cmd *search) SetFlags(f *flag.FlagSet) {
 }
 
 func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) (status subcommands.ExitStatus) {
+	// Enable profiling.
+	defer profile.Start(
+		profile.AllProfiles,
+		profile.ConfigEnvVar("ADDCHAIN_PROFILE"),
+	).Stop()
+
+	// Parse arguments.
 	if f.NArg() < 1 {
 		return cmd.UsageError("missing expression")
 	}
