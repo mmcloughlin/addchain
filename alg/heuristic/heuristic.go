@@ -124,29 +124,33 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 	delta := new(big.Int)
 	var mindelta *big.Int
 	var best *big.Int
-	for i, a := range f {
-		for _, b := range f[i:] {
-			// Compute the delta f-(a+b).
-			delta.Add(a, b)
-			delta.Sub(target, delta)
-			if delta.Sign() < 0 {
-				continue
-			}
 
-			// Proposed insertion is a+delta.
-			insert := new(big.Int).Add(a, delta)
+	for l, r := 0, len(f)-1; l <= r; {
+		a, b := f[l], f[r]
 
-			// If it's actually in the sequence already, use it.
-			if bigints.Contains(insert, f) {
-				return []*big.Int{insert}
-			}
-
-			// Keep it if its the closest we've seen.
-			if best == nil || delta.Cmp(mindelta) < 0 {
-				mindelta = bigint.Clone(delta)
-				best = insert
-			}
+		// Compute the delta f-(a+b).
+		delta.Add(a, b)
+		delta.Sub(target, delta)
+		if delta.Sign() < 0 {
+			r--
+			continue
 		}
+
+		// Proposed insertion is a+delta.
+		insert := new(big.Int).Add(a, delta)
+
+		// If it's actually in the sequence already, use it.
+		if bigints.Contains(insert, f) {
+			return []*big.Int{insert}
+		}
+
+		// Keep it if its the closest we've seen.
+		if best == nil || delta.Cmp(mindelta) < 0 {
+			mindelta = bigint.Clone(delta)
+			best = insert
+		}
+
+		l++
 	}
 
 	return []*big.Int{best}
