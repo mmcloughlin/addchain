@@ -2,6 +2,9 @@ package results
 
 import (
 	"flag"
+	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"sort"
@@ -13,14 +16,37 @@ import (
 	"github.com/mmcloughlin/addchain/internal/test"
 )
 
-// verbose flag for customizing log output from algorithm executor.
-var verbose = flag.Bool("verbose", false, "enable verbose logging")
+var (
+	// verbose flag for customizing log output from algorithm executor.
+	verbose = flag.Bool("verbose", false, "enable verbose logging")
+
+	output = flag.String("output", "", "write all results to `file`")
+)
 
 func TestResults(t *testing.T) {
+	var w io.Writer = ioutil.Discard
+	if *output != "" {
+		f, err := os.Create(*output)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			if err := f.Close(); err != nil {
+				t.Fatal(err)
+			}
+		})
+
+		t.Logf("writing results to %s", *output)
+		w = f
+	}
+
 	as := ensemble.Ensemble()
 	for _, c := range Results {
 		c := c // scopelint
 		t.Run(c.Slug, func(t *testing.T) {
+			t.Parallel()
+
 			// Tests with a best known result are prioritized. Only run all tests in
 			// stress test mode.
 			if c.BestKnown == 0 {
@@ -43,6 +69,14 @@ func TestResults(t *testing.T) {
 			for _, r := range rs {
 				if r.Err != nil {
 					t.Fatalf("error with %s: %v", r.Algorithm, r.Err)
+				}
+			}
+
+			// Write all results.
+			for _, r := range rs {
+				_, err := fmt.Fprintf(w, "%s\t%d\t%s\n", c.Slug, len(r.Program), r.Algorithm)
+				if err != nil {
+					t.Fatal(err)
 				}
 			}
 
