@@ -13,6 +13,7 @@ import (
 
 func TestResults(t *testing.T) {
 	t.Parallel()
+	test.RequireLong(t)
 
 	as := Ensemble()
 	for _, c := range results.Results {
