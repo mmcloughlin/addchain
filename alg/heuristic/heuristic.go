@@ -36,8 +36,8 @@ import (
 
 // Heuristic suggests insertions given a current protosequence.
 type Heuristic interface {
-	// Suggest insertions given protosequence f and given target. Protosequence
-	// is assumed to contain sorted distinct integers.
+	// Suggest insertions given a target and protosequence f. Protosequence must
+	// contain sorted distinct integers.
 	Suggest(f []*big.Int, target *big.Int) []*big.Int
 
 	// String returns a name for the heuristic.
