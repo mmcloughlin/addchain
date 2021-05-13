@@ -157,7 +157,7 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 		// Keep it if its the closest we've seen.
 		if best == nil || delta.Cmp(mindelta) < 0 {
 			mindelta = bigint.Clone(delta)
-			best = insert
+			best = bigint.Clone(insert)
 		}
 
 		// Advance to next a value.
