@@ -23,8 +23,6 @@ archives:
       - LICENSE*
       - CITATION*
       - README*
-changelog:
-  skip: true
 release:
   draft: true
   prerelease: auto
