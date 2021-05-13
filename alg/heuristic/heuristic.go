@@ -126,8 +126,10 @@ func (Approximation) String() string { return "approximation" }
 // "small" positive value.
 func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 	delta := new(big.Int)
-	var mindelta *big.Int
-	var best *big.Int
+	insert := new(big.Int)
+	mindelta := new(big.Int)
+	best := new(big.Int)
+	first := true
 
 	// Leverage the fact that f contains sorted distinct integers to apply a
 	// linear algorithm, similar to the 2-SUM problem.  Maintain left and right
@@ -146,7 +148,7 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 		}
 
 		// Proposed insertion is a+delta.
-		insert := new(big.Int).Add(a, delta)
+		insert.Add(a, delta)
 
 		// If it's actually in the sequence already, use it.
 		if bigints.ContainsSorted(insert, f) {
@@ -154,9 +156,10 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 		}
 
 		// Keep it if its the closest we've seen.
-		if best == nil || delta.Cmp(mindelta) < 0 {
-			mindelta = bigint.Clone(delta)
-			best = insert
+		if first || delta.Cmp(mindelta) < 0 {
+			mindelta.Set(delta)
+			best.Set(insert)
+			first = false
 		}
 
 		// Advance to next a value.
