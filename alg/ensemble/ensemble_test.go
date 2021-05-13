@@ -20,7 +20,7 @@ import (
 // known-good results into golden files and later verify that we get the same
 // result.
 func TestResults(t *testing.T) {
-
+	t.Parallel()
 	test.RequireLong(t)
 
 	as := Ensemble()
