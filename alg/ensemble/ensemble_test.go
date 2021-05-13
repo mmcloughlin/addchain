@@ -12,6 +12,8 @@ import (
 )
 
 func TestResults(t *testing.T) {
+	t.Parallel()
+
 	as := Ensemble()
 	for _, c := range results.Results {
 		c := c // scopelint
