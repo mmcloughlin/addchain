@@ -398,8 +398,8 @@ func primitive(sum Sum, c addchain.Chain) (Sum, addchain.Chain, error) {
 
 	// Rebuild this into a dictionary sum.
 	out := Sum{}
-	for i, coeff := range v {
-		for _, e := range bigint.BitsSet(coeff) {
+	for i := 0; i < v.Len(); i++ {
+		for _, e := range bigint.BitsSet(v.Idx(i)) {
 			out = append(out, Term{
 				D: c[i],
 				E: uint(e),
