@@ -126,6 +126,7 @@ func (Approximation) String() string { return "approximation" }
 // "small" positive value.
 func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 	delta := new(big.Int)
+	insert := new(big.Int)
 	var mindelta *big.Int
 	var best *big.Int
 
@@ -146,7 +147,7 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 		}
 
 		// Proposed insertion is a+delta.
-		insert := new(big.Int).Add(a, delta)
+		insert.Add(a, delta)
 
 		// If it's actually in the sequence already, use it.
 		if bigints.ContainsSorted(insert, f) {
