@@ -44,6 +44,7 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	defer profile.Start(
 		profile.AllProfiles,
 		profile.ConfigEnvVar("ADDCHAIN_PROFILE"),
+		profile.WithLogger(cmd.Log),
 	).Stop()
 
 	// Parse arguments.
