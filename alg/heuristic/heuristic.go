@@ -36,7 +36,11 @@ import (
 
 // Heuristic suggests insertions given a current protosequence.
 type Heuristic interface {
+	// Suggest insertions given protosequence f and given target. Protosequence
+	// is assumed to contain sorted distinct integers.
 	Suggest(f []*big.Int, target *big.Int) []*big.Int
+
+	// String returns a name for the heuristic.
 	String() string
 }
 
@@ -125,6 +129,10 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 	var mindelta *big.Int
 	var best *big.Int
 
+	// Leverage the fact that f contains sorted distinct integers to apply a
+	// linear algorithm, similar to the 2-SUM problem.  Maintain left and right
+	// pointers and adjust them based on whether the sum is above or below the
+	// target.
 	for l, r := 0, len(f)-1; l <= r; {
 		a, b := f[l], f[r]
 
@@ -132,6 +140,7 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 		delta.Add(a, b)
 		delta.Sub(target, delta)
 		if delta.Sign() < 0 {
+			// Sum exceeds target, decrement r for smaller b value.
 			r--
 			continue
 		}
@@ -150,6 +159,7 @@ func (Approximation) Suggest(f []*big.Int, target *big.Int) []*big.Int {
 			best = insert
 		}
 
+		// Advance to next a value.
 		l++
 	}
 
