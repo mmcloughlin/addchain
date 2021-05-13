@@ -13,7 +13,7 @@ type Vector interface {
 	// Len returns vector length.
 	Len() int
 
-	// Idx returns integer at index i. The returned integer is read-only.
+	// Idx returns integer at index i. Returned integer must not be written to.
 	Idx(i int) *big.Int
 }
 
@@ -28,13 +28,12 @@ func (v vector) Len() int           { return len(v) }
 func (v vector) Idx(i int) *big.Int { return &v[i] }
 
 // NewBasis constructs an n-dimensional basis vector with a 1 in position i.
-//
-// Note: the underlying implementation saves allocations by returning
-// pre-allocated zero and one integers based on the index requested.
 func NewBasis(n, i int) Vector {
 	return basis{n: n, i: i}
 }
 
+// Basis implementation saves allocations by returning pre-allocated zero and
+// one integers based on the index requested.
 var (
 	zero = bigint.Zero()
 	one  = bigint.One()
