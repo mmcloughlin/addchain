@@ -7,6 +7,11 @@ import (
 	"github.com/mmcloughlin/addchain/internal/bigint"
 )
 
+var (
+	zero = bigint.Zero()
+	one  = bigint.One()
+)
+
 // Vector is a vector of big integers.
 type Vector []*big.Int
 
@@ -14,7 +19,7 @@ type Vector []*big.Int
 func New(n int) Vector {
 	v := make(Vector, n)
 	for i := 0; i < n; i++ {
-		v[i] = bigint.Zero()
+		v[i] = zero
 	}
 	return v
 }
@@ -22,7 +27,7 @@ func New(n int) Vector {
 // NewBasis constructs an n-dimensional basis vector with a 1 in position i.
 func NewBasis(n, i int) Vector {
 	v := New(n)
-	v[i] = bigint.One()
+	v[i] = one
 	return v
 }
 
