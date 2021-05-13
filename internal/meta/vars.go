@@ -2,9 +2,9 @@ package meta
 
 var (
 	buildversion   = ""
-	releaseversion = "0.2.0"
-	releasedate    = "2021-04-05"
+	releaseversion = "0.3.0"
+	releasedate    = "2021-05-13"
 	conceptdoi     = "10.5281/zenodo.4625263"
-	doi            = "10.5281/zenodo.4662389"
-	zenodoid       = "4662389"
+	doi            = "10.5281/zenodo.4758226"
+	zenodoid       = "4758226"
 )

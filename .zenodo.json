@@ -1,8 +1,8 @@
 {
-    "title": "mmcloughlin/addchain: v0.2.0",
+    "title": "mmcloughlin/addchain: v0.3.0",
     "description": "Cryptographic Addition Chain Generation in Go",
-    "version": "0.2.0",
-    "publication_date": "2021-04-05",
+    "version": "0.3.0",
+    "publication_date": "2021-05-13",
     "upload_type": "software",
     "access_right": "open",
     "license": "BSD-3-Clause",
@@ -14,7 +14,7 @@
     ],
     "related_identifiers": [
         {
-            "identifier": "https://github.com/mmcloughlin/addchain/tree/v0.2.0",
+            "identifier": "https://github.com/mmcloughlin/addchain/tree/v0.3.0",
             "relation": "isSupplementTo",
             "scheme": "url"
         }
