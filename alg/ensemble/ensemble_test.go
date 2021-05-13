@@ -11,8 +11,16 @@ import (
 	"github.com/mmcloughlin/addchain/internal/test"
 )
 
+// TestResults confirms that chain lengths from every ensemble algorithm remain
+// unchanged. This is intended to provide confidence when making risky changes
+// or refactors. The results package has its own similar test, but this is
+// focussed on verifying that the best recorded result is still the same.
+//
+// The test uses the "golden test" technique, where we dump
+// known-good results into golden files and later verify that we get the same
+// result.
 func TestResults(t *testing.T) {
-	t.Parallel()
+
 	test.RequireLong(t)
 
 	as := Ensemble()
