@@ -1,4 +1,5 @@
-// Package bigvector implements operations on vectors of multi-precision integers.
+// Package bigvector implements operations on vectors of immutable
+// multi-precision integers.
 package bigvector
 
 import (
@@ -7,13 +8,12 @@ import (
 	"github.com/mmcloughlin/addchain/internal/bigint"
 )
 
-var (
-	zero = bigint.Zero()
-	one  = bigint.One()
-)
-
+// Vector of immutable multi-precision integers.
 type Vector interface {
+	// Len returns vector length.
 	Len() int
+
+	// Idx returns integer at index i. The returned integer is read-only.
 	Idx(i int) *big.Int
 }
 
@@ -28,9 +28,17 @@ func (v vector) Len() int           { return len(v) }
 func (v vector) Idx(i int) *big.Int { return &v[i] }
 
 // NewBasis constructs an n-dimensional basis vector with a 1 in position i.
+//
+// Note: the underlying implementation saves allocations by returning
+// pre-allocated zero and one integers based on the index requested.
 func NewBasis(n, i int) Vector {
 	return basis{n: n, i: i}
 }
+
+var (
+	zero = bigint.Zero()
+	one  = bigint.One()
+)
 
 type basis struct {
 	n int
@@ -42,7 +50,7 @@ func (b basis) Len() int { return b.n }
 func (b basis) Idx(i int) *big.Int {
 	switch {
 	case i >= b.n:
-		panic("out of range")
+		panic("bigvector: index out of range")
 	case i == b.i:
 		return one
 	default:
