@@ -17,10 +17,14 @@ import (
 var verbose = flag.Bool("verbose", false, "enable verbose logging")
 
 func TestResults(t *testing.T) {
+	t.Parallel()
+
 	as := ensemble.Ensemble()
 	for _, c := range Results {
 		c := c // scopelint
 		t.Run(c.Slug, func(t *testing.T) {
+			t.Parallel()
+
 			// Tests with a best known result are prioritized. Only run all tests in
 			// stress test mode.
 			if c.BestKnown == 0 {
