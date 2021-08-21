@@ -32,10 +32,10 @@ jobs:
       - name: Test
         run: go test -coverprofile=coverage.out -covermode=count ./...
       - name: Upload Coverage
-        uses: codecov/codecov-action@967e2b38a85a62bd61be5529ada27ebc109948c2 #v1.4.1
+        uses: codecov/codecov-action@51d810878be5422784e86451c0e7c14e5860ec47 # v2.0.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.out
+          files: coverage.out
           flags: unittests
 
   lint:
