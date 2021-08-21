@@ -19,25 +19,20 @@ projectdir="${workdir}/godownloader"
 git clone --depth 1 --branch v0.1.0 https://github.com/goreleaser/godownloader.git "${projectdir}"
 (cd "${projectdir}" && go install .)
 
-# Install tools.
-tools=(
-    # gofumports for stricter formatting.
-    mvdan.cc/gofumpt/gofumports
+# gofumports for stricter formatting.
+go install mvdan.cc/gofumpt/gofumports@v0.0.0-20200412215918-a91da47f375c
 
-    # pigeon for PEG parser generation.
-    github.com/mna/pigeon
+# pigeon for PEG parser generation.
+go install github.com/mna/pigeon@v1.0.1-0.20200224192238-18953b277063
 
-    # mathfmt for unicode math formatting.
-    github.com/mmcloughlin/mathfmt
+# mathfmt for unicode math formatting.
+go install github.com/mmcloughlin/mathfmt@v0.0.0-20200207041814-4064651798f4
 
-    # bib for bibliography references.
-    github.com/mmcloughlin/bib
+# bib for bibliography references.
+go install github.com/mmcloughlin/bib@v0.4.0
 
-    # covertool for merging coverage reports
-    github.com/dlespiau/covertool
+# covertool for merging coverage reports.
+go install github.com/dlespiau/covertool@v0.0.0-20180314162135-b0c4c6d0583a
 
-    # assets embedding
-    modernc.org/assets
-)
-
-go install -modfile=script/tools.mod "${tools[@]}"
+# assets embedding.
+go install modernc.org/assets@v1.0.0
