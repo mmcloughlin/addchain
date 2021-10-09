@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"math"
 	"runtime"
 
 	"github.com/google/subcommands"
@@ -20,6 +21,8 @@ import (
 type search struct {
 	cli.Command
 
+	add         float64
+	double      float64
 	concurrency int
 	verbose     bool
 }
@@ -27,7 +30,7 @@ type search struct {
 func (*search) Name() string     { return "search" }
 func (*search) Synopsis() string { return "search for an addition chain." }
 func (*search) Usage() string {
-	return `Usage: search [-v] [-p <N>] <expr>
+	return `Usage: search [-v] [-p <N>] [-add <cost>] [-double <cost>] <expr>
 
 Search for an addition chain for <expr>.
 
@@ -37,6 +40,8 @@ Search for an addition chain for <expr>.
 func (cmd *search) SetFlags(f *flag.FlagSet) {
 	f.IntVar(&cmd.concurrency, "p", runtime.NumCPU(), "run `N` algorithms in parallel")
 	f.BoolVar(&cmd.verbose, "v", false, "verbose output")
+	f.Float64Var(&cmd.add, "add", 1, "add `cost`")
+	f.Float64Var(&cmd.double, "double", 1, "double `cost`")
 }
 
 func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) (status subcommands.ExitStatus) {
@@ -76,15 +81,18 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 
 	// Report results.
 	best := 0
+	mincost := math.Inf(+1)
 	for i, r := range rs {
 		cmd.Debugf("algorithm: %s", r.Algorithm)
 		if r.Err != nil {
 			return cmd.Fail("algorithm error: %v", r.Err)
 		}
 		doubles, adds := r.Program.Count()
-		cmd.Debugf("total: %d\tdoubles: \t%d adds: %d", doubles+adds, doubles, adds)
-		if len(r.Program) < len(rs[best].Program) {
+		cost := cmd.double*float64(doubles) + cmd.add*float64(adds)
+		cmd.Debugf("cost: %v\tdoubles: \t%d adds: %d", cost, doubles, adds)
+		if cost < mincost {
 			best = i
+			mincost = cost
 		}
 	}
 
@@ -94,6 +102,7 @@ func (cmd *search) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 		cmd.Debugf("[%3d] %3d+%3d\t%x", n+1, op.I, op.J, b.Chain[n+1])
 	}
 	cmd.Log.Printf("best: %s", b.Algorithm)
+	cmd.Log.Printf("cost: %v", mincost)
 
 	// Produce a program for it.
 	p, err := acc.Decompile(b.Program)
