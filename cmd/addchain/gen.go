@@ -2,23 +2,28 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
-	"io"
-	"os"
-	"text/template"
+	"fmt"
+	"io/ioutil"
+	"strings"
 
 	"github.com/google/subcommands"
 
 	"github.com/mmcloughlin/addchain/acc"
-	"github.com/mmcloughlin/addchain/acc/ir"
 	"github.com/mmcloughlin/addchain/acc/parse"
 	"github.com/mmcloughlin/addchain/acc/pass"
 	"github.com/mmcloughlin/addchain/internal/cli"
+	"github.com/mmcloughlin/addchain/internal/gen"
 )
 
 // generate subcommand.
 type generate struct {
 	cli.Command
+
+	typ    string
+	tmpl   string
+	output string
 }
 
 func (*generate) Name() string     { return "gen" }
@@ -32,6 +37,13 @@ Generate output from an addition chain program.
 }
 
 func (cmd *generate) SetFlags(f *flag.FlagSet) {
+	defaulttype := "listing"
+	if !gen.IsBuiltinTemplate(defaulttype) {
+		panic("bad default template")
+	}
+	f.StringVar(&cmd.typ, "type", defaulttype, fmt.Sprintf(`name of a builtin template (%s)`, strings.Join(gen.BuiltinTemplateNames(), ",")))
+	f.StringVar(&cmd.tmpl, "tmpl", "", "template file (overrides type)")
+	f.StringVar(&cmd.output, "output", "", "output file (default stdout)")
 }
 
 func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) (status subcommands.ExitStatus) {
@@ -64,90 +76,49 @@ func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{
 		return cmd.Error(err)
 	}
 
-	// Generate output.
-	// ast.Print(token.NewFileSet(), p)
-	// 	tmpl := `
-	// {{- range $i := .Program.Instructions -}}
-	// {{- with add $i.Op -}}
-	// {{ printf "add\t%s\t%s\t%s" $i.Output .X .Y }}
-	// {{ end -}}
-	//
-	// {{- with double $i.Op -}}
-	// {{ printf "double\t%s\t%s" $i.Output .X }}
-	// {{ end -}}
-	//
-	// {{- with shift $i.Op -}}
-	// {{ printf "shift\t%s\t%s\t%d" $i.Output .X .S }}
-	// {{ end -}}
-	// {{- end -}}
-	// `
+	// Prepare template data.
+	data := gen.BuildData(p)
 
-	// ec3:
-	tmpl := `
-{{- range $i := .Program.Instructions -}}
-// Step {{ $i.Output.Index }}: {{ . }}
-{{- with add $i.Op }}
-Mul({{ $i.Output }}, {{ .X }}, {{ .Y }})
-{{ end -}}
+	// Load template.
+	tmpl, err := cmd.LoadTemplate()
+	if err != nil {
+		return cmd.Error(err)
+	}
 
-{{- with double $i.Op }}
-Sqr({{ $i.Output }}, {{ .X }})
-{{ end -}}
+	// Open output.
+	_, w, err := cli.OpenOutput(cmd.output)
+	if err != nil {
+		return cmd.Error(err)
+	}
+	defer cmd.CheckClose(&status, w)
 
-{{- with shift $i.Op -}}
-{{- $first := 0 -}}
-{{- if ne $i.Output.Identifier .X.Identifier }}
-Sqr({{ $i.Output }}, {{ .X }})
-{{- $first = 1 -}}
-{{- end }}
-for s := {{ $first }}; s < {{ .S }}; s++ {
-	Sqr({{ $i.Output }}, {{ $i.Output }})
-}
-{{ end }}
-{{ end -}}
-`
-	if err := Generate(os.Stdout, tmpl, p); err != nil {
+	// Generate.
+	if err := gen.Generate(w, tmpl, data); err != nil {
 		return cmd.Error(err)
 	}
 
 	return subcommands.ExitSuccess
 }
 
-func Generate(w io.Writer, tmpl string, p *ir.Program) error {
-	// Custom template functions.
-	funcs := template.FuncMap{
-		"add": func(op ir.Op) ir.Op {
-			if a, ok := op.(ir.Add); ok {
-				return a
-			}
-			return nil
-		},
-		"double": func(op ir.Op) ir.Op {
-			if d, ok := op.(ir.Double); ok {
-				return d
-			}
-			return nil
-		},
-		"shift": func(op ir.Op) ir.Op {
-			if s, ok := op.(ir.Shift); ok {
-				return s
-			}
-			return nil
-		},
+func (cmd *generate) LoadTemplate() (string, error) {
+	// Explicit filename has precedence.
+	if cmd.tmpl != "" {
+		b, err := ioutil.ReadFile(cmd.tmpl)
+		if err != nil {
+			return "", err
+		}
+		return string(b), nil
 	}
 
-	// Parse template.
-	t, err := template.New("").Funcs(funcs).Parse(tmpl)
+	// Lookup type name in builtin templates.
+	if cmd.typ == "" {
+		return "", errors.New("no builtin template specified")
+	}
+
+	s, err := gen.BuiltinTemplate(cmd.typ)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	// Prepare template data.
-	type data struct {
-		Program *ir.Program
-	}
-	d := data{Program: p}
-
-	// Execute.
-	return t.Execute(w, d)
+	return s, nil
 }
