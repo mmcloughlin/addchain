@@ -18,6 +18,7 @@ func main() {
 	subcommands.Register(&search{Command: base}, "")
 	subcommands.Register(&eval{Command: base}, "")
 	subcommands.Register(&format{Command: base}, "")
+	subcommands.Register(&generate{Command: base}, "")
 
 	if meta.Meta.BuildVersion != "" {
 		subcommands.Register(&version{version: meta.Meta.BuildVersion, Command: base}, "")
