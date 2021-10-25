@@ -10,7 +10,6 @@ import (
 
 	"github.com/google/subcommands"
 
-	"github.com/mmcloughlin/addchain/acc"
 	"github.com/mmcloughlin/addchain/acc/parse"
 	"github.com/mmcloughlin/addchain/acc/pass"
 	"github.com/mmcloughlin/addchain/internal/cli"
@@ -43,7 +42,7 @@ func (cmd *generate) SetFlags(f *flag.FlagSet) {
 	}
 	f.StringVar(&cmd.typ, "type", defaulttype, fmt.Sprintf(`name of a builtin template (%s)`, strings.Join(gen.BuiltinTemplateNames(), ",")))
 	f.StringVar(&cmd.tmpl, "tmpl", "", "template file (overrides type)")
-	f.StringVar(&cmd.output, "output", "", "output file (default stdout)")
+	f.StringVar(&cmd.output, "out", "", "output file (default stdout)")
 }
 
 func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) (status subcommands.ExitStatus) {
@@ -60,24 +59,19 @@ func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{
 		return cmd.Error(err)
 	}
 
-	// Translate to IR.
-	p, err := acc.Translate(s)
+	// Prepare template data.
+	cfg := gen.Config{
+		Allocator: pass.Allocator{
+			Input:  "x",
+			Output: "z",
+			Format: "t%d",
+		},
+	}
+
+	data, err := gen.BuildData(cfg, s)
 	if err != nil {
 		return cmd.Error(err)
 	}
-
-	// Perform temporary variable allocation.
-	alloc := pass.Allocator{
-		Input:  "x",
-		Output: "z",
-		Format: "t%d",
-	}
-	if err := alloc.Execute(p); err != nil {
-		return cmd.Error(err)
-	}
-
-	// Prepare template data.
-	data := gen.BuildData(p)
 
 	// Load template.
 	tmpl, err := cmd.LoadTemplate()
