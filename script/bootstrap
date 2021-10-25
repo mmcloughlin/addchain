@@ -33,6 +33,3 @@ go install github.com/mmcloughlin/bib@v0.4.0
 
 # covertool for merging coverage reports.
 go install github.com/dlespiau/covertool@v0.0.0-20180314162135-b0c4c6d0583a
-
-# assets embedding.
-go install modernc.org/assets@v1.0.0

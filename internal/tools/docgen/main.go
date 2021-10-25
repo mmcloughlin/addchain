@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"embed"
 	"errors"
 	"flag"
 	"fmt"
@@ -18,7 +19,6 @@ import (
 	"github.com/mmcloughlin/addchain/internal/results"
 )
 
-//go:generate assets -d templates/ -o ztemplates.go -map templates
 //go:generate bib generate -bib ../../../doc/references.bib -tmpl bibliography.tmpl -output zbibliography.go
 
 func main() {
@@ -100,6 +100,9 @@ func mainerr() (err error) {
 	return nil
 }
 
+//go:embed templates
+var templates embed.FS
+
 // load template.
 func load() (string, error) {
 	// Prefer explicit filename, if provided.
@@ -115,13 +118,13 @@ func load() (string, error) {
 	if *typ == "" {
 		return "", errors.New("missing documentation type")
 	}
-	key := fmt.Sprintf("/%s.tmpl", *typ)
-	s, ok := templates[key]
-	if !ok {
+	path := fmt.Sprintf("templates/%s.tmpl", *typ)
+	b, err := templates.ReadFile(path)
+	if err != nil {
 		return "", fmt.Errorf("unknown documentation type %q", *typ)
 	}
 
-	return s, nil
+	return string(b), nil
 }
 
 // include template function.
