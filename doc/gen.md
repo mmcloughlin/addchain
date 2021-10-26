@@ -56,11 +56,10 @@ templates may use:
 {{- range $n, $value := .Chain -}}
 {{- printf "%3d: %#x\n" (inc $n) $value -}}
 {{- end -}}
-
 ```
 
 <details>
-<summary>Output of `chain` template</summary>
+<summary>Output of <code>chain</code> template</summary>
 
 ```
   1: 0x1
@@ -330,7 +329,6 @@ templates may use:
 265: 0x3ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff4
 266: 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe8
 267: 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeb
-
 ```
 
 </details>
@@ -355,11 +353,10 @@ templates may use:
 {{ end -}}
 
 {{- end -}}
-
 ```
 
 <details>
-<summary>Output of `listing` template</summary>
+<summary>Output of <code>listing</code> template</summary>
 
 ```
 double	r	x
@@ -386,7 +383,6 @@ shift	t0	t0	2
 add	t0	x	t0
 shift	t0	t0	3
 add	r	r	t0
-
 ```
 
 </details>
@@ -399,11 +395,10 @@ add	r	r	t0
 {{- range $n, $op := .Ops -}}
 {{- printf "[%3d] %4d+%-4d %#x\n" $n $op.I $op.J (index $.Chain (inc $n)) -}}
 {{- end -}}
-
 ```
 
 <details>
-<summary>Output of `ops` template</summary>
+<summary>Output of <code>ops</code> template</summary>
 
 ```
 [  0]    0+0    0x2
@@ -672,7 +667,6 @@ add	r	r	t0
 [263]  263+263  0x3ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff4
 [264]  264+264  0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe8
 [265]    2+265  0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeb
-
 ```
 
 </details>
@@ -683,11 +677,10 @@ add	r	r	t0
 
 ```
 {{- format .Script -}}
-
 ```
 
 <details>
-<summary>Output of `script` template</summary>
+<summary>Output of <code>script</code> template</summary>
 
 ```
 _10       = 2*1
@@ -704,7 +697,6 @@ x120      = x60 << 60 + x60
 x240      = x120 << 120 + x120
 x250      = x240 << 10 + x10
 return      (x250 << 2 + 1) << 3 + _11
-
 ```
 
 </details>
