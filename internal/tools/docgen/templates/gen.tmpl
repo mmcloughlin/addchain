@@ -4,8 +4,16 @@
 
 ## Template Reference
 
-Templates are executed with the following data structure:
+Templates use Go {{ stdpkg "text/template" }} syntax. The data structure passed
+to the template is:
 
 ```go
 {{ snippet "internal/gen/gen.go" "type Data" "^}" -}}
 ```
+
+In addition to the [builtin functions]({{ stdpkgurl "text/template" }}#hdr-Functions),
+templates may use:
+
+{{ range .TemplateFunctions }}
+**`{{ .Name }}`** `{{ .Signature }}`: {{ .Description }}
+{{ end }}

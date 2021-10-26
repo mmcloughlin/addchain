@@ -3,6 +3,7 @@ package gen
 import (
 	"bufio"
 	"io"
+	"reflect"
 	"strings"
 	"text/template"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/mmcloughlin/addchain/acc/ir"
 	"github.com/mmcloughlin/addchain/acc/pass"
 	"github.com/mmcloughlin/addchain/acc/printer"
+	"github.com/mmcloughlin/addchain/internal/meta"
 )
 
 type Data struct {
@@ -19,6 +21,7 @@ type Data struct {
 	Ops     addchain.Program
 	Script  *ast.Chain
 	Program *ir.Program
+	Meta    *meta.Properties
 }
 
 type Config struct {
@@ -43,6 +46,7 @@ func BuildData(cfg Config, s *ast.Chain) (*Data, error) {
 		Ops:     p.Program,
 		Script:  s,
 		Program: p,
+		Meta:    meta.Meta,
 	}, nil
 }
 
@@ -52,9 +56,14 @@ type Function struct {
 	Func        interface{}
 }
 
-var Functions = []Function{
+func (f *Function) Signature() string {
+	return reflect.ValueOf(f.Func).Type().String()
+}
+
+var Functions = []*Function{
 	{
-		Name: "add",
+		Name:        "add",
+		Description: "If the input operation is an `ir.Add` then return it, otherwise return `nil`.",
 		Func: func(op ir.Op) ir.Op {
 			if a, ok := op.(ir.Add); ok {
 				return a
@@ -64,7 +73,8 @@ var Functions = []Function{
 	},
 
 	{
-		Name: "double",
+		Name:        "double",
+		Description: "If the input operation is an `ir.Double` then return it, otherwise return `nil`.",
 		Func: func(op ir.Op) ir.Op {
 			if d, ok := op.(ir.Double); ok {
 				return d
@@ -74,7 +84,8 @@ var Functions = []Function{
 	},
 
 	{
-		Name: "shift",
+		Name:        "shift",
+		Description: "If the input operation is an `ir.Shift` then return it, otherwise return `nil`.",
 		Func: func(op ir.Op) ir.Op {
 			if s, ok := op.(ir.Shift); ok {
 				return s
@@ -84,20 +95,23 @@ var Functions = []Function{
 	},
 
 	{
-		Name: "inc",
-		Func: func(n int) int { return n + 1 },
+		Name:        "inc",
+		Description: "Increment an integer.",
+		Func:        func(n int) int { return n + 1 },
 	},
 
 	{
-		Name: "format",
-		Func: printer.String,
+		Name:        "format",
+		Description: "Formats an addition chain script (`*ast.Chain`) as a string.",
+		Func:        printer.String,
 	},
 
-	{Name: "split", Func: strings.Split},
-	{Name: "join", Func: strings.Join},
+	{Name: "split", Description: "Calls `strings.Split`.", Func: strings.Split},
+	{Name: "join", Description: "Calls `strings.Join`.", Func: strings.Join},
 
 	{
-		Name: "lines",
+		Name:        "lines",
+		Description: "Split input string into lines.",
 		Func: func(s string) []string {
 			var lines []string
 			scanner := bufio.NewScanner(strings.NewReader(s))

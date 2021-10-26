@@ -9,12 +9,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/url"
 	"os"
 	"path"
 	"regexp"
 	"strings"
 	"text/template"
 
+	"github.com/mmcloughlin/addchain/internal/gen"
 	"github.com/mmcloughlin/addchain/internal/results"
 	"github.com/mmcloughlin/addchain/meta"
 )
@@ -47,8 +49,6 @@ func mainerr() (err error) {
 		"include":  include,
 		"snippet":  snippet,
 		"anchor":   anchor,
-		"pkg":      pkg,
-		"sym":      sym,
 		"bibentry": bibentry,
 		"biburl":   biburl,
 		"toc":      toc,
@@ -56,6 +56,9 @@ func mainerr() (err error) {
 		"otimes":   symbol('\u2297'),
 		"sum":      symbol('\u2211'),
 	})
+
+	t.Funcs(pkgfuncs("", "github.com/mmcloughlin/addchain"))
+	t.Funcs(pkgfuncs("std", ""))
 
 	// Load template.
 	s, err := load()
@@ -69,9 +72,10 @@ func mainerr() (err error) {
 
 	// Prepare template data.
 	data := map[string]interface{}{
-		"Meta":         meta.Meta,
-		"Results":      results.Results,
-		"Bibliography": bibliography,
+		"Meta":              meta.Meta,
+		"Results":           results.Results,
+		"Bibliography":      bibliography,
+		"TemplateFunctions": gen.Functions,
 	}
 
 	// Execute.
@@ -181,19 +185,34 @@ func anchor(heading string) string {
 	return r.Replace(strings.ToLower((heading)))
 }
 
-// pkg returns markdown for a package with a link to documentation.
-func pkg(name string) string {
-	return fmt.Sprintf("[`%s`](%s)", name, pkgurl(name))
+// pkgfuncs builds template functions for references to packages linked to
+// documentation.
+func pkgfuncs(prefix, mod string) template.FuncMap {
+	return template.FuncMap{
+		// pkgurl returns url to package documentation.
+		prefix + "pkgurl": func(pkg string) string {
+			return pkgurl(mod, pkg, "")
+		},
+		// pkg returns markdown for a package with a link to documentation.
+		prefix + "pkg": func(pkg string) string {
+			return fmt.Sprintf("[`%s`](%s)", pkg, pkgurl(mod, pkg, ""))
+		},
+		// sym returns markdown for a symbol with a link to documentation.
+		prefix + "sym": func(pkg, name string) string {
+			return fmt.Sprintf("[`%s.%s`](%s)", path.Base(pkg), name, pkgurl(mod, pkg, name))
+		},
+	}
 }
 
-// sym returns markdown for a symbol with a link to documentation.
-func sym(pkg, name string) string {
-	return fmt.Sprintf("[`%s.%s`](%s#%s)", path.Base(pkg), name, pkgurl(pkg), name)
-}
-
-// pkgurl returns url to go.dev documentation on the given sub-package.
-func pkgurl(name string) string {
-	return "https://pkg.go.dev/" + path.Join("github.com/mmcloughlin/addchain", name)
+// pkgurl returns url to go.dev documentation for a given package.
+func pkgurl(mod, pkg, fragment string) string {
+	u := url.URL{
+		Scheme:   "https",
+		Host:     "pkg.go.dev",
+		Path:     path.Join(mod, pkg),
+		Fragment: fragment,
+	}
+	return u.String()
 }
 
 // bibentry returns formatted bibliography entry for the given citation name.
