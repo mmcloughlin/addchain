@@ -72,10 +72,12 @@ func mainerr() (err error) {
 
 	// Prepare template data.
 	data := map[string]interface{}{
-		"Meta":              meta.Meta,
-		"Results":           results.Results,
-		"Bibliography":      bibliography,
-		"TemplateFunctions": gen.Functions,
+		"Meta":         meta.Meta,
+		"Results":      results.Results,
+		"Bibliography": bibliography,
+
+		"BuiltinTemplateNames": gen.BuiltinTemplateNames(),
+		"TemplateFunctions":    gen.Functions,
 	}
 
 	// Execute.

@@ -2,7 +2,7 @@
 
 {{ toc }}
 
-## Template Reference
+## Templates
 
 Templates use Go {{ stdpkg "text/template" }} syntax. The data structure passed
 to the template is:
@@ -16,4 +16,25 @@ templates may use:
 
 {{ range .TemplateFunctions }}
 **`{{ .Name }}`** `{{ .Signature }}`: {{ .Description }}
+{{ end }}
+
+## Builtin Templates
+
+{{ range .BuiltinTemplateNames }}
+
+### {{ . }}
+
+```
+{{ include (printf "internal/gen/templates/%s.tmpl" .) }}
+```
+
+<details>
+<summary>Output of `{{ . }}` template</summary>
+
+```
+{{ include (printf "internal/gen/testdata/builtin/%s.golden" .) }}
+```
+
+</details>
+
 {{ end }}
