@@ -20,8 +20,13 @@ templates may use:
 
 ## Builtin Templates
 
-{{ range .BuiltinTemplateNames }}
+Example output for each builtin template is generated from the chain:
 
+```
+{{ include "internal/gen/testdata/input.acc" -}}
+```
+
+{{ range .BuiltinTemplateNames }}
 ### {{ . }}
 
 ```
@@ -36,5 +41,4 @@ templates may use:
 ```
 
 </details>
-
 {{ end }}
