@@ -14,8 +14,10 @@ to the template is:
 In addition to the [builtin functions]({{ stdpkgurl "text/template" }}#hdr-Functions),
 templates may use:
 
-{{ range .TemplateFunctions }}
-**`{{ .Name }}`** `{{ .Signature }}`: {{ .Description }}
+| Name | Signature | Description |
+| ---- | --------- | ----------- |
+{{ range .TemplateFunctions -}}
+| **`{{ .Name }}`** | `{{ .Signature }}` | {{ .Description }} |
 {{ end }}
 
 ## Builtin Templates
