@@ -170,10 +170,10 @@ Install:
 go get -u github.com/mmcloughlin/addchain
 ```
 
-Algorithms all conform to the [`alg.ChainAlgorithm`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg#ChainAlgorithm) or
-[`alg.SequenceAlgorithm`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg#SequenceAlgorithm) interfaces and can be used directly. However the
-most user-friendly method uses the [`alg/ensemble`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg/ensemble) package to
-instantiate a sensible default set of algorithms and the [`alg/exec`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg/exec)
+Algorithms all conform to the [`alg.ChainAlgorithm`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg#ChainAlgorithm) or
+[`alg.SequenceAlgorithm`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg#SequenceAlgorithm) interfaces and can be used directly. However the
+most user-friendly method uses the [`alg/ensemble`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/ensemble) package to
+instantiate a sensible default set of algorithms and the [`alg/exec`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/exec)
 helper to execute them in parallel. The following code uses this method to
 find an addition chain for curve25519 field inversion:
 
@@ -218,7 +218,7 @@ for the complete references list.
 
 ### Binary
 
-The [`alg/binary`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg/binary) package implements the addition chain equivalent
+The [`alg/binary`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/binary) package implements the addition chain equivalent
 of the basic [square-and-multiply exponentiation
 method](https://en.wikipedia.org/wiki/Exponentiation_by_squaring). It is
 included for completeness, but is almost always outperformed by more advanced
@@ -226,7 +226,7 @@ algorithms below.
 
 ### Continued Fractions
 
-The [`alg/contfrac`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg/contfrac) package implements the continued fractions
+The [`alg/contfrac`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/contfrac) package implements the continued fractions
 methods for addition sequence search introduced by
 Bergeron-Berstel-Brlek-Duboc in 1989 and later extended. This approach
 utilizes a decomposition of an addition chain akin to continued fractions,
@@ -239,7 +239,7 @@ namely
 for certain special operators ⊗ and ⊕. This
 decomposition lends itself to a recursive algorithm for efficient addition
 sequence search, with results dependent on the _strategy_ for choosing the
-auxillary integer _k_. The [`alg/contfrac`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg/contfrac) package provides a
+auxillary integer _k_. The [`alg/contfrac`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/contfrac) package provides a
 laundry list of strategies from the literature: binary, co-binary,
 dichotomic, dyadic, fermat, square-root and total.
 
@@ -257,7 +257,7 @@ sequence generation in which at each step a heuristic proposes new numbers
 for the sequence in such a way that the _maximum_ number always decreases.
 The [original Bos-Coster paper](https://link.springer.com/content/pdf/10.1007/0-387-34805-0_37.pdf) defined four
 heuristics: Approximation, Divison, Halving and Lucas. Package
-[`alg/heuristic`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg/heuristic) implements a variation on these heuristics:
+[`alg/heuristic`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/heuristic) implements a variation on these heuristics:
 
 * **Approximation:** looks for two elements a, b in the current sequence with sum close to the largest element.
 * **Halving:** applies when the target is at least twice as big as the next largest, and if so it will propose adding a sequence of doublings.
@@ -293,7 +293,7 @@ for exponents _e_ and elements _d_ from a dictionary _D_. Given such a decomposi
 1. Find a short addition _sequence_ containing every element of the dictionary _D_. Continued fractions and Bos-Coster heuristics can be used here.
 2. Build _n_ from the dictionary terms according to the sum decomposition.
 
-The efficiency of this approach boils down to the decomposition method. The [`alg/dict`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict) package provides:
+The efficiency of this approach boils down to the decomposition method. The [`alg/dict`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict) package provides:
 
 * **Fixed Window:** binary representation of _n_ is broken into fixed _k_-bit windows
 * **Sliding Window**: break _n_ into _k_-bit windows, skipping zeros where possible
@@ -322,7 +322,7 @@ reduced to:
 2. Use the addition sequence for the run lengths <code>l<sub>i</sub></code>
    to build an addition sequence for the runs themselves
    <code>r(l<sub>i</sub>)</code> where <code>r(e) = 2<sup>e</sup>-1</code>. See
-   [`dict.RunsChain`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict#RunsChain).
+   [`dict.RunsChain`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/dict#RunsChain).
 
 This approach has proved highly effective against cryptographic exponents
 which frequently exhibit binary structure, such as those derived from
@@ -334,7 +334,7 @@ which frequently exhibit binary structure, such as those derived from
 
 Close inspection of addition chains produced by other algorithms revealed
 cases of redundant computation. This motivated a final optimization pass over
-addition chains to remove unecessary steps. The [`alg/opt`](https:/pkg.go.dev/github.com/mmcloughlin/addchain/alg/opt) package
+addition chains to remove unecessary steps. The [`alg/opt`](https://pkg.go.dev/github.com/mmcloughlin/addchain/alg/opt) package
 implements the following optimization:
 
 1. Determine _all possible_ ways each element can be computed from those prior.
