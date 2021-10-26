@@ -2,19 +2,17 @@
 
 set -exuo pipefail
 
-# Parse options.
-all="false"
-while getopts "a" opt; do
-    case "${opt}" in
-        a) all="true" ;;
-    esac
-done
+# Run examples.
+go install ./cmd/addchain
 
-# Run example program.
-if [ "${all}" = "true" ]; then
-    go install ./cmd/addchain
-    bash ./internal/examples/cli/cmd.sh 2>&1 | tee ./internal/examples/cli/output
-fi
+for example in ./internal/examples/*; do
+    cd "${example}"
+    for script in *.sh; do
+        root="${script%.sh}"
+        bash "${script}" > "${root}.out" 2>&1
+    done
+    cd -
+done
 
 # go generate
 go generate -x ./...
