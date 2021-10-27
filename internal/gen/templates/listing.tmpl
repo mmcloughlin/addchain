@@ -1,4 +1,5 @@
-{{- range $i := .Program.Instructions -}}
+{{ printf "tmp\t%s" (join .Program.Temporaries "\t") }}
+{{ range $i := .Program.Instructions -}}
 
 {{- with add $i.Op -}}
 {{ printf "add\t%s\t%s\t%s" $i.Output .X .Y }}

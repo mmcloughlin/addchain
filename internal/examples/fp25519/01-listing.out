@@ -1,3 +1,4 @@
+tmp	t0	t1	t2
 double	z	x
 add	z	x	z
 shift	t0	z	2
