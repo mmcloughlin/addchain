@@ -27,7 +27,7 @@ func (v *VarsFile) SetFlags(f *flag.FlagSet) {
 // DefaultPath returns the path to the default variables file in the meta
 // package. Returns the empty string if the path cannot be determined.
 func (v *VarsFile) DefaultPath() string {
-	return RepoPath("internal/meta/vars.go")
+	return RepoPath("meta/vars.go")
 }
 
 // Get variable from the meta variables file.

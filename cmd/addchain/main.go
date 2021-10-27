@@ -9,7 +9,7 @@ import (
 	"github.com/google/subcommands"
 
 	"github.com/mmcloughlin/addchain/internal/cli"
-	"github.com/mmcloughlin/addchain/internal/meta"
+	"github.com/mmcloughlin/addchain/meta"
 )
 
 func main() {

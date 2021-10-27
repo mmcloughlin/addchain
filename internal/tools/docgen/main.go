@@ -15,8 +15,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/mmcloughlin/addchain/internal/meta"
 	"github.com/mmcloughlin/addchain/internal/results"
+	"github.com/mmcloughlin/addchain/meta"
 )
 
 //go:generate bib generate -bib ../../../doc/references.bib -tmpl bibliography.tmpl -output zbibliography.go
