@@ -11,6 +11,15 @@ import (
 	"github.com/mmcloughlin/addchain/internal/print"
 )
 
+// String prints the AST and returns resulting string.
+func String(n interface{}) (string, error) {
+	b, err := Bytes(n)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
 // Bytes prints the AST and returns resulting bytes.
 func Bytes(n interface{}) ([]byte, error) {
 	var buf bytes.Buffer

@@ -21,6 +21,7 @@ generators.
 * Generic optimization methods eliminate redundant operations
 * Simple domain-specific language for addition chain computations
 * Command-line interface or library
+* Code generation and templated output support
 
 {{ toc }}
 
@@ -80,12 +81,12 @@ delta from the library result.
 | ---- | -----------: | ---------: | ----: |
 {{ range .Results -}}
 {{- if gt .BestKnown 0 -}}
-| [{{ .Name }}](doc/results.md#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ if le .Delta 0 }}**{{ printf "%+d" .Delta }}**{{ else }}{{ printf "%+d" .Delta }}{{ end }} |
+| [{{ .Name }}]({{ link "doc/results.md" }}#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ if le .Delta 0 }}**{{ printf "%+d" .Delta }}**{{ else }}{{ printf "%+d" .Delta }}{{ end }} |
 {{ end -}}
 {{ end }}
 
-See [full results listing](doc/results.md) for more detail and results for
-less common exponents.
+See [full results listing]({{ link "doc/results.md" }}) for more detail and
+results for less common exponents.
 
 These results demonstrate that `addchain` is competitive with hand-optimized
 chains, often with equivalent or better performance. Even when `addchain` is
@@ -113,14 +114,16 @@ go install {{ .Meta.Module }}/cmd/addchain@latest
 Search for a curve25519 field inversion addition chain with:
 
 ```sh
-{{ include "internal/examples/cli/cmd.sh" -}}
+{{ include "internal/examples/search/cmd.sh" -}}
 ```
 
 Output:
 
 ```
-{{ include "internal/examples/cli/output" -}}
+{{ include "internal/examples/search/cmd.out" -}}
 ```
+
+Next, you can [generate code from this addition chain]({{ link "doc/gen.md" }}).
 
 ### Library
 

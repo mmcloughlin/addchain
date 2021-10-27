@@ -21,6 +21,7 @@ generators.
 * Generic optimization methods eliminate redundant operations
 * Simple domain-specific language for addition chain computations
 * Command-line interface or library
+* Code generation and templated output support
 
 ## Table of Contents
 
@@ -106,8 +107,8 @@ delta from the library result.
 | [secp256k1 (Bitcoin) Scalar Inversion](doc/results.md#secp256k1-bitcoin-scalar-inversion) | 293 | 290 | +3 |
 
 
-See [full results listing](doc/results.md) for more detail and results for
-less common exponents.
+See [full results listing](doc/results.md) for more detail and
+results for less common exponents.
 
 These results demonstrate that `addchain` is competitive with hand-optimized
 chains, often with equivalent or better performance. Even when `addchain` is
@@ -161,6 +162,8 @@ x240      = x120 << 120 + x120
 x250      = x240 << 10 + x10
 return      (x250 << 2 + 1) << 3 + _11
 ```
+
+Next, you can [generate code from this addition chain](doc/gen.md).
 
 ### Library
 
