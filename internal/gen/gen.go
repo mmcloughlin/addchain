@@ -28,7 +28,7 @@ type Config struct {
 	Allocator pass.Allocator
 }
 
-func BuildData(cfg Config, s *ast.Chain) (*Data, error) {
+func PrepareData(cfg Config, s *ast.Chain) (*Data, error) {
 	// Translate to IR.
 	p, err := acc.Translate(s)
 	if err != nil {

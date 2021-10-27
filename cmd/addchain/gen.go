@@ -68,7 +68,7 @@ func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{
 		},
 	}
 
-	data, err := gen.BuildData(cfg, s)
+	data, err := gen.PrepareData(cfg, s)
 	if err != nil {
 		return cmd.Error(err)
 	}
