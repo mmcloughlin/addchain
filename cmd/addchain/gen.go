@@ -28,7 +28,7 @@ type generate struct {
 func (*generate) Name() string     { return "gen" }
 func (*generate) Synopsis() string { return "generate output from an addition chain program" }
 func (*generate) Usage() string {
-	return `Usage: gen [<filename>]
+	return `Usage: gen [-type <name>] [-tmpl <file>] [-out <file>] [<filename>]
 
 Generate output from an addition chain program.
 
@@ -40,9 +40,9 @@ func (cmd *generate) SetFlags(f *flag.FlagSet) {
 	if !gen.IsBuiltinTemplate(defaulttype) {
 		panic("bad default template")
 	}
-	f.StringVar(&cmd.typ, "type", defaulttype, fmt.Sprintf(`name of a builtin template (%s)`, strings.Join(gen.BuiltinTemplateNames(), ",")))
-	f.StringVar(&cmd.tmpl, "tmpl", "", "template file (overrides type)")
-	f.StringVar(&cmd.output, "out", "", "output file (default stdout)")
+	f.StringVar(&cmd.typ, "type", defaulttype, fmt.Sprintf("`name` of a builtin template (%s)", strings.Join(gen.BuiltinTemplateNames(), ",")))
+	f.StringVar(&cmd.tmpl, "tmpl", "", "template `file` (overrides type)")
+	f.StringVar(&cmd.output, "out", "", "output `file` (default stdout)")
 }
 
 func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) (status subcommands.ExitStatus) {
