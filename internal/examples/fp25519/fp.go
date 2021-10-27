@@ -5,7 +5,7 @@ import "math/big"
 // p is the field prime modulus.
 var p, _ = new(big.Int).SetString("57896044618658097711785492504343953926634992332820282019728792003956564819949", 10)
 
-// Elt is an element of the field modulo 2^255-19.
+// Elt is an element of the field modulo 2²⁵⁵-19.
 type Elt struct{ n big.Int }
 
 func (z *Elt) SetInt(x *big.Int) *Elt {
@@ -23,7 +23,7 @@ func (z *Elt) Mul(x, y *Elt) *Elt {
 	return z.modp()
 }
 
-// Sqr computes z = x^2 (mod p) and returns it.
+// Sqr computes z = x² (mod p) and returns it.
 func (z *Elt) Sqr(x *Elt) *Elt {
 	return z.Mul(x, x)
 }
