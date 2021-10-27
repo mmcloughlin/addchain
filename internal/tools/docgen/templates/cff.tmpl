@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use addchain in your work, a citation would be appreciated using the following metadata."
-title: "addchain: Cryptographic Addition Chain Generation in Go"
+title: "{{ .Meta.Title }}"
 authors:
   - family-names: "McLoughlin"
     given-names: "Michael Ben"
@@ -8,7 +8,7 @@ authors:
 version: "{{ .Meta.ReleaseVersion }}"
 date-released: "{{ .Meta.ReleaseDate }}"
 license: BSD-3-Clause
-repository-code: https://github.com/mmcloughlin/addchain
+repository-code: {{ .Meta.RepositoryURL }}
 doi: "{{ .Meta.DOI }}"
 identifiers:
   - type: doi

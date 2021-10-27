@@ -363,7 +363,7 @@ release](https://github.com/mmcloughlin/addchain/releases/tag/v0.3.0).
     author       = {Michael B. McLoughlin},
     year         = 2021,
     month        = may,
-    howpublished = {Github repository \url{https://github.com/mmcloughlin/addchain}},
+    howpublished = {Repository \url{https://github.com/mmcloughlin/addchain}},
     version      = {0.3.0},
     license      = {BSD 3-Clause License},
     doi          = {10.5281/zenodo.4758226},
