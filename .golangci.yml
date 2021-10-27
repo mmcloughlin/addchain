@@ -15,6 +15,7 @@ linters:
     - maligned
     - nlreturn
     - paralleltest
+    - prealloc
     - predeclared
     - revive
     - testpackage

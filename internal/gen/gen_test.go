@@ -14,6 +14,7 @@ import (
 func TestBuiltinTemplatesGolden(t *testing.T) {
 	d := LoadTestData(t)
 	for _, name := range BuiltinTemplateNames() {
+		name := name // scopelint
 		t.Run(name, func(t *testing.T) {
 			// Load the template.
 			tmpl, err := BuiltinTemplate(name)

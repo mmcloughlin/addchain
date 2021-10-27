@@ -1,3 +1,5 @@
+// Package gen provides templated output generation from addition chain
+// programs.
 package gen
 
 import (
