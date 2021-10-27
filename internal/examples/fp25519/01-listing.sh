@@ -1,1 +1,1 @@
-addchain gen 25519.acc
+addchain gen inv.acc

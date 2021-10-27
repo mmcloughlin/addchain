@@ -1,0 +1,30 @@
+package fp25519
+
+func Inv(z, x *Elt) {
+var (
+{{- range .Program.Temporaries }}
+	{{ . }} = new(Elt)
+{{- end -}}
+)
+
+{{ range $i := .Program.Instructions -}}
+{{- with add $i.Op }}
+Mul({{ $i.Output }}, {{ .X }}, {{ .Y }})
+{{ end -}}
+
+{{- with double $i.Op }}
+Sqr({{ $i.Output }}, {{ .X }})
+{{ end -}}
+
+{{- with shift $i.Op -}}
+{{- $first := 0 -}}
+{{- if ne $i.Output.Identifier .X.Identifier }}
+Sqr({{ $i.Output }}, {{ .X }})
+{{- $first = 1 -}}
+{{- end }}
+for s := {{ $first }}; s < {{ .S }}; s++ {
+	Sqr({{ $i.Output }}, {{ $i.Output }})
+}
+{{ end -}}
+{{- end -}}
+}
