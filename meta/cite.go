@@ -35,12 +35,12 @@ func (p *Properties) WriteCitation(w io.Writer) error {
 	field := func(key, value string) { tw.Linef("    %s\t=\t%s,", key, value) }
 	str := func(key, value string) { field(key, "{"+value+"}") }
 
-	tw.Linef("@misc{addchain,")
-	str("title", "addchain: Cryptographic Addition Chain Generation in Go")
+	tw.Linef("@misc{%s,", p.Name)
+	str("title", p.Title())
 	str("author", "Michael B. McLoughlin")
 	field("year", strconv.Itoa(date.Year()))
 	field("month", strings.ToLower(date.Month().String()[:3]))
-	str("howpublished", "Github repository \\url{https://github.com/mmcloughlin/addchain}")
+	str("howpublished", "Repository \\url{"+p.RepositoryURL()+"}")
 	str("version", p.ReleaseVersion)
 	str("license", "BSD 3-Clause License")
 	str("doi", p.DOI)
