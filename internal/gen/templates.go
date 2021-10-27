@@ -13,6 +13,8 @@ var templates embed.FS
 // Template file extension.
 const templateext = ".tmpl"
 
+// BuiltinTemplate loads the named template. Returns an error if the template is
+// unknown.
 func BuiltinTemplate(name string) (string, error) {
 	path := fmt.Sprintf("templates/%s%s", name, templateext)
 	b, err := templates.ReadFile(path)
@@ -22,6 +24,7 @@ func BuiltinTemplate(name string) (string, error) {
 	return string(b), nil
 }
 
+// BuiltinTemplateNames returns all builtin template names.
 func BuiltinTemplateNames() []string {
 	entries, err := templates.ReadDir("templates")
 	if err != nil {
@@ -39,6 +42,7 @@ func BuiltinTemplateNames() []string {
 	return names
 }
 
+// IsBuiltinTemplate reports whether name is a builtin template name.
 func IsBuiltinTemplate(name string) bool {
 	for _, builtin := range BuiltinTemplateNames() {
 		if builtin == name {

@@ -1,3 +1,4 @@
+tmp	t0	t1	t2
 double	r	x
 add	r	x	r
 shift	t0	r	2

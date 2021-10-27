@@ -66,7 +66,7 @@ func LoadTestData(t *testing.T) *Data {
 			Format: "t%d",
 		},
 	}
-	d, err := BuildData(cfg, s)
+	d, err := PrepareData(cfg, s)
 	if err != nil {
 		t.Fatal(err)
 	}
