@@ -14,11 +14,29 @@ import (
 
 // Data provided to templates.
 type Data struct {
-	Chain   addchain.Chain
-	Ops     addchain.Program
-	Script  *ast.Chain
+	// Chain is the addition chain as a list of integers.
+	Chain addchain.Chain
+
+	// Ops is the complete sequence of addition operations required to compute
+	// the addition chain.
+	Ops addchain.Program
+
+	// Script is the condensed representation of the addition chain computation
+	// in the "addition chain calculator" language.
+	Script *ast.Chain
+
+	// Program is the intermediate representation of the addition chain
+	// computation. This representation is likely the most convenient for code
+	// generation. It contains a sequence of add, double and shift (repeated
+	// doubling) instructions required to compute the chain. Temporary variable
+	// allocation has been performed and the list of required temporaries
+	// populated.
 	Program *ir.Program
-	Meta    *meta.Properties
+
+	// Metadata about the addchain project and the specific release parameters.
+	// Please use this to include a reference or citation back to the addchain
+	// project in your generated output.
+	Meta *meta.Properties
 }
 
 // Config for template input generation.
@@ -51,7 +69,7 @@ func PrepareData(cfg Config, s *ast.Chain) (*Data, error) {
 	}, nil
 }
 
-// Generate
+// Generate templated output for the given data, writing to w.
 func Generate(w io.Writer, tmpl string, d *Data) error {
 	// Custom template functions.
 	funcs := template.FuncMap{}

@@ -52,20 +52,20 @@ func TestBuiltinTemplatesGolden(t *testing.T) {
 func LoadTestData(t *testing.T) *Data {
 	t.Helper()
 
-	// Test input.
+	// Prepare data for a fixed test input.
 	s, err := parse.File("testdata/input.acc")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	//
 	cfg := Config{
 		Allocator: pass.Allocator{
 			Input:  "x",
-			Output: "r",
+			Output: "z",
 			Format: "t%d",
 		},
 	}
+
 	d, err := PrepareData(cfg, s)
 	if err != nil {
 		t.Fatal(err)

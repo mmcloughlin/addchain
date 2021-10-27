@@ -1,12 +1,12 @@
 tmp	t0	t1	t2
-double	r	x
-add	r	x	r
-shift	t0	r	2
-add	t0	r	t0
+double	z	x
+add	z	x	z
+shift	t0	z	2
+add	t0	z	t0
 shift	t1	t0	4
 add	t0	t0	t1
 shift	t0	t0	2
-add	t0	r	t0
+add	t0	z	t0
 shift	t1	t0	10
 add	t1	t0	t1
 shift	t1	t1	10
@@ -22,4 +22,4 @@ add	t0	t0	t1
 shift	t0	t0	2
 add	t0	x	t0
 shift	t0	t0	3
-add	r	r	t0
+add	z	z	t0

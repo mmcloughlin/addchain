@@ -273,11 +273,29 @@ to the template is:
 
 ```go
 type Data struct {
-	Chain   addchain.Chain
-	Ops     addchain.Program
-	Script  *ast.Chain
+	// Chain is the addition chain as a list of integers.
+	Chain addchain.Chain
+
+	// Ops is the complete sequence of addition operations required to compute
+	// the addition chain.
+	Ops addchain.Program
+
+	// Script is the condensed representation of the addition chain computation
+	// in the "addition chain calculator" language.
+	Script *ast.Chain
+
+	// Program is the intermediate representation of the addition chain
+	// computation. This representation is likely the most convenient for code
+	// generation. It contains a sequence of add, double and shift (repeated
+	// doubling) instructions required to compute the chain. Temporary variable
+	// allocation has been performed and the list of required temporaries
+	// populated.
 	Program *ir.Program
-	Meta    *meta.Properties
+
+	// Metadata about the addchain project and the specific release parameters.
+	// Please use this to include a reference or citation back to the addchain
+	// project in your generated output.
+	Meta *meta.Properties
 }
 ```
 
@@ -627,14 +645,14 @@ return      (x250 << 2 + 1) << 3 + _11
 
 ```
 tmp	t0	t1	t2
-double	r	x
-add	r	x	r
-shift	t0	r	2
-add	t0	r	t0
+double	z	x
+add	z	x	z
+shift	t0	z	2
+add	t0	z	t0
 shift	t1	t0	4
 add	t0	t0	t1
 shift	t0	t0	2
-add	t0	r	t0
+add	t0	z	t0
 shift	t1	t0	10
 add	t1	t0	t1
 shift	t1	t1	10
@@ -650,7 +668,7 @@ add	t0	t0	t1
 shift	t0	t0	2
 add	t0	x	t0
 shift	t0	t0	3
-add	r	r	t0
+add	z	z	t0
 ```
 
 </details>
