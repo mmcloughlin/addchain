@@ -98,7 +98,7 @@ produce high quality results in an automated code generation tool.
 ### Command-line Interface
 
 Install a pre-compiled [release
-binary](https://github.com/mmcloughlin/addchain/releases):
+binary]({{ .Meta.RepositoryURL }}/releases):
 
 ```
 curl -sSfL https://git.io/addchain | sh -s -- -b /usr/local/bin
@@ -107,7 +107,7 @@ curl -sSfL https://git.io/addchain | sh -s -- -b /usr/local/bin
 Alternatively build from source:
 
 ```
-go install github.com/mmcloughlin/addchain/cmd/addchain@latest
+go install {{ .Meta.Module }}/cmd/addchain@latest
 ```
 
 Search for a curve25519 field inversion addition chain with:
@@ -127,7 +127,7 @@ Output:
 Install:
 
 ```
-go get -u github.com/mmcloughlin/addchain
+go get -u {{ .Meta.Module }}
 ```
 
 Algorithms all conform to the {{ sym "alg" "ChainAlgorithm" }} or
@@ -199,7 +199,7 @@ about their precise definition and poor results from early experiments.
 Furthermore, this library does not apply weights to the heuristics as
 suggested in the paper, rather it simply uses the first that applies. However
 both of these remain [possible avenues for
-improvement](https://github.com/mmcloughlin/addchain/issues/26).
+improvement]({{ .Meta.RepositoryURL }}/issues/26).
 
 #### References
 
@@ -276,7 +276,7 @@ These micro-optimizations were vital in closing the gap between `addchain`'s
 automated approaches and hand-optimized chains. This technique is reminiscent
 of basic passes in optimizing compilers, raising the question of whether
 other [compiler optimizations could apply to addition
-chains](https://github.com/mmcloughlin/addchain/issues/24)?
+chains]({{ .Meta.RepositoryURL }}/issues/24)?
 
 > I have not seen this method discussed in the literature. Please help me find references to prior art if you know any.
 
@@ -293,7 +293,7 @@ release]({{ .Meta.ReleaseURL }}).
 ```
 
 If you need to cite a currently unreleased version please consider [filing an
-issue](https://github.com/mmcloughlin/addchain/issues/new) to request a new
+issue]({{ .Meta.RepositoryURL }}/issues/new) to request a new
 release, or to discuss an appropriate format for the citation.
 
 ## Thanks
@@ -308,11 +308,11 @@ Glancy](https://twitter.com/mglancy) for review.
 
 Contributions to `addchain` are welcome:
 
-* [Submit bug reports](https://github.com/mmcloughlin/addchain/issues/new) to
+* [Submit bug reports]({{ .Meta.RepositoryURL }}/issues/new) to
   the issues page.
-* Suggest [test cases](https://github.com/mmcloughlin/addchain/blob/e6c070065205efcaa02627ab1b23e8ce6aeea1db/internal/results/results.go#L62)
+* Suggest [test cases]({{ .Meta.RepositoryURL }}/blob/e6c070065205efcaa02627ab1b23e8ce6aeea1db/internal/results/results.go#L62)
   or update best-known hand-optimized results.
-* Pull requests accepted. Please discuss in the [issues section](https://github.com/mmcloughlin/addchain/issues)
+* Pull requests accepted. Please discuss in the [issues section]({{ .Meta.RepositoryURL }}/issues)
   before starting significant work.
 
 ## License
