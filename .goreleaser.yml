@@ -14,7 +14,7 @@ builds:
       - arm64
     ldflags:
       - -s -w
-      - -X github.com/mmcloughlin/addchain/internal/meta.buildversion={{ .Version }}
+      - -X github.com/mmcloughlin/addchain/meta.buildversion={{ .Version }}
 archives:
   - format_overrides:
       - goos: windows
