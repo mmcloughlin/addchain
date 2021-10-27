@@ -13,7 +13,7 @@ import (
 	"github.com/mmcloughlin/addchain/acc/ir"
 	"github.com/mmcloughlin/addchain/acc/pass"
 	"github.com/mmcloughlin/addchain/acc/printer"
-	"github.com/mmcloughlin/addchain/internal/meta"
+	"github.com/mmcloughlin/addchain/meta"
 )
 
 type Data struct {
