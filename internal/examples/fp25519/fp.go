@@ -8,16 +8,28 @@ var p, _ = new(big.Int).SetString("578960446186580977117854925043439539266349923
 // Elt is an element of the field modulo 2^255-19.
 type Elt struct{ n big.Int }
 
-// Modp reduces z modulo p, ensuring it's in the range [0, p).
-func Modp(z *Elt) {
-	z.n.Mod(&z.n, p)
+func (z *Elt) SetInt(x *big.Int) *Elt {
+	z.n.Set(x)
+	return z.modp()
 }
 
-// Mul computes z = x*y (mod p).
-func Mul(z, x, y *Elt) {
+func (z *Elt) Int() *big.Int {
+	return new(big.Int).Set(&z.n)
+}
+
+// Mul computes z = x*y (mod p) and returns it.
+func (z *Elt) Mul(x, y *Elt) *Elt {
 	z.n.Mul(&x.n, &y.n)
-	Modp(z)
+	return z.modp()
 }
 
-// Sqr computes z = x^2 (mod p).
-func Sqr(z, x *Elt) { Mul(z, x, x) }
+// Sqr computes z = x^2 (mod p) and returns it.
+func (z *Elt) Sqr(x *Elt) *Elt {
+	return z.Mul(x, x)
+}
+
+// modp reduces z modulo p, ensuring it's in the range [0, p).
+func (z *Elt) modp() *Elt {
+	z.n.Mod(&z.n, p)
+	return z
+}
