@@ -21,6 +21,7 @@ generators.
 * Generic optimization methods eliminate redundant operations
 * Simple domain-specific language for addition chain computations
 * Command-line interface or library
+* Code generation and templated output support
 
 {{ toc }}
 
@@ -121,6 +122,9 @@ Output:
 ```
 {{ include "internal/examples/search/cmd.out" -}}
 ```
+
+Next, you can use `{{ .Meta.Name }}` to [generate code from this addition
+chain]({{ link "doc/gen.md" }}).
 
 ### Library
 

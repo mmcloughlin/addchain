@@ -8,11 +8,13 @@ var p, _ = new(big.Int).SetString("578960446186580977117854925043439539266349923
 // Elt is an element of the field modulo 2²⁵⁵-19.
 type Elt struct{ n big.Int }
 
+// SetInt sets z = x (mod p) and returns it.
 func (z *Elt) SetInt(x *big.Int) *Elt {
 	z.n.Set(x)
 	return z.modp()
 }
 
+// Int returns z as a big integer.
 func (z *Elt) Int() *big.Int {
 	return new(big.Int).Set(&z.n)
 }

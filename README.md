@@ -21,6 +21,7 @@ generators.
 * Generic optimization methods eliminate redundant operations
 * Simple domain-specific language for addition chain computations
 * Command-line interface or library
+* Code generation and templated output support
 
 ## Table of Contents
 
@@ -161,6 +162,9 @@ x240      = x120 << 120 + x120
 x250      = x240 << 10 + x10
 return      (x250 << 2 + 1) << 3 + _11
 ```
+
+Next, you can use `addchain` to [generate code from this addition
+chain](doc/gen.md).
 
 ### Library
 
