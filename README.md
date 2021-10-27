@@ -163,8 +163,7 @@ x250      = x240 << 10 + x10
 return      (x250 << 2 + 1) << 3 + _11
 ```
 
-Next, you can use `addchain` to [generate code from this addition
-chain](doc/gen.md).
+Next, you can [generate code from this addition chain](doc/gen.md).
 
 ### Library
 
