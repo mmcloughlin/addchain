@@ -2,7 +2,7 @@
 
 {{ toc }}
 
-{{- $templatereference := "Templates" -}}
+{{- $templatereference := "Template Reference" -}}
 {{- $builtins := "Builtin Templates" }}
 
 ## Example
@@ -58,6 +58,9 @@ The end product:
 ```go
 {{ include "internal/examples/fp25519/inv.go" -}}
 ```
+
+This code is part of a [full working example]({{ link
+"internal/examples/fp25519" }}) that passes tests.
 
 ## {{ $templatereference }}
 

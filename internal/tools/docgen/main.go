@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"text/template"
@@ -46,6 +47,7 @@ func mainerr() (err error) {
 	t := template.New("doc")
 
 	t.Funcs(template.FuncMap{
+		"link":     rellink(*output),
 		"include":  include,
 		"snippet":  snippet,
 		"anchor":   anchor,
@@ -57,7 +59,7 @@ func mainerr() (err error) {
 		"sum":      symbol('\u2211'),
 	})
 
-	t.Funcs(pkgfuncs("", "github.com/mmcloughlin/addchain"))
+	t.Funcs(pkgfuncs("", meta.Meta.Module()))
 	t.Funcs(pkgfuncs("std", ""))
 
 	// Load template.
@@ -131,6 +133,17 @@ func load() (string, error) {
 	}
 
 	return string(b), nil
+}
+
+// link to a file in the repository.
+func rellink(output string) func(string) (string, error) {
+	base := filepath.Dir(output)
+	return func(filename string) (string, error) {
+		if _, err := os.Stat(filename); err != nil {
+			return "", err
+		}
+		return filepath.Rel(base, filename)
+	}
 }
 
 // include template function.

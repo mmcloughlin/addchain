@@ -80,12 +80,12 @@ delta from the library result.
 | ---- | -----------: | ---------: | ----: |
 {{ range .Results -}}
 {{- if gt .BestKnown 0 -}}
-| [{{ .Name }}](doc/results.md#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ if le .Delta 0 }}**{{ printf "%+d" .Delta }}**{{ else }}{{ printf "%+d" .Delta }}{{ end }} |
+| [{{ .Name }}]({{ link "doc/results.md" }}#{{ anchor .Name }}) | {{ .Length }} | {{ .BestKnown }} | {{ if le .Delta 0 }}**{{ printf "%+d" .Delta }}**{{ else }}{{ printf "%+d" .Delta }}{{ end }} |
 {{ end -}}
 {{ end }}
 
-See [full results listing](doc/results.md) for more detail and results for
-less common exponents.
+See [full results listing]({{ link "doc/results.md" }}) for more detail and
+results for less common exponents.
 
 These results demonstrate that `addchain` is competitive with hand-optimized
 chains, often with equivalent or better performance. Even when `addchain` is

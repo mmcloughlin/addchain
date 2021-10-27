@@ -106,8 +106,8 @@ delta from the library result.
 | [secp256k1 (Bitcoin) Scalar Inversion](doc/results.md#secp256k1-bitcoin-scalar-inversion) | 293 | 290 | +3 |
 
 
-See [full results listing](doc/results.md) for more detail and results for
-less common exponents.
+See [full results listing](doc/results.md) for more detail and
+results for less common exponents.
 
 These results demonstrate that `addchain` is competitive with hand-optimized
 chains, often with equivalent or better performance. Even when `addchain` is

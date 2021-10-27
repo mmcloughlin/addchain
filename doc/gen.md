@@ -3,7 +3,7 @@
 ## Table of Contents
 
 * [Example](#example)
-* [Templates](#templates)
+* [Template Reference](#template-reference)
 * [Builtin Templates](#builtin-templates)
   * [chain](#chain)
   * [listing](#listing)
@@ -71,7 +71,7 @@ tools.
 
 In addition, `addchain` also offers templated output. In fact, the
 listing is actually produced by the [listing](#listing) builtin template. See
-below for details of the [templating language](#templates)
+below for details of the [templating language](#template-reference)
 and [builtin template examples](#builtin-templates). The following template
 can be used to directly produce Go code to execute the inversion chain:
 
@@ -264,7 +264,9 @@ func (z *Elt) Inv(x *Elt) *Elt {
 }
 ```
 
-## Templates
+This code is part of a [full working example](../internal/examples/fp25519) that passes tests.
+
+## Template Reference
 
 Templates use Go [`text/template`](https://pkg.go.dev/text/template) syntax. The data structure passed
 to the template is:
