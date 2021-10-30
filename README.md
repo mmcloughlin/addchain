@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/github/workflow/status/mmcloughlin/addchain/ci/master.svg?style=flat-square" alt="Build Status" />
   <a href="https://pkg.go.dev/github.com/mmcloughlin/addchain"><img src="https://img.shields.io/badge/doc-reference-007d9b?logo=go&style=flat-square" alt="go.dev" /></a>
   <a href="https://goreportcard.com/report/github.com/mmcloughlin/addchain"><img src="https://goreportcard.com/badge/github.com/mmcloughlin/addchain?style=flat-square" alt="Go Report Card" /></a>
-  <a href="https://doi.org/10.5281/zenodo.4758226"><img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.4758226-007ec6?style=flat-square" alt="DOI: 10.5281/zenodo.4758226" /></a>
+  <a href="https://doi.org/10.5281/zenodo.5622943"><img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.5622943-007ec6?style=flat-square" alt="DOI: 10.5281/zenodo.5622943" /></a>
 </p>
 
 <p align="center">Cryptographic Addition Chain Generation in Go</p>
@@ -357,20 +357,20 @@ chains](https://github.com/mmcloughlin/addchain/issues/24)?
 If you use `addchain` in your research a citation would be appreciated.
 Citing a specific release is preferred, since they are [archived on
 Zenodo](https://doi.org/10.5281/zenodo.4625263) and assigned a DOI. Please use the
-following BibTeX to cite the most recent [0.3.0
-release](https://github.com/mmcloughlin/addchain/releases/tag/v0.3.0).
+following BibTeX to cite the most recent [0.4.0
+release](https://github.com/mmcloughlin/addchain/releases/tag/v0.4.0).
 
 ```bib
 @misc{addchain,
     title        = {addchain: Cryptographic Addition Chain Generation in Go},
     author       = {Michael B. McLoughlin},
     year         = 2021,
-    month        = may,
+    month        = oct,
     howpublished = {Repository \url{https://github.com/mmcloughlin/addchain}},
-    version      = {0.3.0},
+    version      = {0.4.0},
     license      = {BSD 3-Clause License},
-    doi          = {10.5281/zenodo.4758226},
-    url          = {https://doi.org/10.5281/zenodo.4758226},
+    doi          = {10.5281/zenodo.5622943},
+    url          = {https://doi.org/10.5281/zenodo.5622943},
 }
 ```
 
