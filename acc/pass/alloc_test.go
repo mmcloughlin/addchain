@@ -1,11 +1,13 @@
 package pass
 
 import (
+	"math/rand"
 	"reflect"
 	"strconv"
 	"testing"
 
 	"github.com/mmcloughlin/addchain/acc/ir"
+	"github.com/mmcloughlin/addchain/internal/test"
 )
 
 func TestAllocator(t *testing.T) {
@@ -75,4 +77,52 @@ func TestAllocator(t *testing.T) {
 	if p.Output().Identifier != a.Output {
 		t.Errorf("unexpected output name: got %q expect %q", p.Output().Identifier, a.Output)
 	}
+}
+
+func TestAllocatorAlias(t *testing.T) {
+	test.Repeat(t, func(t *testing.T) bool {
+		// Generate a random program.
+		p := &ir.Program{}
+		for i := 1; i < 32; i++ {
+			p.AddInstruction(&ir.Instruction{
+				Output: ir.Index(i),
+				Op: ir.Add{
+					X: ir.Index(i - 1), // ensure every index is used
+					Y: ir.Index(rand.Intn(i)),
+				},
+			})
+		}
+
+		// Execute allocation pass.
+		t.Logf("pre:\n%s", p)
+
+		a := Allocator{
+			Input:  "in",
+			Output: "out",
+			Format: "tmp%d",
+		}
+		if err := a.Execute(p); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("post:\n%s", p)
+
+		// Verify the input and output are not live at the same time.
+		live := map[string]bool{}
+		for i := len(p.Instructions) - 1; i >= 0; i-- {
+			inst := p.Instructions[i]
+
+			// Update live set.
+			delete(live, inst.Output.Identifier)
+			for _, input := range inst.Op.Inputs() {
+				live[input.Identifier] = true
+			}
+
+			if live[a.Input] && live[a.Output] {
+				t.Fatalf("instruction %d: input %q and output %q both live", i, a.Input, a.Output)
+			}
+		}
+
+		return false
+	})
 }
