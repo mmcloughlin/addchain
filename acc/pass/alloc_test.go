@@ -1,12 +1,14 @@
 package pass
 
 import (
-	"math/rand"
 	"reflect"
 	"strconv"
 	"testing"
 
+	"github.com/mmcloughlin/addchain/acc/eval"
 	"github.com/mmcloughlin/addchain/acc/ir"
+	"github.com/mmcloughlin/addchain/acc/rand"
+	"github.com/mmcloughlin/addchain/internal/bigint"
 	"github.com/mmcloughlin/addchain/internal/test"
 )
 
@@ -80,17 +82,12 @@ func TestAllocator(t *testing.T) {
 }
 
 func TestAllocatorAlias(t *testing.T) {
+	r := rand.AddsGenerator{N: 32}
 	test.Repeat(t, func(t *testing.T) bool {
 		// Generate a random program.
-		p := &ir.Program{}
-		for i := 1; i < 32; i++ {
-			p.AddInstruction(&ir.Instruction{
-				Output: ir.Index(i),
-				Op: ir.Add{
-					X: ir.Index(i - 1), // ensure every index is used
-					Y: ir.Index(rand.Intn(i)),
-				},
-			})
+		p, err := r.GenerateProgram()
+		if err != nil {
+			t.Fatal(err)
 		}
 
 		// Execute allocation pass.
@@ -124,5 +121,61 @@ func TestAllocatorAlias(t *testing.T) {
 		}
 
 		return false
+	})
+}
+
+func TestAllocatorExec(t *testing.T) {
+	r := rand.AddsGenerator{N: 64}
+	test.Repeat(t, func(t *testing.T) bool {
+		// Generate a random program.
+		p, err := r.GenerateProgram()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// Execute allocation pass.
+		t.Logf("pre:\n%s", p)
+
+		a := Allocator{
+			Input:  "x",
+			Output: "z",
+			Format: "t%d",
+		}
+		if err := a.Execute(p); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("post:\n%s", p)
+
+		// Execute with interpreter. Deliberately setup the input and output to
+		// be aliased.
+		i := eval.NewInterpreter()
+		x := bigint.One()
+		i.Store(a.Input, x)
+		i.Store(a.Output, x)
+
+		if err := i.Execute(p); err != nil {
+			t.Fatal(err)
+		}
+
+		// Output should be the same as the target of the addition chain.
+		output, ok := i.Load(a.Output)
+		if !ok {
+			t.Fatalf("missing output variable %q", a.Output)
+		}
+
+		if err := Eval(p); err != nil {
+			t.Fatal(err)
+		}
+
+		expect := p.Chain.End()
+
+		if !bigint.Equal(output, expect) {
+			t.Logf("   got = %#x", output)
+			t.Logf("expect = %#x", expect)
+			t.Fatal("mismatch")
+		}
+
+		return true
 	})
 }
