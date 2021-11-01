@@ -26,8 +26,8 @@ type Allocator struct {
 
 // Execute performs temporary variable allocation.
 func (a Allocator) Execute(p *ir.Program) error {
-	// Canonicalize operands and delete all names.
-	if err := Exec(p, Func(CanonicalizeOperands), Func(ClearNames)); err != nil {
+	// Canonicalize operands, collect unique indexes, and delete all names.
+	if err := Exec(p, Func(CanonicalizeOperands), Func(Indexes), Func(ClearNames)); err != nil {
 		return err
 	}
 
@@ -82,7 +82,8 @@ func (a Allocator) Execute(p *ir.Program) error {
 	}
 
 	name := map[int]string{}
-	for _, op := range p.Operands {
+	for _, index := range p.Indexes {
+		op := p.Operands[index]
 		v := allocation[op.Index]
 		_, ok := name[v]
 		switch {

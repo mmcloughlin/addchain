@@ -3,6 +3,7 @@ package pass
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/mmcloughlin/addchain/acc/ir"
 	"github.com/mmcloughlin/addchain/internal/errutil"
@@ -96,6 +97,28 @@ func CanonicalizeOperands(p *ir.Program) error {
 			return errutil.UnexpectedType(op)
 		}
 	}
+
+	return nil
+}
+
+// Indexes computes the sorted list of unique operand indexes that appear in the
+// program. Populates the Indexes field of the program.
+func Indexes(p *ir.Program) error {
+	if p.Indexes != nil {
+		return nil
+	}
+
+	// Canonicalize operands to populate the Operands field.
+	if err := CanonicalizeOperands(p); err != nil {
+		return err
+	}
+
+	// Gather and sort indexes.
+	for index := range p.Operands {
+		p.Indexes = append(p.Indexes, index)
+	}
+
+	sort.Ints(p.Indexes)
 
 	return nil
 }

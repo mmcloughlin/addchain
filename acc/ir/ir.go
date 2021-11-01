@@ -13,6 +13,7 @@ type Program struct {
 	Instructions []*Instruction
 
 	// Pass/analysis results.
+	Indexes     []int
 	Operands    map[int]*Operand
 	ReadCount   map[int]int
 	Program     addchain.Program

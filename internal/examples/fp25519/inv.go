@@ -34,97 +34,97 @@ func (z *Elt) Inv(x *Elt) *Elt {
 		t4 = new(Elt)
 	)
 
-	// Step 1: t3 = x^0x2
-	t3.Sqr(x)
+	// Step 1: t0 = x^0x2
+	t0.Sqr(x)
 
-	// Step 2: t3 = x^0x3
-	t3.Mul(x, t3)
+	// Step 2: t0 = x^0x3
+	t0.Mul(x, t0)
 
-	// Step 4: t0 = x^0xc
-	t0.Sqr(t3)
+	// Step 4: t1 = x^0xc
+	t1.Sqr(t0)
 	for s := 1; s < 2; s++ {
-		t0.Sqr(t0)
+		t1.Sqr(t1)
 	}
 
-	// Step 5: t0 = x^0xf
-	t0.Mul(t3, t0)
+	// Step 5: t1 = x^0xf
+	t1.Mul(t0, t1)
 
-	// Step 9: t1 = x^0xf0
-	t1.Sqr(t0)
+	// Step 9: t2 = x^0xf0
+	t2.Sqr(t1)
 	for s := 1; s < 4; s++ {
+		t2.Sqr(t2)
+	}
+
+	// Step 10: t1 = x^0xff
+	t1.Mul(t1, t2)
+
+	// Step 12: t1 = x^0x3fc
+	for s := 0; s < 2; s++ {
 		t1.Sqr(t1)
 	}
 
-	// Step 10: t0 = x^0xff
-	t0.Mul(t0, t1)
+	// Step 13: t1 = x^0x3ff
+	t1.Mul(t0, t1)
 
-	// Step 12: t0 = x^0x3fc
-	for s := 0; s < 2; s++ {
-		t0.Sqr(t0)
-	}
-
-	// Step 13: t0 = x^0x3ff
-	t0.Mul(t3, t0)
-
-	// Step 23: t1 = x^0xffc00
-	t1.Sqr(t0)
+	// Step 23: t2 = x^0xffc00
+	t2.Sqr(t1)
 	for s := 1; s < 10; s++ {
-		t1.Sqr(t1)
+		t2.Sqr(t2)
 	}
 
-	// Step 24: t1 = x^0xfffff
-	t1.Mul(t0, t1)
+	// Step 24: t2 = x^0xfffff
+	t2.Mul(t1, t2)
 
-	// Step 34: t1 = x^0x3ffffc00
+	// Step 34: t2 = x^0x3ffffc00
 	for s := 0; s < 10; s++ {
-		t1.Sqr(t1)
+		t2.Sqr(t2)
 	}
 
-	// Step 35: t1 = x^0x3fffffff
-	t1.Mul(t0, t1)
+	// Step 35: t2 = x^0x3fffffff
+	t2.Mul(t1, t2)
 
-	// Step 65: t2 = x^0xfffffffc0000000
-	t2.Sqr(t1)
+	// Step 65: t3 = x^0xfffffffc0000000
+	t3.Sqr(t2)
 	for s := 1; s < 30; s++ {
-		t2.Sqr(t2)
+		t3.Sqr(t3)
 	}
 
-	// Step 66: t1 = x^0xfffffffffffffff
-	t1.Mul(t1, t2)
+	// Step 66: t2 = x^0xfffffffffffffff
+	t2.Mul(t2, t3)
 
-	// Step 126: t2 = x^0xfffffffffffffff000000000000000
-	t2.Sqr(t1)
+	// Step 126: t3 = x^0xfffffffffffffff000000000000000
+	t3.Sqr(t2)
 	for s := 1; s < 60; s++ {
-		t2.Sqr(t2)
+		t3.Sqr(t3)
 	}
 
-	// Step 127: t1 = x^0xffffffffffffffffffffffffffffff
-	t1.Mul(t1, t2)
+	// Step 127: t2 = x^0xffffffffffffffffffffffffffffff
+	t2.Mul(t2, t3)
 
-	// Step 247: t2 = x^0xffffffffffffffffffffffffffffff000000000000000000000000000000
-	t2.Sqr(t1)
+	// Step 247: t3 = x^0xffffffffffffffffffffffffffffff000000000000000000000000000000
+	t3.Sqr(t2)
 	for s := 1; s < 120; s++ {
+		t3.Sqr(t3)
+	}
+
+	// Step 248: t2 = x^0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+	t2.Mul(t2, t3)
+
+	// Step 258: t2 = x^0x3fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc00
+	for s := 0; s < 10; s++ {
 		t2.Sqr(t2)
 	}
 
-	// Step 248: t1 = x^0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+	// Step 259: t1 = x^0x3ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 	t1.Mul(t1, t2)
 
-	// Step 258: t1 = x^0x3fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc00
-	for s := 0; s < 10; s++ {
-		t1.Sqr(t1)
-	}
-
-	// Step 259: t0 = x^0x3ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-	t0.Mul(t0, t1)
-
-	// Step 261: t0 = x^0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc
+	// Step 261: t1 = x^0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc
 	for s := 0; s < 2; s++ {
-		t0.Sqr(t0)
+		t1.Sqr(t1)
 	}
 
 	// Step 262: t4 = x^0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd
-	t4.Mul(x, t0)
+	t4.Mul(x, t1)
 
 	// Step 265: t4 = x^0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe8
 	for s := 0; s < 3; s++ {
@@ -132,7 +132,7 @@ func (z *Elt) Inv(x *Elt) *Elt {
 	}
 
 	// Step 266: z = x^0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeb
-	z.Mul(t3, t4)
+	z.Mul(t0, t4)
 
 	return z
 }
