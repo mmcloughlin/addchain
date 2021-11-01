@@ -52,6 +52,32 @@ func RequireStress(t *testing.T) {
 	}
 }
 
+type Timer struct {
+	start    time.Time
+	duration time.Duration
+}
+
+func NewTimer() *Timer {
+	return &Timer{
+		start:    time.Now(),
+		duration: timeallowed(),
+	}
+}
+
+func (t *Timer) Elapsed() time.Duration {
+	return time.Since(t.start)
+}
+
+func (t *Timer) Done() bool {
+	return t.Elapsed() >= t.duration
+}
+
+func (t *Timer) Check(test *testing.T) {
+	if t.Done() {
+		test.Skip("time limit reached")
+	}
+}
+
 // Repeat the given trial function. The duration is controlled by custom
 // command-line flags. The trial function returns whether it wants to continue
 // testing.
@@ -60,13 +86,12 @@ func RequireStress(t *testing.T) {
 //	-long		allow more time
 //	-stress		run for an extremely long time
 func Repeat(t *testing.T, trial func(t *testing.T) bool) {
-	start := time.Now()
-	d := timeallowed()
+	timer := NewTimer()
 	n := 1
-	for time.Since(start) < d && trial(t) {
+	for !timer.Done() && trial(t) {
 		n++
 	}
-	t.Logf("%d trials in %s", n, time.Since(start))
+	t.Logf("%d trials in %s", n, timer.Elapsed())
 }
 
 // Trials returns a function that repeats f.
