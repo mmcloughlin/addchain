@@ -52,41 +52,47 @@ func RequireStress(t *testing.T) {
 	}
 }
 
+// Timer for keeping test execution times under a configured time limit.
+//
+// The duration is controlled by custom command-line flags.
+//
+//	-short		run for less time than usual
+//	-long		allow more time
+//	-stress		run for an extremely long time
 type Timer struct {
 	start    time.Time
 	duration time.Duration
 }
 
-func NewTimer() *Timer {
+// Start a test execution timer.
+func Start() *Timer {
 	return &Timer{
 		start:    time.Now(),
 		duration: timeallowed(),
 	}
 }
 
+// Elapsed time since the timer started.
 func (t *Timer) Elapsed() time.Duration {
 	return time.Since(t.start)
 }
 
+// Done reports if the test deadline has been reached.
 func (t *Timer) Done() bool {
 	return t.Elapsed() >= t.duration
 }
 
+// Check skips the test if the time limit has been reached.
 func (t *Timer) Check(test *testing.T) {
 	if t.Done() {
 		test.Skip("time limit reached")
 	}
 }
 
-// Repeat the given trial function. The duration is controlled by custom
-// command-line flags. The trial function returns whether it wants to continue
-// testing.
-//
-//	-short		run for less time than usual
-//	-long		allow more time
-//	-stress		run for an extremely long time
+// Repeat the given trial function until the time limit is reached (with the
+// same rules as Timer), or the trial function returns false.
 func Repeat(t *testing.T, trial func(t *testing.T) bool) {
-	timer := NewTimer()
+	timer := Start()
 	n := 1
 	for !timer.Done() && trial(t) {
 		n++
