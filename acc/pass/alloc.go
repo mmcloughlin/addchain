@@ -71,7 +71,10 @@ func (a Allocator) Execute(p *ir.Program) error {
 		}
 	}
 
-	// Assign names to the operands.
+	// Assign names to the operands. Reuse of the output variable is handled
+	// specially, since we have to account for the possibility that it could be
+	// aliased with the input. Prior to the last use of the input, variable 0
+	// will be a temporary, after it will be the output.
 	lastinputread := 0
 	for _, inst := range p.Instructions {
 		for _, input := range inst.Op.Inputs() {
@@ -81,16 +84,21 @@ func (a Allocator) Execute(p *ir.Program) error {
 		}
 	}
 
+	// Map from variable index to name.
 	name := map[int]string{}
 	for _, index := range p.Indexes {
 		op := p.Operands[index]
 		v := allocation[op.Index]
 		_, ok := name[v]
 		switch {
+		// Operand index 0 is the input.
 		case op.Index == 0:
 			op.Identifier = a.Input
+		// Variable index 0 is the output, as long as we're past the last use of
+		// the input.
 		case v == 0 && op.Index >= lastinputread:
 			op.Identifier = a.Output
+		// Unnamed variable: allocate a temporary.
 		case !ok:
 			name[v] = fmt.Sprintf(a.Format, len(p.Temporaries))
 			p.Temporaries = append(p.Temporaries, name[v])
