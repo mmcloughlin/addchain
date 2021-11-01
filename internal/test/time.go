@@ -85,7 +85,7 @@ func (t *Timer) Done() bool {
 // Check skips the test if the time limit has been reached.
 func (t *Timer) Check(test *testing.T) {
 	if t.Done() {
-		test.Skip("time limit reached")
+		test.Skipf("%s time limit reached", t.duration)
 	}
 }
 
