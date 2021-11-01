@@ -1,3 +1,4 @@
+// Package rand provides random addition chain program generators.
 package rand
 
 import (
@@ -23,6 +24,7 @@ func (a AddsGenerator) String() string {
 	return fmt.Sprintf("random_adds(%d)", a.N)
 }
 
+// GenerateProgram builds a program with N random adds.
 func (a AddsGenerator) GenerateProgram() (*ir.Program, error) {
 	p := &ir.Program{}
 	for i := 1; i <= a.N; i++ {

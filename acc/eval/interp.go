@@ -9,10 +9,15 @@ import (
 	"github.com/mmcloughlin/addchain/internal/errutil"
 )
 
+// Interpreter for acc programs.  In contrast to evaluation using indexes, the
+// interpreter executes the program using operand variable names, as if it was a
+// block of source code. Internally it maintains the state of every variable,
+// and program instructions update that state.
 type Interpreter struct {
 	state map[string]*big.Int
 }
 
+// NewInterpreter builds a new interpreter. Initially, all variables are unset.
 func NewInterpreter() *Interpreter {
 	return &Interpreter{
 		state: map[string]*big.Int{},
