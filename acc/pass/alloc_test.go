@@ -46,7 +46,8 @@ func TestAllocator(t *testing.T) {
 		Output: "out",
 		Format: "tmp%d",
 	}
-	Allocate(t, a, p)
+
+	Allocate(t, p, a)
 
 	// Every operand should have a name.
 	for _, operand := range p.Operands {
@@ -75,9 +76,16 @@ func TestAllocator(t *testing.T) {
 	}
 }
 
-func TestAllocatorAlias(t *testing.T) {
-	r := rand.AddsGenerator{N: 32}
+func TestAllocatorRandom(t *testing.T) {
+	checks := []func(*testing.T, *ir.Program, Allocator){
+		CheckInputOutputNotBothLive,
+		CheckExecute,
+	}
+
+	r := rand.AddsGenerator{N: 64}
 	test.Repeat(t, func(t *testing.T) bool {
+		t.Helper()
+
 		// Generate a random program.
 		p, err := r.GenerateProgram()
 		if err != nil {
@@ -88,81 +96,74 @@ func TestAllocatorAlias(t *testing.T) {
 		a := Allocator{
 			Input:  "in",
 			Output: "out",
-			Format: "tmp%d",
-		}
-		Allocate(t, a, p)
-
-		// Verify the input and output are not live at the same time.
-		live := map[string]bool{}
-		for i := len(p.Instructions) - 1; i >= 0; i-- {
-			inst := p.Instructions[i]
-
-			// Update live set.
-			delete(live, inst.Output.Identifier)
-			for _, input := range inst.Op.Inputs() {
-				live[input.Identifier] = true
-			}
-
-			if live[a.Input] && live[a.Output] {
-				t.Fatalf("instruction %d: input %q and output %q both live", i, a.Input, a.Output)
-			}
-		}
-
-		return true
-	})
-}
-
-func TestAllocatorExec(t *testing.T) {
-	r := rand.AddsGenerator{N: 64}
-	test.Repeat(t, func(t *testing.T) bool {
-		// Generate a random program.
-		p, err := r.GenerateProgram()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		// Execute allocation pass.
-		a := Allocator{
-			Input:  "x",
-			Output: "z",
 			Format: "t%d",
 		}
-		Allocate(t, a, p)
 
-		// Execute with interpreter. Deliberately setup the input and output to
-		// be aliased.
-		i := eval.NewInterpreter()
-		x := bigint.One()
-		i.Store(a.Input, x)
-		i.Store(a.Output, x)
+		Allocate(t, p, a)
 
-		if err := i.Execute(p); err != nil {
-			t.Fatal(err)
-		}
-
-		// Output should be the same as the target of the addition chain.
-		output, ok := i.Load(a.Output)
-		if !ok {
-			t.Fatalf("missing output variable %q", a.Output)
-		}
-
-		if err := Eval(p); err != nil {
-			t.Fatal(err)
-		}
-
-		expect := p.Chain.End()
-
-		if !bigint.Equal(output, expect) {
-			t.Logf("   got = %#x", output)
-			t.Logf("expect = %#x", expect)
-			t.Fatal("mismatch")
+		// Checks.
+		for _, check := range checks {
+			check(t, p, a)
 		}
 
 		return true
 	})
 }
 
-func Allocate(t *testing.T, a Allocator, p *ir.Program) {
+func CheckInputOutputNotBothLive(t *testing.T, p *ir.Program, a Allocator) {
+	t.Helper()
+
+	// Verify the input and output are not live at the same time.
+	live := map[string]bool{}
+	for i := len(p.Instructions) - 1; i >= 0; i-- {
+		inst := p.Instructions[i]
+
+		// Update live set.
+		delete(live, inst.Output.Identifier)
+		for _, input := range inst.Op.Inputs() {
+			live[input.Identifier] = true
+		}
+
+		if live[a.Input] && live[a.Output] {
+			t.Fatalf("instruction %d: input %q and output %q both live", i, a.Input, a.Output)
+		}
+	}
+}
+
+func CheckExecute(t *testing.T, p *ir.Program, a Allocator) {
+	t.Helper()
+
+	// Execute with interpreter. Deliberately setup the input and output to
+	// be aliased.
+	i := eval.NewInterpreter()
+	x := bigint.One()
+	i.Store(a.Input, x)
+	i.Store(a.Output, x)
+
+	if err := i.Execute(p); err != nil {
+		t.Fatal(err)
+	}
+
+	// Output should be the same as the target of the addition chain.
+	output, ok := i.Load(a.Output)
+	if !ok {
+		t.Fatalf("missing output variable %q", a.Output)
+	}
+
+	if err := Eval(p); err != nil {
+		t.Fatal(err)
+	}
+
+	expect := p.Chain.End()
+
+	if !bigint.Equal(output, expect) {
+		t.Logf("   got = %#x", output)
+		t.Logf("expect = %#x", expect)
+		t.Fatal("mismatch")
+	}
+}
+
+func Allocate(t *testing.T, p *ir.Program, a Allocator) {
 	t.Helper()
 
 	t.Logf("pre alloc:\n%s", p)
