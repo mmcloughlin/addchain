@@ -100,13 +100,16 @@ func TestIndexes(t *testing.T) {
 		},
 	}
 
-	if err := Indexes(p); err != nil {
-		t.Fatal(err)
-	}
+	// Twice to check idempotency.
+	for i := 0; i < 2; i++ {
+		if err := Indexes(p); err != nil {
+			t.Fatal(err)
+		}
 
-	expect := []int{0, 2, 5, 9}
-	if !reflect.DeepEqual(expect, p.Indexes) {
-		t.FailNow()
+		expect := []int{0, 2, 5, 9}
+		if !reflect.DeepEqual(expect, p.Indexes) {
+			t.FailNow()
+		}
 	}
 }
 
@@ -148,11 +151,14 @@ func TestReadCounts(t *testing.T) {
 		5: 1,
 	}
 
-	if err := ReadCounts(p); err != nil {
-		t.Fatal(p)
-	}
+	// Twice to check idempotency.
+	for i := 0; i < 2; i++ {
+		if err := ReadCounts(p); err != nil {
+			t.Fatal(p)
+		}
 
-	if !reflect.DeepEqual(expect, p.ReadCount) {
-		t.FailNow()
+		if !reflect.DeepEqual(expect, p.ReadCount) {
+			t.FailNow()
+		}
 	}
 }
