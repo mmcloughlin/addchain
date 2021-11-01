@@ -29,31 +29,31 @@ addchain gen inv.acc
 ```
 Output:
 ```
-tmp	t0	t1	t2
-double	z	x
-add	z	x	z
-shift	t0	z	2
-add	t0	z	t0
-shift	t1	t0	4
-add	t0	t0	t1
-shift	t0	t0	2
-add	t0	z	t0
-shift	t1	t0	10
-add	t1	t0	t1
-shift	t1	t1	10
-add	t1	t0	t1
-shift	t2	t1	30
-add	t1	t1	t2
-shift	t2	t1	60
-add	t1	t1	t2
-shift	t2	t1	120
-add	t1	t1	t2
-shift	t1	t1	10
-add	t0	t0	t1
-shift	t0	t0	2
-add	t0	x	t0
-shift	t0	t0	3
-add	z	z	t0
+tmp	t0	t1	t2	t3	t4
+double	t1	x
+add	t1	x	t1
+shift	t2	t1	2
+add	t2	t1	t2
+shift	t0	t2	4
+add	t2	t2	t0
+shift	t2	t2	2
+add	t2	t1	t2
+shift	t0	t2	10
+add	t0	t2	t0
+shift	t0	t0	10
+add	t0	t2	t0
+shift	t3	t0	30
+add	t0	t0	t3
+shift	t3	t0	60
+add	t0	t0	t3
+shift	t3	t0	120
+add	t0	t0	t3
+shift	t0	t0	10
+add	t2	t2	t0
+shift	t2	t2	2
+add	t4	x	t2
+shift	t4	t4	3
+add	z	t1	t4
 ```
 
 This listing is intended to be a simple text format that could directly be
@@ -162,22 +162,24 @@ func (z *Elt) Inv(x *Elt) *Elt {
 		t0 = new(Elt)
 		t1 = new(Elt)
 		t2 = new(Elt)
+		t3 = new(Elt)
+		t4 = new(Elt)
 	)
 
-	// Step 1: z = x^0x2
-	z.Sqr(x)
+	// Step 1: t3 = x^0x2
+	t3.Sqr(x)
 
-	// Step 2: z = x^0x3
-	z.Mul(x, z)
+	// Step 2: t3 = x^0x3
+	t3.Mul(x, t3)
 
 	// Step 4: t0 = x^0xc
-	t0.Sqr(z)
+	t0.Sqr(t3)
 	for s := 1; s < 2; s++ {
 		t0.Sqr(t0)
 	}
 
 	// Step 5: t0 = x^0xf
-	t0.Mul(z, t0)
+	t0.Mul(t3, t0)
 
 	// Step 9: t1 = x^0xf0
 	t1.Sqr(t0)
@@ -194,7 +196,7 @@ func (z *Elt) Inv(x *Elt) *Elt {
 	}
 
 	// Step 13: t0 = x^0x3ff
-	t0.Mul(z, t0)
+	t0.Mul(t3, t0)
 
 	// Step 23: t1 = x^0xffc00
 	t1.Sqr(t0)
@@ -253,16 +255,16 @@ func (z *Elt) Inv(x *Elt) *Elt {
 		t0.Sqr(t0)
 	}
 
-	// Step 262: t0 = x^0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd
-	t0.Mul(x, t0)
+	// Step 262: t4 = x^0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd
+	t4.Mul(x, t0)
 
-	// Step 265: t0 = x^0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe8
+	// Step 265: t4 = x^0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe8
 	for s := 0; s < 3; s++ {
-		t0.Sqr(t0)
+		t4.Sqr(t4)
 	}
 
 	// Step 266: z = x^0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeb
-	z.Mul(z, t0)
+	z.Mul(t3, t4)
 
 	return z
 }
