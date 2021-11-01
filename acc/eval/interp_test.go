@@ -29,9 +29,12 @@ func TestInterpreter(t *testing.T) {
 
 	// Evaluate it.
 	i := NewInterpreter()
-	i.Store("a", big.NewInt(1))
-	err := i.Execute(p)
-	if err != nil {
+
+	if err := i.Initialize("a", big.NewInt(1)); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := i.Execute(p); err != nil {
 		t.Fatal(err)
 	}
 
