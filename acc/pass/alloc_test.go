@@ -49,12 +49,8 @@ func TestAllocator(t *testing.T) {
 
 	Allocate(t, p, a)
 
-	// Every operand should have a name.
-	for _, operand := range p.Operands {
-		if operand.Identifier == "" {
-			t.Errorf("operand %s does not have a name", operand)
-		}
-	}
+	// Check allocation properties.
+	CheckAllocation(t, p, a)
 
 	// We expect to have n-1 temporaries. Note we do not expect n, since the output
 	// variable should be used as a temporary.
@@ -77,11 +73,6 @@ func TestAllocator(t *testing.T) {
 }
 
 func TestAllocatorRandom(t *testing.T) {
-	checks := []func(*testing.T, *ir.Program, Allocator){
-		CheckInputOutputNotBothLive,
-		CheckExecute,
-	}
-
 	r := rand.AddsGenerator{N: 64}
 	test.Repeat(t, func(t *testing.T) bool {
 		t.Helper()
@@ -101,19 +92,84 @@ func TestAllocatorRandom(t *testing.T) {
 
 		Allocate(t, p, a)
 
-		// Checks.
-		for _, check := range checks {
-			check(t, p, a)
-		}
+		// Check.
+		CheckAllocation(t, p, a)
 
 		return true
 	})
 }
 
+func CheckAllocation(t *testing.T, p *ir.Program, a Allocator) {
+	t.Helper()
+
+	checks := []func(*testing.T, *ir.Program, Allocator){
+		CheckEveryOperandNamed,
+		CheckUsedVariables,
+		CheckInputNotWritten,
+		CheckInputOutputNotBothLive,
+		CheckLiveVariablesUnique,
+		CheckExecute,
+	}
+	for _, check := range checks {
+		check(t, p, a)
+	}
+}
+
+// CheckEveryOperandNamed verfies the allocator assigned an identifier to every operand.
+func CheckEveryOperandNamed(t *testing.T, p *ir.Program, a Allocator) {
+	t.Helper()
+
+	for _, operand := range p.Operands {
+		if operand.Identifier == "" {
+			t.Errorf("operand %s does not have a name", operand)
+		}
+	}
+}
+
+// CheckUsedVariables verifies that the set of used variables is exactly the
+// input, output and temporaries list.
+func CheckUsedVariables(t *testing.T, p *ir.Program, a Allocator) {
+	t.Helper()
+
+	// Gather set of used variables.
+	used := map[string]bool{}
+	for _, operand := range p.Operands {
+		used[operand.Identifier] = true
+	}
+
+	// Expect the set of used variables should be the input, output and
+	// temporaries list.
+	expect := []string{a.Input, a.Output}
+	expect = append(expect, p.Temporaries...)
+
+	if len(used) != len(expect) {
+		t.Errorf("%d used variables; expected %d", len(used), len(expect))
+	}
+
+	for _, v := range expect {
+		if !used[v] {
+			t.Errorf("variable %q not used", v)
+		}
+	}
+}
+
+// CheckInputNotWritten verifies the input is never written to.
+func CheckInputNotWritten(t *testing.T, p *ir.Program, a Allocator) {
+	t.Helper()
+
+	for i, inst := range p.Instructions {
+		if inst.Output.Identifier == a.Input {
+			t.Fatalf("instruction %d: write to input %q", i, a.Input)
+		}
+	}
+}
+
+// CheckInputOutputNotBothLive verifies the input and output are not live at the
+// same time. This is required to preserve correctness when input and output are
+// aliased.
 func CheckInputOutputNotBothLive(t *testing.T, p *ir.Program, a Allocator) {
 	t.Helper()
 
-	// Verify the input and output are not live at the same time.
 	live := map[string]bool{}
 	for i := len(p.Instructions) - 1; i >= 0; i-- {
 		inst := p.Instructions[i]
@@ -130,11 +186,45 @@ func CheckInputOutputNotBothLive(t *testing.T, p *ir.Program, a Allocator) {
 	}
 }
 
+// CheckLiveVariablesUnique verifies the primary property of the allocator: live
+// variables are assigned different names.
+func CheckLiveVariablesUnique(t *testing.T, p *ir.Program, a Allocator) {
+	t.Helper()
+
+	// Collect the index to name map.
+	name := map[int]string{}
+	for _, op := range p.Operands {
+		name[op.Index] = op.Identifier
+	}
+
+	// Maintain set of live indexes.
+	live := map[int]bool{}
+	for i := len(p.Instructions) - 1; i >= 0; i-- {
+		inst := p.Instructions[i]
+
+		// Update live set.
+		delete(live, inst.Output.Index)
+		for _, input := range inst.Op.Inputs() {
+			live[input.Index] = true
+		}
+
+		// Check all unique.
+		seen := map[string]bool{}
+		for i := range live {
+			if seen[name[i]] {
+				t.Fatalf("variable %q assigned to two live operands", name[i])
+			}
+			seen[name[i]] = true
+		}
+	}
+}
+
+// CheckExecute executes the program under the interpreter and verifies the
+// output is the same as the the evaluated addition chain.
 func CheckExecute(t *testing.T, p *ir.Program, a Allocator) {
 	t.Helper()
 
-	// Execute with interpreter. Deliberately setup the input and output to
-	// be aliased.
+	// Deliberately setup the input and output to be aliased.
 	i := eval.NewInterpreter()
 	x := bigint.One()
 	i.Store(a.Input, x)
