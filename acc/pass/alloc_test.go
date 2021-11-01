@@ -41,18 +41,12 @@ func TestAllocator(t *testing.T) {
 	}
 
 	// Execute allocation pass.
-	t.Logf("pre:\n%s", p)
-
 	a := Allocator{
 		Input:  "in",
 		Output: "out",
 		Format: "tmp%d",
 	}
-	if err := a.Execute(p); err != nil {
-		t.Fatal(err)
-	}
-
-	t.Logf("post:\n%s", p)
+	Allocate(t, a, p)
 
 	// Every operand should have a name.
 	for _, operand := range p.Operands {
@@ -62,7 +56,7 @@ func TestAllocator(t *testing.T) {
 	}
 
 	// We expect to have n-1 temporaries. Note we do not expect n, since the output
-	// variable will be used as a temporary.
+	// variable should be used as a temporary.
 	expect := make([]string, n-1)
 	for i := 0; i < n-1; i++ {
 		expect[i] = "tmp" + strconv.Itoa(i)
@@ -91,18 +85,12 @@ func TestAllocatorAlias(t *testing.T) {
 		}
 
 		// Execute allocation pass.
-		t.Logf("pre:\n%s", p)
-
 		a := Allocator{
 			Input:  "in",
 			Output: "out",
 			Format: "tmp%d",
 		}
-		if err := a.Execute(p); err != nil {
-			t.Fatal(err)
-		}
-
-		t.Logf("post:\n%s", p)
+		Allocate(t, a, p)
 
 		// Verify the input and output are not live at the same time.
 		live := map[string]bool{}
@@ -120,7 +108,7 @@ func TestAllocatorAlias(t *testing.T) {
 			}
 		}
 
-		return false
+		return true
 	})
 }
 
@@ -134,18 +122,12 @@ func TestAllocatorExec(t *testing.T) {
 		}
 
 		// Execute allocation pass.
-		t.Logf("pre:\n%s", p)
-
 		a := Allocator{
 			Input:  "x",
 			Output: "z",
 			Format: "t%d",
 		}
-		if err := a.Execute(p); err != nil {
-			t.Fatal(err)
-		}
-
-		t.Logf("post:\n%s", p)
+		Allocate(t, a, p)
 
 		// Execute with interpreter. Deliberately setup the input and output to
 		// be aliased.
@@ -178,4 +160,20 @@ func TestAllocatorExec(t *testing.T) {
 
 		return true
 	})
+}
+
+func Allocate(t *testing.T, a Allocator, p *ir.Program) {
+	t.Helper()
+
+	t.Logf("pre alloc:\n%s", p)
+
+	if err := a.Execute(p); err != nil {
+		t.Fatal(err)
+	}
+
+	for _, op := range p.Operands {
+		t.Logf("alloc %d: %s", op.Index, op.Identifier)
+	}
+
+	t.Logf("post alloc:\n%s", p)
 }
