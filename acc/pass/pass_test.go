@@ -91,6 +91,28 @@ func TestCanonicalizeOperandsIdentifierConflict(t *testing.T) {
 	assert.ErrorContains(t, err, "conflict")
 }
 
+func TestIndexes(t *testing.T) {
+	p := &ir.Program{
+		Instructions: []*ir.Instruction{
+			{Output: ir.Index(2), Op: ir.Shift{X: ir.Index(0), S: 2}},
+			{Output: ir.Index(5), Op: ir.Shift{X: ir.Index(2), S: 3}},
+			{Output: ir.Index(9), Op: ir.Shift{X: ir.Index(5), S: 4}},
+		},
+	}
+
+	// Twice to check idempotency.
+	for i := 0; i < 2; i++ {
+		if err := Indexes(p); err != nil {
+			t.Fatal(err)
+		}
+
+		expect := []int{0, 2, 5, 9}
+		if !reflect.DeepEqual(expect, p.Indexes) {
+			t.FailNow()
+		}
+	}
+}
+
 func TestReadCounts(t *testing.T) {
 	p := &ir.Program{
 		Instructions: []*ir.Instruction{
@@ -129,11 +151,14 @@ func TestReadCounts(t *testing.T) {
 		5: 1,
 	}
 
-	if err := ReadCounts(p); err != nil {
-		t.Fatal(p)
-	}
+	// Twice to check idempotency.
+	for i := 0; i < 2; i++ {
+		if err := ReadCounts(p); err != nil {
+			t.Fatal(p)
+		}
 
-	if !reflect.DeepEqual(expect, p.ReadCount) {
-		t.FailNow()
+		if !reflect.DeepEqual(expect, p.ReadCount) {
+			t.FailNow()
+		}
 	}
 }

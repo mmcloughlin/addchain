@@ -26,23 +26,22 @@ type Allocator struct {
 
 // Execute performs temporary variable allocation.
 func (a Allocator) Execute(p *ir.Program) error {
-	// Canonicalize operands and delete all names.
-	if err := Exec(p, Func(CanonicalizeOperands), Func(ClearNames)); err != nil {
+	// Canonicalize operands, collect unique indexes, and delete all names.
+	if err := Exec(p, Func(CanonicalizeOperands), Func(Indexes), Func(ClearNames)); err != nil {
 		return err
 	}
 
-	// Initialize allocation. This maps operand index to variable index. The
-	// inidicies 0 and 1 are special, reserved for the input and output
-	// respectively. Any indicies above that are temporaries.
-	out := p.Output()
-	allocation := map[int]int{
-		0:         0,
-		out.Index: 1,
-	}
-	n := 2
+	// Keep an allocation map from operand index to variable index.
+	allocation := map[int]int{}
 
-	// Keep a heap of available indicies. Initially none.
+	// Keep a heap of available variables, and a total variable count.
 	available := heap.NewMinInts()
+	n := 0
+
+	// Assign a variable for the output.
+	out := p.Output()
+	allocation[out.Index] = 0
+	n = 1
 
 	// Process instructions in reverse.
 	for i := len(p.Instructions) - 1; i >= 0; i-- {
@@ -72,27 +71,42 @@ func (a Allocator) Execute(p *ir.Program) error {
 		}
 	}
 
-	// Record allocation.
-	for _, op := range p.Operands {
-		op.Identifier = a.name(allocation[op.Index])
+	// Assign names to the operands. Reuse of the output variable is handled
+	// specially, since we have to account for the possibility that it could be
+	// aliased with the input. Prior to the last use of the input, variable 0
+	// will be a temporary, after it will be the output.
+	lastinputread := 0
+	for _, inst := range p.Instructions {
+		for _, input := range inst.Op.Inputs() {
+			if input.Index == 0 {
+				lastinputread = inst.Output.Index
+			}
+		}
 	}
 
-	temps := []string{}
-	for i := 2; i < n; i++ {
-		temps = append(temps, a.name(i))
+	// Map from variable index to name.
+	name := map[int]string{}
+	for _, index := range p.Indexes {
+		op := p.Operands[index]
+		v := allocation[op.Index]
+		_, ok := name[v]
+		switch {
+		// Operand index 0 is the input.
+		case op.Index == 0:
+			op.Identifier = a.Input
+		// Variable index 0 is the output, as long as we're past the last use of
+		// the input.
+		case v == 0 && op.Index >= lastinputread:
+			op.Identifier = a.Output
+		// Unnamed variable: allocate a temporary.
+		case !ok:
+			name[v] = fmt.Sprintf(a.Format, len(p.Temporaries))
+			p.Temporaries = append(p.Temporaries, name[v])
+			fallthrough
+		default:
+			op.Identifier = name[v]
+		}
 	}
-	p.Temporaries = temps
 
 	return nil
-}
-
-func (a Allocator) name(v int) string {
-	switch v {
-	case 0:
-		return a.Input
-	case 1:
-		return a.Output
-	default:
-		return fmt.Sprintf(a.Format, v-2)
-	}
 }
