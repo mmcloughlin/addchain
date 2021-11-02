@@ -12,6 +12,11 @@ import (
 	"github.com/mmcloughlin/addchain/internal/test"
 )
 
+// TestResults is an integration test designed to confirm we can produce correct
+// code for all the target exponents in the results list. Specifically, for
+// every target exponent and every algorithm in the ensemble, we confirm the
+// resulting chain can be converted to an addition chain program, allocated
+// variables, and interpreted to give the expected result.
 func TestResults(t *testing.T) {
 	timer := test.Start()
 	as := ensemble.Ensemble()
