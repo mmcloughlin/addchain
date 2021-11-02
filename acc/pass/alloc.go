@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	"github.com/mmcloughlin/addchain/acc/ir"
-	"github.com/mmcloughlin/addchain/internal/container/heap"
-	"github.com/mmcloughlin/addchain/internal/errutil"
 )
 
 // Allocator pass assigns a minimal number of temporary variables to execute a program.
@@ -31,43 +29,22 @@ func (a Allocator) Execute(p *ir.Program) error {
 		return err
 	}
 
-	// Keep an allocation map from operand index to variable index.
-	allocation := map[int]int{}
+	// Initialize an allocation. This maintains a map from operand index to
+	// variable, and a pool of free variables.
+	allocation := newallocation()
 
-	// Keep a heap of available variables, and a total variable count.
-	available := heap.NewMinInts()
-	n := 0
-
-	// Assign a variable for the output.
-	out := p.Output()
-	allocation[out.Index] = 0
-	n = 1
-
-	// Process instructions in reverse.
+	// Process instructions in reverse, similar to liveness analysis. Allocate
+	// when variables are read, mark available for re-allocation on write.
 	for i := len(p.Instructions) - 1; i >= 0; i-- {
 		inst := p.Instructions[i]
 
-		// The output operand variable now becomes available.
-		v, ok := allocation[inst.Output.Index]
-		if !ok {
-			return errutil.AssertionFailure("output operand %d missing allocation", inst.Output.Index)
-		}
-		available.Push(v)
+		// The output operand variable now becomes free.
+		v := allocation.Variable(inst.Output.Index)
+		allocation.Free(v)
 
 		// Inputs may need variables, if they are not already live.
 		for _, input := range inst.Op.Inputs() {
-			_, ok := allocation[input.Index]
-			if ok {
-				continue
-			}
-
-			// If there's nothing available, we'll need one more temporary.
-			if available.Empty() {
-				available.Push(n)
-				n++
-			}
-
-			allocation[input.Index] = available.Pop()
+			allocation.Allocate(input.Index)
 		}
 	}
 
@@ -86,17 +63,17 @@ func (a Allocator) Execute(p *ir.Program) error {
 
 	// Map from variable index to name.
 	name := map[int]string{}
+	outv := allocation.Variable(p.Output().Index)
 	for _, index := range p.Indexes {
 		op := p.Operands[index]
-		v := allocation[op.Index]
+		v := allocation.Variable(op.Index)
 		_, ok := name[v]
 		switch {
 		// Operand index 0 is the input.
 		case op.Index == 0:
 			op.Identifier = a.Input
-		// Variable index 0 is the output, as long as we're past the last use of
-		// the input.
-		case v == 0 && op.Index >= lastinputread:
+		// Use the output variable name after the last use of the input.
+		case v == outv && op.Index >= lastinputread:
 			op.Identifier = a.Output
 		// Unnamed variable: allocate a temporary.
 		case !ok:
@@ -109,4 +86,57 @@ func (a Allocator) Execute(p *ir.Program) error {
 	}
 
 	return nil
+}
+
+// allocation of a pool of variables to operands.
+type allocation struct {
+	// Allocation map from operand index to variable index.
+	variable map[int]int
+
+	// List of available variables.
+	available []int
+
+	// Total number of variables.
+	n int
+}
+
+// newallocation initializes an empty allocation.
+func newallocation() *allocation {
+	return &allocation{
+		variable:  map[int]int{},
+		available: []int{},
+		n:         0,
+	}
+}
+
+// Allocate ensures a variable is allocated to operand index i.
+func (a *allocation) Allocate(i int) {
+	// Return if it already has an assignment.
+	_, ok := a.variable[i]
+	if ok {
+		return
+	}
+
+	// If there's nothing available, we'll need one more temporary.
+	if len(a.available) == 0 {
+		a.available = append(a.available, a.n)
+		a.n++
+	}
+
+	// Assign from the available list.
+	last := len(a.available) - 1
+	a.variable[i] = a.available[last]
+	a.available = a.available[:last]
+}
+
+// Variable allocated to operand index i. Allocates one if it doesn't already
+// have an allocation.
+func (a *allocation) Variable(i int) int {
+	a.Allocate(i)
+	return a.variable[i]
+}
+
+// Free marks v as available to be allocated to another operand.
+func (a *allocation) Free(v int) {
+	a.available = append(a.available, v)
 }
