@@ -67,7 +67,6 @@ func TestResults(t *testing.T) {
 				if !bigint.Equal(output, expect) {
 					t.FailNow()
 				}
-
 			}
 		})
 	}
