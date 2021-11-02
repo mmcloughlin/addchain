@@ -117,7 +117,7 @@ func (a *allocation) Allocate(i int) {
 		return
 	}
 
-	// If there's nothing available, we'll need one more temporary.
+	// If there's nothing available, we'll need another variable.
 	if len(a.available) == 0 {
 		a.available = append(a.available, a.n)
 		a.n++
