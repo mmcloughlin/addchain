@@ -50,7 +50,7 @@ func TestResults(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if err := ioutil.WriteFile(filename, b, 0644); err != nil {
+				if err := ioutil.WriteFile(filename, b, 0o644); err != nil {
 					t.Fatalf("write golden file: %v", err)
 				}
 			}

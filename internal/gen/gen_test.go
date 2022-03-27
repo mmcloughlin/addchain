@@ -33,7 +33,7 @@ func TestBuiltinTemplatesGolden(t *testing.T) {
 			filename := test.GoldenName(filepath.Join("builtin", name))
 
 			if test.Golden() {
-				if err := ioutil.WriteFile(filename, got, 0644); err != nil {
+				if err := ioutil.WriteFile(filename, got, 0o644); err != nil {
 					t.Fatalf("write golden file: %v", err)
 				}
 			}

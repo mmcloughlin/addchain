@@ -21,8 +21,11 @@ projectdir="${workdir}/godownloader"
 git clone --depth 1 --branch v0.1.0 https://github.com/goreleaser/godownloader.git "${projectdir}"
 (cd "${projectdir}" && go install .)
 
+# goimports.
+go install golang.org/x/tools/cmd/goimports@v0.1.10
+
 # gofumports for stricter formatting.
-go install mvdan.cc/gofumpt/gofumports@v0.0.0-20200412215918-a91da47f375c
+go install mvdan.cc/gofumpt@v0.3.1
 
 # pigeon for PEG parser generation.
 go install github.com/mna/pigeon@v1.0.1-0.20200224192238-18953b277063
