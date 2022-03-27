@@ -11,7 +11,8 @@ mapfile -t files < <(find . -name '*.go' -print0 | xargs -0 grep -L '// Code gen
 sed -i.fmtbackup '/^import (/,/)/ { /^$$/ d; }' "${files[@]}"
 find . -name '*.fmtbackup' -delete
 
-gofumports -w -local "${repo}" "${files[@]}"
+goimports -w -local "${repo}" "${files[@]}"
+gofumpt -w "${files[@]}"
 
 # Math formatting.
 mathfmt -w "${files[@]}"

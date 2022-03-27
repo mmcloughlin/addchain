@@ -4,29 +4,37 @@ linters:
     - cyclop
     - exhaustivestruct
     - forbidigo
+    - forcetypeassert
     - funlen
     - gochecknoglobals
     - gocognit
     - goerr113
+    - golint
     - gomnd
     - ifshort
     - interfacer
+    - ireturn
     - lll
     - maligned
     - nlreturn
     - paralleltest
     - prealloc
     - predeclared
-    - revive
+    - scopelint
+    - tagliatelle
     - testpackage
     - thelper
+    - varnamelen
     - wastedassign
     - wrapcheck
     - wsl
 
 linters-settings:
   gci:
-    local-prefixes: github.com/mmcloughlin/addchain
+    sections:
+     - standard
+     - default
+     - prefix(github.com/mmcloughlin/addchain)
 
 issues:
   exclude-use-default: false

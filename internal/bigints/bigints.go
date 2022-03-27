@@ -55,6 +55,11 @@ func Clone(xs []*big.Int) []*big.Int {
 	return append([]*big.Int{}, xs...)
 }
 
+// Concat concatenates two lists of integers.
+func Concat(xs, ys []*big.Int) []*big.Int {
+	return append(Clone(xs), ys...)
+}
+
 // Unique removes consecutive duplicates.
 func Unique(xs []*big.Int) []*big.Int {
 	if len(xs) == 0 {
