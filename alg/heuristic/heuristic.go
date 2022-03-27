@@ -71,7 +71,7 @@ func (h Algorithm) FindSequence(targets []*big.Int) (addchain.Chain, error) {
 
 	// Initialize protosequence.
 	leader := bigints.Int64s(1, 2)
-	proto := append(leader, targets...)
+	proto := bigints.Concat(leader, targets)
 	bigints.Sort(proto)
 	proto = bigints.Unique(proto)
 	c := []*big.Int{}
