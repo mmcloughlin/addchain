@@ -2,7 +2,7 @@ package gen
 
 import (
 	"bytes"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -33,12 +33,12 @@ func TestBuiltinTemplatesGolden(t *testing.T) {
 			filename := test.GoldenName(filepath.Join("builtin", name))
 
 			if test.Golden() {
-				if err := ioutil.WriteFile(filename, got, 0o644); err != nil {
+				if err := os.WriteFile(filename, got, 0o644); err != nil {
 					t.Fatalf("write golden file: %v", err)
 				}
 			}
 
-			expect, err := ioutil.ReadFile(filename)
+			expect, err := os.ReadFile(filename)
 			if err != nil {
 				t.Fatalf("read golden file: %v", err)
 			}

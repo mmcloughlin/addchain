@@ -7,8 +7,8 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/google/subcommands"
 
@@ -148,7 +148,7 @@ func Download(ctx context.Context, w io.Writer, c *http.Client, url string) (err
 
 // LoadZenodoMetadata reads and parses a Zenodo metadata file.
 func LoadZenodoMetadata(filename string) (*zenodo.DepositionMetadata, error) {
-	b, err := ioutil.ReadFile(filename)
+	b, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}

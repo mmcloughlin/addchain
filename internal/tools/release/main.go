@@ -1,3 +1,4 @@
+// Command release automates the release process.
 package main
 
 import (

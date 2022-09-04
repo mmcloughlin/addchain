@@ -2,6 +2,8 @@ linters:
   enable-all: true
   disable:
     - cyclop
+    - deadcode
+    - exhaustruct
     - exhaustivestruct
     - forbidigo
     - forcetypeassert
@@ -17,13 +19,17 @@ linters:
     - lll
     - maligned
     - nlreturn
+    - nonamedreturns
+    - nosnakecase
     - paralleltest
     - prealloc
     - predeclared
     - scopelint
+    - structcheck
     - tagliatelle
     - testpackage
     - thelper
+    - varcheck
     - varnamelen
     - wastedassign
     - wrapcheck

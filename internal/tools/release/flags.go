@@ -6,7 +6,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -155,7 +154,7 @@ func (h *HTTPClient) RootCAs() (*x509.CertPool, error) {
 		return roots, nil
 	}
 
-	data, err := ioutil.ReadFile(h.cert)
+	data, err := os.ReadFile(h.cert)
 	if err != nil {
 		return nil, err
 	}
