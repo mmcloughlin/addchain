@@ -5,7 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/google/subcommands"
@@ -97,7 +97,7 @@ func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{
 func (cmd *generate) LoadTemplate() (string, error) {
 	// Explicit filename has precedence.
 	if cmd.tmpl != "" {
-		b, err := ioutil.ReadFile(cmd.tmpl)
+		b, err := os.ReadFile(cmd.tmpl)
 		if err != nil {
 			return "", err
 		}

@@ -3,7 +3,7 @@ package exec
 
 import (
 	"errors"
-	"io/ioutil"
+	"io"
 	"log"
 	"math/big"
 	"runtime"
@@ -58,7 +58,7 @@ type Parallel struct {
 func NewParallel() *Parallel {
 	return &Parallel{
 		limit:  runtime.NumCPU(),
-		logger: log.New(ioutil.Discard, "", 0),
+		logger: log.New(io.Discard, "", 0),
 	}
 }
 

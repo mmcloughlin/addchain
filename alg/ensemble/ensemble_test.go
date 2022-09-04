@@ -2,7 +2,7 @@ package ensemble
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 
@@ -50,13 +50,13 @@ func TestResults(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if err := ioutil.WriteFile(filename, b, 0o644); err != nil {
+				if err := os.WriteFile(filename, b, 0o644); err != nil {
 					t.Fatalf("write golden file: %v", err)
 				}
 			}
 
 			// Load golden file.
-			b, err := ioutil.ReadFile(filename)
+			b, err := os.ReadFile(filename)
 			if err != nil {
 				t.Fatalf("read golden file: %v", err)
 			}
