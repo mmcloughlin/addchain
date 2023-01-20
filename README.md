@@ -74,7 +74,7 @@ cryptography where exponentiation by huge fixed exponents forms a
 performance-critical component of finite-field arithmetic. In particular,
 constant-time inversion modulo a prime _p_ is performed by computing
 <code>x<sup>p-2</sup> (mod p)</code>, thanks to [Fermat's Little
-Theorem](https://en.wikipedia.org/wiki/Fermat%27_little_theorem). Square root
+Theorem](https://en.wikipedia.org/wiki/Fermat%27s_little_theorem). Square root
 also reduces to exponentiation for some prime moduli. Finding short addition
 chains for these exponents is one important part of high-performance finite
 field implementations required for elliptic curve cryptography or RSA.
