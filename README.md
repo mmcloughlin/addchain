@@ -1,7 +1,7 @@
 <p align="center">
   <img src="logo.svg" width="40%" border="0" alt="addchain" />
   <br />
-  <img src="https://img.shields.io/github/workflow/status/mmcloughlin/addchain/ci/master.svg?style=flat-square" alt="Build Status" />
+  <img src="https://img.shields.io/github/actions/workflow/status/mmcloughlin/addchain/ci.yml?style=flat-square" alt="Build Status" />
   <a href="https://pkg.go.dev/github.com/mmcloughlin/addchain"><img src="https://img.shields.io/badge/doc-reference-007d9b?logo=go&style=flat-square" alt="go.dev" /></a>
   <a href="https://goreportcard.com/report/github.com/mmcloughlin/addchain"><img src="https://goreportcard.com/badge/github.com/mmcloughlin/addchain?style=flat-square" alt="Go Report Card" /></a>
   <a href="https://doi.org/10.5281/zenodo.5622943"><img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.5622943-007ec6?style=flat-square" alt="DOI: 10.5281/zenodo.5622943" /></a>
