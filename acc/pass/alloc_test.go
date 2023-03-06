@@ -220,7 +220,7 @@ func CheckLiveVariablesUnique(t *testing.T, p *ir.Program, a Allocator) {
 }
 
 // CheckExecute executes the program under the interpreter and verifies the
-// output is the same as the the evaluated addition chain.
+// output is the same as the evaluated addition chain.
 func CheckExecute(t *testing.T, p *ir.Program, a Allocator) {
 	t.Helper()
 
