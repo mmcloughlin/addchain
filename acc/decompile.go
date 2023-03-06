@@ -24,10 +24,10 @@ func Decompile(p addchain.Program) (*ir.Program, error) {
 			continue
 		}
 
-		// We have a double. Look ahead to see if this is a chain of doublings, which
-		// can be encoded as a shift. Note we can only follow the the doublings as
-		// long as the intermediate values are not required anywhere else later in the
-		// program.
+		// We have a double. Look ahead to see if this is a chain of doublings,
+		// which can be encoded as a shift. Note we can only follow the
+		// doublings as long as the intermediate values are not required
+		// anywhere else later in the program.
 		j := i + 1
 		for ; j < len(p) && numreads[j] == 1 && p[j].I == j && p[j].J == j; j++ {
 		}
