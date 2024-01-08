@@ -3,7 +3,7 @@
 set -exuo pipefail
 
 # Install golangci-lint
-golangci_lint_version='v1.51.2'
+golangci_lint_version='v1.55.2'
 golangci_install_script="https://raw.githubusercontent.com/golangci/golangci-lint/${golangci_lint_version}/install.sh"
 curl -sfL "${golangci_install_script}" | sh -s -- -b "$GOPATH/bin" "${golangci_lint_version}"
 
