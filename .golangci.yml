@@ -15,6 +15,7 @@ linters:
     - golint
     - gomnd
     - ifshort
+    - inamedparam
     - interfacer
     - ireturn
     - lll
@@ -37,11 +38,57 @@ linters:
     - wsl
 
 linters-settings:
+  depguard:
+    rules:
+      main:
+        allow:
+          - github.com/mmcloughlin/addchain
+          - github.com/mmcloughlin/profile
+          - github.com/google/subcommands
+          - $gostd
   gci:
     sections:
-     - standard
-     - default
-     - prefix(github.com/mmcloughlin/addchain)
+      - standard
+      - default
+      - prefix(github.com/mmcloughlin/addchain)
+
+  revive:
+    enable-all-rules: true
+    confidence: 1.0
+    rules:
+      - name: add-constant
+        disabled: true
+      - name: bare-return
+        disabled: true
+      - name: confusing-naming
+        disabled: true
+      - name: cognitive-complexity
+        disabled: true
+      - name: cyclomatic
+        disabled: true
+      - name: deep-exit
+        disabled: true
+      - name: empty-block
+        disabled: true
+      - name: function-length
+        disabled: true
+      - name: import-shadowing
+        disabled: true
+      - name: line-length-limit
+        disabled: true
+      - name: max-public-structs
+        disabled: true
+      - name: unchecked-type-assertion
+        disabled: true
+      - name: unhandled-error
+        arguments:
+          - 'fmt\.(P|Fp)rint(ln|f)?'
+      - name: unused-parameter
+        disabled: true
+      - name: unused-receiver
+        disabled: true
+      - name: use-any
+        disabled: true
 
 issues:
   exclude-use-default: false
