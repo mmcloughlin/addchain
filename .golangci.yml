@@ -51,7 +51,6 @@ linters-settings:
       - standard
       - default
       - prefix(github.com/mmcloughlin/addchain)
-
   revive:
     enable-all-rules: true
     confidence: 1.0
