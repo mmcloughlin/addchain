@@ -117,6 +117,12 @@ var bibliography = []struct{
     },
 
     {
+        CiteName:  "isogenychains",
+        URL: "http://faculty.eng.fau.edu/azarderakhsh/files/2016/11/Inscrypt2016.pdf",
+        Formatted: "Koziel, Brian, Azarderakhsh, Reza, Jao, David and Mozaffari-Kermani, Mehran. On Fast Calculation of Addition Chains for Isogeny-Based Cryptography. In Information Security and Cryptology, pages 323--342. 2016. http://faculty.eng.fau.edu/azarderakhsh/files/2016/11/Inscrypt2016.pdf",
+    },
+
+    {
         CiteName:  "modboscoster",
         URL: "http://library.isical.ac.in:8080/jspui/bitstream/10263/6441/1/DISS-285.pdf",
         Formatted: "Ayan Nandy. Modifications of Bos and Coster’s Heuristics in search of a shorter addition chain for faster exponentiation. Masters thesis, Indian Statistical Institute Kolkata. 2011. http://library.isical.ac.in:8080/jspui/bitstream/10263/6441/1/DISS-285.pdf",

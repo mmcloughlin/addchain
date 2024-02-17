@@ -102,9 +102,10 @@ delta from the library result.
 | [NIST P-384 Field Inversion](doc/results.md#nist-p-384-field-inversion) | 397 | 396 | +1 |
 | [secp256k1 (Bitcoin) Field Inversion](doc/results.md#secp256k1-bitcoin-field-inversion) | 269 | 269 | **+0** |
 | [Curve25519 Scalar Inversion](doc/results.md#curve25519-scalar-inversion) | 283 | 284 | **-1** |
-| [NIST P-256 Scalar Inversion](doc/results.md#nist-p-256-scalar-inversion) | 294 | 292 | +2 |
-| [NIST P-384 Scalar Inversion](doc/results.md#nist-p-384-scalar-inversion) | 434 | 433 | +1 |
+| [NIST P-256 Scalar Inversion](doc/results.md#nist-p-256-scalar-inversion) | 291 | 292 | **-1** |
+| [NIST P-384 Scalar Inversion](doc/results.md#nist-p-384-scalar-inversion) | 433 | 433 | **+0** |
 | [secp256k1 (Bitcoin) Scalar Inversion](doc/results.md#secp256k1-bitcoin-scalar-inversion) | 293 | 290 | +3 |
+| [Smooth Isogeny P-512 Field Inversion](doc/results.md#smooth-isogeny-p-512-field-inversion) | 581 | 584 | **-3** |
 
 
 See [full results listing](doc/results.md) for more detail and

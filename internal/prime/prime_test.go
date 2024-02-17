@@ -24,3 +24,22 @@ func TestSolinas(t *testing.T) {
 		t.FailNow()
 	}
 }
+
+func TestSmoothIsogeny(t *testing.T) {
+	// p₅₁₂ from [isogenychains].
+	p := NewSmoothIsogeny(2, 3, 253, 161, 7, false)
+
+	if p.Bits() != 511 {
+		t.FailNow()
+	}
+
+	x := p.Int()
+	decimal := "6640624951081187159942983469764469901416062130859495455216614392426065341738463661693533115419196273210738003796604179119423082390833875356421735665631231"
+	if x.String() != decimal {
+		t.FailNow()
+	}
+
+	if p.String() != "2^253*3^161*7-1" {
+		t.FailNow()
+	}
+}

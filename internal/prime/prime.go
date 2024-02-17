@@ -14,6 +14,10 @@ import (
 //	[crandallprime]  Richard E. Crandall. Method and apparatus for public key exchange in a
 //	                 cryptographic system. US Patent 5,159,632. 1992.
 //	                 https://patents.google.com/patent/US5159632A
+//	[isogenychains]  Koziel, Brian, Azarderakhsh, Reza, Jao, David and Mozaffari-Kermani, Mehran. On
+//	                 Fast Calculation of Addition Chains for Isogeny-Based Cryptography. In
+//	                 Information Security and Cryptology, pages 323--342. 2016.
+//	                 http://faculty.eng.fau.edu/azarderakhsh/files/2016/11/Inscrypt2016.pdf
 //	[solinasprime]   Jerome A. Solinas. Generalized Mersenne Primes. Technical Report CORR 99-39,
 //	                 Centre for Applied Cryptographic Research (CACR) at the University of Waterloo.
 //	                 1999. http://cacr.uwaterloo.ca/techreports/1999/corr99-39.pdf
@@ -85,6 +89,48 @@ func (p Solinas) String() string {
 		g = append(g, s)
 	}
 	return g.Format("2")
+}
+
+// SmoothIsogeny is a prime of the form ℓ₁ᵃ * ℓ₂ᵇ * f ± 1 for small primes
+// ℓ₁ and ℓ₂ and small cofactor f, as introduced in [isogenychains].
+// These primes are useful for isogeny-based post-quantum cryptography.
+type SmoothIsogeny struct {
+	L1  uint
+	L2  uint
+	A   uint
+	B   uint
+	F   uint
+	Add bool // True for +1, false for -1.
+	p   *big.Int
+}
+
+// NewSmoothIsogeny constructs a smooth isogeny prime.
+func NewSmoothIsogeny(l1 uint, l2 uint, a uint, b uint, f uint, add bool) SmoothIsogeny {
+	t1 := new(big.Int).Exp(big.NewInt(int64(l1)), big.NewInt(int64(a)), nil)
+	t2 := new(big.Int).Exp(big.NewInt(int64(l2)), big.NewInt(int64(b)), nil)
+	p := big.NewInt(int64(f))
+	p.Mul(p, t1)
+	p.Mul(p, t2)
+	if add {
+		p.Add(p, bigint.One())
+	} else {
+		p.Sub(p, bigint.One())
+	}
+	return SmoothIsogeny{L1: l1, L2: l2, A: a, B: b, F: f, Add: add, p: p}
+}
+
+// Bits returns the bit length of p.
+func (p SmoothIsogeny) Bits() int { return p.p.BitLen() }
+
+// Int returns p as an integer.
+func (p SmoothIsogeny) Int() *big.Int { return p.p }
+
+func (p SmoothIsogeny) String() string {
+	s := "-1"
+	if p.Add {
+		s = "+1"
+	}
+	return fmt.Sprintf("%d^%d*%d^%d*%d%s", p.L1, p.A, p.L2, p.B, p.F, s)
 }
 
 // Other is a prime whose structure does not match any of the other specific
