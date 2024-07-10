@@ -8,6 +8,7 @@
 * [NIST P-256 Scalar Inversion](#nist-p-256-scalar-inversion)
 * [NIST P-384 Scalar Inversion](#nist-p-384-scalar-inversion)
 * [secp256k1 (Bitcoin) Scalar Inversion](#secp256k1-bitcoin-scalar-inversion)
+* [Smooth Isogeny P-512 Field Inversion](#smooth-isogeny-p-512-field-inversion)
 * [M-221 Field Inversion](#m-221-field-inversion)
 * [E-222 Field Inversion](#e-222-field-inversion)
 * [Curve1174 Field Inversion](#curve1174-field-inversion)
@@ -161,7 +162,7 @@ return     (_11 + i266) << 2
 | _d_ | `2` |
 | _N_-_d_ | `1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3eb` |
 | Length | 283 |
-| Algorithm | `opt(dictionary(hybrid(4,0),continued_fractions(binary)))` |
+| Algorithm | `opt(dictionary(hybrid(5,0,sliding_window(4)),continued_fractions(binary)))` |
 | Best Known | 284 |
 | Delta | -1 |
 
@@ -207,10 +208,10 @@ return      ((_11110101 + i264) << 8 + _11010011) << 8 + _11101011
 | _N_ | `ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551` |
 | _d_ | `2` |
 | _N_-_d_ | `ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc63254f` |
-| Length | 294 |
-| Algorithm | `opt(dictionary(hybrid(8,16),heuristic(use_first(halving,delta_largest))))` |
+| Length | 291 |
+| Algorithm | `opt(dictionary(hybrid(9,32,sliding_window_short_rtl(8,4)),heuristic(use_first(halving,approximation))))` |
 | Best Known | 292 |
-| Delta | +2 |
+| Delta | -1 |
 
 
 Addition chain produced by `addchain`:
@@ -219,38 +220,36 @@ Addition chain produced by `addchain`:
 _10       = 2*1
 _100      = 2*_10
 _101      = 1 + _100
-_110      = 1 + _101
-_1001     = _100 + _101
-_1111     = _110 + _1001
-_10010    = 2*_1001
-_10101    = _110 + _1111
-_11000    = _110 + _10010
-_11010    = _10 + _11000
-_101111   = _10101 + _11010
-_111000   = _1001 + _101111
-_111101   = _101 + _111000
-_111111   = _10 + _111101
-_1001111  = _10010 + _111101
-_1100001  = _10010 + _1001111
-_1100011  = _10 + _1100001
-_1110011  = _10010 + _1100001
-_1110111  = _100 + _1110011
-_1111101  = _110 + _1110111
-_10010101 = _11000 + _1111101
-_10100111 = _10010 + _10010101
-_10101101 = _110 + _10100111
-_11100101 = _111000 + _10101101
-_11111111 = _11010 + _11100101
-x16       = _11111111 << 8 + _11111111
-x32       = x16 << 16 + x16
-i133      = ((x32 << 48 + x16) << 16 + x16) << 16
-i158      = ((x16 + i133) << 16 + x16) << 6 + _101111
-i186      = ((i158 << 9 + _1110011) << 8 + _1111101) << 9
-i206      = ((_10101101 + i186) << 8 + _10100111) << 9 + _101111
-i236      = ((i206 << 8 + _111101) << 11 + _1001111) << 9
-i257      = ((_1110111 + i236) << 10 + _11100101) << 8 + _1100001
-i286      = ((i257 << 7 + _111111) << 10 + _1100011) << 10
-return      (_10010101 + i286) << 6 + _1111
+_111      = _10 + _101
+_1000     = 1 + _111
+_1110     = 2*_111
+_10000    = _10 + _1110
+_100000   = 2*_10000
+_100101   = _101 + _100000
+_100111   = _10 + _100101
+_101011   = _100 + _100111
+_101100   = 1 + _101011
+_101111   = _100 + _101011
+_1001111  = _100000 + _101111
+_1011011  = _101100 + _101111
+_1011100  = 1 + _1011011
+_1100011  = _111 + _1011100
+_10111111 = _1011100 + _1100011
+_11011111 = _100000 + _10111111
+_11111111 = _100000 + _11011111
+i28       = _11111111 << 8
+x16       = _11111111 + i28
+i37       = i28 << 8
+x24       = x16 + i37
+x32       = i37 << 8 + x24
+i151      = ((x32 << 64 + x32) << 32 + x32) << 6
+i169      = ((_101111 + i151) << 5 + _111) << 10 + _11011111
+i190      = ((i169 << 4 + _101) << 8 + _1011011) << 7
+i210      = ((_100111 + i190) << 9 + _101111) << 8 + _101111
+i229      = ((_1110 + i210) << 11 + _1001111) << 5 + _111
+i249      = (i229 << 9 + _11011111 + _1000) << 8 + _101011
+i281      = ((i249 << 12 + _10111111) << 10 + _1100011) << 8
+return      (_100101 + i281) << 8 + _1001111
 ```
 
 ## NIST P-384 Scalar Inversion
@@ -260,48 +259,50 @@ return      (_10010101 + i286) << 6 + _1111
 | _N_ | `ffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52973` |
 | _d_ | `2` |
 | _N_-_d_ | `ffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52971` |
-| Length | 434 |
-| Algorithm | `opt(dictionary(hybrid(4,0),continued_fractions(dichotomic)))` |
+| Length | 433 |
+| Algorithm | `opt(dictionary(hybrid(6,0,sliding_window_short(5,0)),continued_fractions(dichotomic)))` |
 | Best Known | 433 |
-| Delta | +1 |
+| Delta | +0 |
 
 
 Addition chain produced by `addchain`:
 
 ```go
-_10      = 2*1
-_11      = 1 + _10
-_101     = _10 + _11
-_111     = _10 + _101
-_1001    = _10 + _111
-_1011    = _10 + _1001
-_1101    = _10 + _1011
-_1111    = _10 + _1101
-_11110   = 2*_1111
-_11111   = 1 + _11110
-_1111100 = _11111 << 2
-i14      = _1111100 << 2
-i26      = (i14 << 3 + _1111100) << 7 + i14
-i42      = i26 << 15 + i26
-x64      = i42 << 30 + i42 + _1111
-x128     = x64 << 64 + x64
-x192     = x128 << 64 + x64
-x194     = x192 << 2 + _11
-i225     = ((x194 << 6 + _111) << 3 + _11) << 7
-i235     = 2*((_1101 + i225) << 6 + _1101) + 1
-i258     = ((i235 << 11 + _11111) << 2 + 1) << 8
-i269     = ((_1101 + i258) << 2 + _11) << 6 + _1011
-i286     = ((i269 << 4 + _111) << 6 + _11111) << 5
-i308     = ((_1011 + i286) << 10 + _1101) << 9 + _1101
-i323     = ((i308 << 4 + _1011) << 6 + _1001) << 3
-i340     = ((1 + i323) << 7 + _1011) << 7 + _101
-i357     = ((i340 << 5 + _111) << 5 + _1111) << 5
-i369     = ((_1011 + i357) << 4 + _1011) << 5 + _111
-i387     = ((i369 << 3 + _11) << 7 + _11) << 6
-i397     = ((_1011 + i387) << 4 + _101) << 3 + _11
-i413     = ((i397 << 4 + _11) << 4 + _11) << 6
-i427     = ((_101 + i413) << 5 + _101) << 6 + _1011
-return     (2*i427 + 1) << 4 + 1
+_10       = 2*1
+_11       = 1 + _10
+_101      = _10 + _11
+_111      = _10 + _101
+_1000     = 1 + _111
+_1001     = 1 + _1000
+_1011     = _10 + _1001
+_1101     = _10 + _1011
+_1111     = _10 + _1101
+_10111    = _1000 + _1111
+_11001    = _10 + _10111
+_11011    = _10 + _11001
+_11111    = _1000 + _10111
+_1111100  = _11111 << 2
+_11111000 = 2*_1111100
+i17       = 2*_11111000
+i23       = i17 << 5 + i17
+i34       = i23 << 10 + i23
+i61       = (i34 << 4 + _11111000) << 21 + i34
+i113      = (i61 << 3 + _1111100) << 47 + i61
+x194      = i113 << 95 + i113 + _1111
+i228      = ((x194 << 6 + _111) << 3 + _11) << 7
+i249      = ((_1101 + i228) << 7 + _11011) << 11 + _11111
+i263      = ((i249 << 2 + 1) << 6 + _11) << 4
+i276      = ((_111 + i263) << 6 + _1011) << 4 + _111
+i299      = ((i276 << 6 + _11111) << 5 + _1011) << 10
+i318      = ((_1101 + i299) << 10 + _11011) << 6 + _11001
+i340      = ((i318 << 6 + _1001) << 7 + _1011) << 7
+i353      = ((_101 + i340) << 5 + _111) << 5 + _1111
+i369      = ((i353 << 6 + _10111) << 3 + _11) << 5
+i385      = ((_111 + i369) << 3 + _11) << 10 + _11001
+i401      = ((i385 << 5 + _1101) << 5 + _1011) << 4
+i414      = ((_11 + i401) << 4 + _11) << 6 + _101
+i432      = ((i414 << 5 + _101) << 7 + _10111) << 4
+return      1 + i432
 ```
 
 ## secp256k1 (Bitcoin) Scalar Inversion
@@ -312,7 +313,7 @@ return     (2*i427 + 1) << 4 + 1
 | _d_ | `2` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413f` |
 | Length | 293 |
-| Algorithm | `opt(dictionary(hybrid(4,0),continued_fractions(dichotomic)))` |
+| Algorithm | `opt(dictionary(hybrid(5,0,sliding_window(4)),continued_fractions(dichotomic)))` |
 | Best Known | 290 |
 | Delta | +3 |
 
@@ -352,6 +353,93 @@ i283      = ((i261 << 10 + _1101) << 4 + _1001) << 6
 return      (1 + i283) << 8 + _111111
 ```
 
+## Smooth Isogeny P-512 Field Inversion
+
+| Property | Value |
+| --- | ----- |
+| _N_ | `2^253*3^161*7-1` |
+| _d_ | `2` |
+| _N_-_d_ | `7ecab2d8f6334bcd895f45c61b8c79b65b0ddab3210770ad7874d573134004529ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd` |
+| Length | 581 |
+| Algorithm | `opt(dictionary(hybrid(17,20,sliding_window_short(16,8)),continued_fractions(binary)))` |
+| Best Known | 584 |
+| Delta | -3 |
+
+
+Addition chain produced by `addchain`:
+
+```go
+_10       = 2*1
+_11       = 1 + _10
+_101      = _10 + _11
+_111      = _10 + _101
+_1001     = _10 + _111
+_1011     = _10 + _1001
+_1100     = 1 + _1011
+_1111     = _11 + _1100
+_10110    = _111 + _1111
+_11000    = _10 + _10110
+_11001    = 1 + _11000
+_110010   = 2*_11001
+_1001000  = _10110 + _110010
+_1001010  = _10 + _1001000
+_1010110  = _1100 + _1001010
+_1011001  = _11 + _1010110
+_1011011  = _10 + _1011001
+_1100100  = _1001 + _1011011
+_10111101 = _1011001 + _1100100
+_11010101 = _11000 + _10111101
+i21       = _1010110 + _11010101
+i22       = _111 + i21
+i23       = _11000 + i21
+i24       = _1011001 + i21
+i25       = 1 + i24
+i26       = _11001 + i25
+i27       = _1011 + i26
+i28       = _11001 + i27
+i30       = 2*i28 + i26
+i31       = _1100100 + i30
+i32       = _11010101 + i31
+i33       = _1001010 + i32
+i34       = _10111101 + i33
+i35       = i23 + i34
+i36       = i27 + i35
+i37       = i31 + i36
+i38       = _1001000 + i37
+i39       = _1011011 + i38
+i40       = i30 + i39
+i41       = _10110 + i40
+i42       = i36 + i41
+i43       = i21 + i42
+i44       = i26 + i43
+i45       = i25 + i44
+i46       = i22 + i45
+i47       = i22 + i46
+i48       = i38 + i47
+i49       = i33 + i48
+i50       = i45 + i49
+i51       = i37 + i50
+i52       = i24 + i51
+i53       = i28 + i52
+i54       = i44 + i53
+i55       = i43 + i54
+i56       = i49 + i55
+i61       = (i34 + i56) << 4
+x20       = i47 + i61
+i108      = ((i61 << 8 + i32) << 19 + i56) << 17
+i147      = ((i54 + i108) << 17 + i46) << 19 + i55
+i197      = ((i147 << 16 + i51) << 16 + i48) << 16
+i231      = ((i50 + i197) << 14 + i40) << 17 + i39
+i285      = ((i231 << 17 + i41) << 19 + i53) << 16
+i313      = ((i52 + i285) << 2 + 1) << 23 + i35
+i377      = ((i313 << 22 + x20) << 20 + x20) << 20
+i420      = ((x20 + i377) << 20 + x20) << 20 + x20
+i482      = ((i420 << 20 + x20) << 20 + x20) << 20
+i525      = ((x20 + i482) << 20 + x20) << 20 + x20
+i580      = ((i525 << 20 + x20) << 20 + x20) << 13
+return      i42 + i580
+```
+
 ## M-221 Field Inversion
 
 | Property | Value |
@@ -389,7 +477,7 @@ return    x218 << 3 + _11
 | _d_ | `2` |
 | _N_-_d_ | `3fffffffffffffffffffffffffffffffffffffffffffffffffffff89` |
 | Length | 233 |
-| Algorithm | `opt(runs(continued_fractions(dichotomic)))` |
+| Algorithm | `opt(dictionary(sliding_window_short_rtl(128,64),continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -418,8 +506,8 @@ return     (x215 << 4 + 1) << 3 + 1
 | _N_ | `2^251-9` |
 | _d_ | `2` |
 | _N_-_d_ | `7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5` |
-| Length | 263 |
-| Algorithm | `opt(dictionary(hybrid(3,64),continued_fractions(dichotomic)))` |
+| Length | 261 |
+| Algorithm | `opt(dictionary(sliding_window_rtl(128),continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -428,18 +516,18 @@ _10      = 2*1
 _11      = 1 + _10
 _110     = 2*_11
 _111     = 1 + _110
-_111000  = _111 << 3
-_111111  = _111 + _111000
+_1110    = 2*_111
+_10101   = _111 + _1110
+_101010  = 2*_10101
+_111111  = _10101 + _101010
 _1111110 = 2*_111111
-_1111111 = 1 + _1111110
-x14      = _1111111 << 7 + _1111111
-x15      = 2*x14 + 1
-x30      = x15 << 15 + x15
-x60      = x30 << 30 + x30
-x120     = x60 << 60 + x60
-x240     = x120 << 120 + x120
-x247     = x240 << 7 + _1111111
-return     (x247 << 2 + 1) << 2 + 1
+i11      = _1111110 << 2
+i18      = i11 << 6 + i11
+i38      = (i18 << 4 + _1111110) << 14 + i18
+i69      = i38 << 30 + i38
+x123     = i69 << 60 + i69 + _111
+x246     = x123 << 123 + x123
+return     x246 << 5 + _10101
 ```
 
 ## E-382 Field Inversion
@@ -450,7 +538,7 @@ return     (x247 << 2 + 1) << 2 + 1
 | _d_ | `2` |
 | _N_-_d_ | `3fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff95` |
 | Length | 395 |
-| Algorithm | `opt(dictionary(hybrid(5,0),continued_fractions(dichotomic)))` |
+| Algorithm | `opt(dictionary(hybrid(6,0,sliding_window(5)),continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -576,7 +664,7 @@ return      (x503 << 2 + 1) << 6 + _11
 | _d_ | `2` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffefffffffffffffffd` |
 | Length | 203 |
-| Algorithm | `opt(dictionary(hybrid(2,0),continued_fractions(dichotomic)))` |
+| Algorithm | `opt(dictionary(hybrid(3,0,sliding_window(2)),continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -665,7 +753,7 @@ return    (x223 << 223 + x222) << 2 + 1
 | _d_ | `2` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffffffffffeffffee35` |
 | Length | 205 |
-| Algorithm | `opt(dictionary(hybrid(3,0),continued_fractions(dichotomic)))` |
+| Algorithm | `opt(dictionary(hybrid(4,0,sliding_window(3)),continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 
@@ -696,7 +784,7 @@ return     (_11 + i199) << 4 + _101
 | _d_ | `2` |
 | _N_-_d_ | `fffffffffffffffffffffffffffffffffffffffffffffffeffffe56b` |
 | Length | 238 |
-| Algorithm | `opt(dictionary(hybrid(5,0),continued_fractions(dichotomic)))` |
+| Algorithm | `opt(dictionary(hybrid(6,0,sliding_window(5)),continued_fractions(dichotomic)))` |
 
 Addition chain produced by `addchain`:
 

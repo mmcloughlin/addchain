@@ -12,12 +12,20 @@ func TestAlgorithms(t *testing.T) {
 	as := []alg.ChainAlgorithm{
 		// Dictionary-based algorithms.
 		NewAlgorithm(
+			FixedWindow{K: 7},
+			contfrac.NewAlgorithm(contfrac.BinaryStrategy{}),
+		),
+		NewAlgorithm(
 			SlidingWindow{K: 4},
 			contfrac.NewAlgorithm(contfrac.DichotomicStrategy{}),
 		),
 		NewAlgorithm(
-			FixedWindow{K: 7},
-			contfrac.NewAlgorithm(contfrac.BinaryStrategy{}),
+			SlidingWindowShortRTL{K: 4, Z: 2},
+			contfrac.NewAlgorithm(contfrac.CoBinaryStrategy{}),
+		),
+		NewAlgorithm(
+			Hybrid{TMin: 6, TMax: 20, Decomposer: SlidingWindowShortRTL{K: 5, Z: 2}},
+			contfrac.NewAlgorithm(contfrac.CoBinaryStrategy{}),
 		),
 
 		// Runs algorithm.

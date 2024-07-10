@@ -12,9 +12,13 @@ import (
 
 // References:
 //
-//	[curvechains]  Brian Smith. The Most Efficient Known Addition Chains for Field Element and
-//	               Scalar Inversion for the Most Popular and Most Unpopular Elliptic Curves. 2017.
-//	               https://briansmith.org/ecc-inversion-addition-chains-01 (accessed June 30, 2019)
+//	[curvechains]    Brian Smith. The Most Efficient Known Addition Chains for Field Element and
+//	                 Scalar Inversion for the Most Popular and Most Unpopular Elliptic Curves. 2017.
+//	                 https://briansmith.org/ecc-inversion-addition-chains-01 (accessed June 30, 2019)
+//	[isogenychains]  Koziel, Brian, Azarderakhsh, Reza, Jao, David and Mozaffari-Kermani, Mehran. On
+//	                 Fast Calculation of Addition Chains for Isogeny-Based Cryptography. In
+//	                 Information Security and Cryptology, pages 323--342. 2016.
+//	                 http://faculty.eng.fau.edu/azarderakhsh/files/2016/11/Inscrypt2016.pdf
 
 // Integer of interest.
 type Integer interface {
@@ -47,7 +51,7 @@ type Result struct {
 	AlgorithmName string
 
 	// BestKnown is the length of the most efficient chain known, found by any
-	// method. These are currently all from [curvechains], it's possible there
+	// method. These are from sources known to the library. It's possible there
 	// are better results elsewhere.
 	BestKnown int
 }
@@ -62,7 +66,7 @@ func (r Result) Delta() int { return r.Length - r.BestKnown }
 
 // Results on inversion exponents for various interesting or popular fields.
 // These results set a baseline to prevent regressions, as well as to compare
-// against the best hand-crafted chains [curvechains].
+// against the best hand-crafted chains.
 var Results = []Result{
 	{
 		Name:          "Curve25519 Field Inversion",
@@ -71,7 +75,7 @@ var Results = []Result{
 		D:             2,
 		Length:        266,
 		AlgorithmName: "opt(runs(continued_fractions(dichotomic)))",
-		BestKnown:     265,
+		BestKnown:     265, // [curvechains]
 	},
 	{
 		Name:          "NIST P-256 Field Inversion",
@@ -80,7 +84,7 @@ var Results = []Result{
 		D:             3,
 		Length:        266,
 		AlgorithmName: "opt(runs(continued_fractions(dichotomic)))",
-		BestKnown:     266,
+		BestKnown:     266, // [curvechains]
 	},
 	{
 		Name:          "NIST P-384 Field Inversion",
@@ -89,7 +93,7 @@ var Results = []Result{
 		D:             3,
 		Length:        397,
 		AlgorithmName: "opt(runs(heuristic(use_first(halving,approximation))))",
-		BestKnown:     396,
+		BestKnown:     396, // [curvechains]
 	},
 	{
 		Name:          "secp256k1 (Bitcoin) Field Inversion",
@@ -98,7 +102,7 @@ var Results = []Result{
 		D:             3,
 		Length:        269,
 		AlgorithmName: "opt(runs(heuristic(use_first(halving,delta_largest))))",
-		BestKnown:     269,
+		BestKnown:     269, // [curvechains]
 	},
 	{
 		Name:          "Curve25519 Scalar Inversion",
@@ -106,26 +110,26 @@ var Results = []Result{
 		N:             Hex("1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed"),
 		D:             2,
 		Length:        283,
-		AlgorithmName: "opt(dictionary(hybrid(4,0),continued_fractions(binary)))",
-		BestKnown:     284,
+		AlgorithmName: "opt(dictionary(hybrid(5,0,sliding_window(4)),continued_fractions(binary)))",
+		BestKnown:     284, // [curvechains]
 	},
 	{
 		Name:          "NIST P-256 Scalar Inversion",
 		Slug:          "p256_scalar",
 		N:             Hex("ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551"),
 		D:             2,
-		Length:        294,
-		AlgorithmName: "opt(dictionary(hybrid(8,16),heuristic(use_first(halving,delta_largest))))",
-		BestKnown:     292,
+		Length:        291,
+		AlgorithmName: "opt(dictionary(hybrid(9,32,sliding_window_short_rtl(8,4)),heuristic(use_first(halving,approximation))))",
+		BestKnown:     292, // [curvechains]
 	},
 	{
 		Name:          "NIST P-384 Scalar Inversion",
 		Slug:          "p384_scalar",
 		N:             Hex("ffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52973"),
 		D:             2,
-		Length:        434,
-		AlgorithmName: "opt(dictionary(hybrid(4,0),continued_fractions(dichotomic)))",
-		BestKnown:     433,
+		Length:        433,
+		AlgorithmName: "opt(dictionary(hybrid(6,0,sliding_window_short(5,0)),continued_fractions(dichotomic)))",
+		BestKnown:     433, // [curvechains]
 	},
 	{
 		Name:          "secp256k1 (Bitcoin) Scalar Inversion",
@@ -133,8 +137,17 @@ var Results = []Result{
 		N:             Hex("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141"),
 		D:             2,
 		Length:        293,
-		AlgorithmName: "opt(dictionary(hybrid(4,0),continued_fractions(dichotomic)))",
-		BestKnown:     290,
+		AlgorithmName: "opt(dictionary(hybrid(5,0,sliding_window(4)),continued_fractions(dichotomic)))",
+		BestKnown:     290, // [curvechains]
+	},
+	{
+		Name:          "Smooth Isogeny P-512 Field Inversion",
+		Slug:          "isop512_field",
+		N:             prime.NewSmoothIsogeny(2, 3, 253, 161, 7, false),
+		D:             2,
+		Length:        83 + 498,
+		AlgorithmName: "opt(dictionary(hybrid(17,20,sliding_window_short(16,8)),continued_fractions(binary)))",
+		BestKnown:     76 + 508, // [isogenychains]
 	},
 	{
 		Name:          "M-221 Field Inversion",
@@ -150,20 +163,20 @@ var Results = []Result{
 		N:             prime.P222117,
 		D:             2,
 		Length:        233,
-		AlgorithmName: "opt(runs(continued_fractions(dichotomic)))",
+		AlgorithmName: "opt(dictionary(sliding_window_short_rtl(128,64),continued_fractions(dichotomic)))",
 	},
 	{
 		Name:          "Curve1174 Field Inversion",
 		Slug:          "p2519_field",
 		N:             prime.P2519,
 		D:             2,
-		Length:        263,
-		AlgorithmName: "opt(dictionary(hybrid(3,64),continued_fractions(dichotomic)))",
+		Length:        261,
+		AlgorithmName: "opt(dictionary(sliding_window_rtl(128),continued_fractions(dichotomic)))",
 	},
 	{
 		Name:          "E-382 Field Inversion",
 		Slug:          "p382105_field",
-		AlgorithmName: "opt(dictionary(hybrid(5,0),continued_fractions(dichotomic)))",
+		AlgorithmName: "opt(dictionary(hybrid(6,0,sliding_window(5)),continued_fractions(dichotomic)))",
 		N:             prime.P382105,
 		D:             2,
 		Length:        395,
@@ -198,7 +211,7 @@ var Results = []Result{
 		N:             prime.NISTP192,
 		D:             2,
 		Length:        203,
-		AlgorithmName: "opt(dictionary(hybrid(2,0),continued_fractions(dichotomic)))",
+		AlgorithmName: "opt(dictionary(hybrid(3,0,sliding_window(2)),continued_fractions(dichotomic)))",
 	},
 	{
 		Name:          "NIST P-224 Field Inversion",
@@ -222,7 +235,7 @@ var Results = []Result{
 		N:             prime.Secp192k1,
 		D:             2,
 		Length:        205,
-		AlgorithmName: "opt(dictionary(hybrid(3,0),continued_fractions(dichotomic)))",
+		AlgorithmName: "opt(dictionary(hybrid(4,0,sliding_window(3)),continued_fractions(dichotomic)))",
 	},
 	{
 		Name:          "secp224k1 Field Inversion",
@@ -230,6 +243,6 @@ var Results = []Result{
 		N:             prime.Secp224k1,
 		D:             2,
 		Length:        238,
-		AlgorithmName: "opt(dictionary(hybrid(5,0),continued_fractions(dichotomic)))",
+		AlgorithmName: "opt(dictionary(hybrid(6,0,sliding_window(5)),continued_fractions(dichotomic)))",
 	},
 }
